@@ -1,0 +1,147 @@
+package com.epoint.union.audituniontaskuser.impl;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+import com.epoint.union.audituniontaskuser.api.entity.AuditUnionTaskUser;
+import com.alibaba.dubbo.config.annotation.Service;
+import com.epoint.core.grammar.Record;
+import com.epoint.union.audituniontaskuser.api.IAuditUnionTaskUserService;
+/**
+ * 异地通办事项人员关联表对应的后台service实现类
+ * 
+ * @author zhaoyan
+ * @version [版本号, 2020-03-22 22:39:40]
+ */
+@Component
+@Service
+public class AuditUnionTaskUserServiceImpl implements IAuditUnionTaskUserService
+{
+    /**
+     * 插入数据
+     * 
+     * @param record
+     *            BaseEntity或Record对象 <必须继承Record>
+     * @return int
+     */
+    public int insert(AuditUnionTaskUser record) {
+        return new AuditUnionTaskUserService().insert(record);
+    }
+
+    /**
+     * 删除数据
+     * 
+     * @param record
+     *            BaseEntity或Record对象 <必须继承Record>
+     * @return int
+     */
+    public int deleteByGuid(String guid) {
+        return new AuditUnionTaskUserService().deleteByGuid(guid);
+    }
+    
+    /**
+     * 删除事项人员配置
+     * @param taskid
+     * @return
+     */
+    public int deleteByTaskid(String taskid) {
+    	return new AuditUnionTaskUserService().deleteByTaskid(taskid);
+    }
+    
+    /**
+     * 获取事项人员配置
+     * @param taskid
+     * @return
+     */
+    public List<Record> getUserBytaskid(String taskid) {
+    	return new AuditUnionTaskUserService().getUserBytaskid(taskid);
+    }
+
+    /**
+     * 更新数据
+     * 
+     * @param record
+     *            BaseEntity或Record对象 <必须继承Record>
+     * @return int
+     */
+    public int update(AuditUnionTaskUser record) {
+        return new AuditUnionTaskUserService().update(record);
+    }
+
+    /**
+     * 根据ID查找单个实体
+     * 
+     * @param clazz
+     *            类<必须继承BaseEntity>
+     * @param primaryKey
+     *            主键
+     * @return T extends BaseEntity
+     */
+    public AuditUnionTaskUser find(Object primaryKey) {
+       return new AuditUnionTaskUserService().find(primaryKey);
+    }
+
+    /**
+     * 查找单条记录
+     * 
+     * @param sql
+     *            查询语句
+     * @param clazz
+     *            可以是[Record.class(弱类型);FrameOu.class(强类型);Object[].class，返回一个数组
+     *            ;String.class;Integer.class;Long.class]
+     * @param args
+     *            参数值数组
+     * @return T {String、Integer、Long、Record、FrameOu、Object[]等}
+     */
+    public AuditUnionTaskUser find(String sql, Object... args) {
+        return new AuditUnionTaskUserService().find(sql,args);
+    }
+
+    /**
+     * 查找一个list
+     * 
+     * @param sql
+     *            查询语句
+     * @param clazz
+     *            可以是[Record.class(弱类型);FrameOu.class(强类型);Object[].class]
+     * @param args
+     *            参数值数组
+     * @return T extends BaseEntity
+     */
+    public List<AuditUnionTaskUser> findList(String sql, Object... args) {
+       return new AuditUnionTaskUserService().findList(sql,args);
+    }
+
+    /**
+     * 分页查找一个list
+     * 
+     * @param sql
+     *            查询语句
+     * @param pageNumber
+     *            记录行的偏移量
+     * @param pageSize
+     *            记录行的最大数目
+     * @param clazz
+     *            可以是[Record.class(弱类型);FrameOu.class(强类型);Object[].class]
+     * @param args
+     *            参数值数组
+     * @return T extends BaseEntity
+     */
+    public List<AuditUnionTaskUser> findList(String sql, int pageNumber, int pageSize, Object... args) {
+       return new AuditUnionTaskUserService().findList(sql,pageNumber,pageSize,args);
+    }
+    
+     /**
+     * 查询数量
+     * 
+     * @param sql
+     *            执行语句
+     * @param args
+     *            参数
+     * @return Integer
+     */
+     @Override
+    public Integer countAuditUnionTaskUser(String sql, Object... args){
+        return new AuditUnionTaskUserService().countAuditUnionTaskUser(sql, args);
+    }
+
+}

@@ -1,0 +1,140 @@
+package com.epoint.ces.auditnotifydocattachinfo.api.entity;
+
+import java.util.Date;
+
+import com.epoint.core.BaseEntity;
+import com.epoint.core.annotation.Entity;
+import com.epoint.core.utils.EnumClazz.StrategyType;
+
+/**
+ * 办件文书信息表实体
+ *
+ * @version [版本号, 2022-03-15 14:02:49]
+ * @作者 jiem
+ */
+@Entity(table = "AUDIT_NOTIFYDOC_ATTACHINFO", id = "rowguid")
+public class AuditNotifydocAttachinfo extends BaseEntity implements Cloneable {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 文书类别
+     */
+    public String getDoctype() {
+        return super.get("doctype");
+    }
+
+    public void setDoctype(String doctype) {
+        super.set("doctype", doctype);
+    }
+
+    /**
+     * 经营类别
+     */
+    public String getBusinesstype() {
+        return super.get("businesstype");
+    }
+
+    public void setBusinesstype(String businesstype) {
+        super.set("businesstype", businesstype);
+    }
+
+    /**
+     * 文档名称
+     */
+    public String getDocname() {
+        return super.get("docname");
+    }
+
+    public void setDocname(String docname) {
+        super.set("docname", docname);
+    }
+
+    /**
+     * 创建人员名称
+     */
+    public String getCreateusername() {
+        return super.get("createusername");
+    }
+
+    public void setCreateusername(String createusername) {
+        super.set("createusername", createusername);
+    }
+
+    /**
+     * 所属辖区号
+     */
+    public String getBelongxiaqucode() {
+        return super.get("belongxiaqucode");
+    }
+
+    public void setBelongxiaqucode(String belongxiaqucode) {
+        super.set("belongxiaqucode", belongxiaqucode);
+    }
+
+    /**
+     * 创建人员标识
+     */
+    public String getCreateuserguid() {
+        return super.get("createuserguid");
+    }
+
+    public void setCreateuserguid(String createuserguid) {
+        super.set("createuserguid", createuserguid);
+    }
+
+    /**
+     * 操作者名字
+     */
+    public String getOperateusername() {
+        return super.get("operateusername");
+    }
+
+    public void setOperateusername(String operateusername) {
+        super.set("operateusername", operateusername);
+    }
+
+    /**
+     * 操作日期
+     */
+    public Date getOperatedate() {
+        return super.getDate("operatedate");
+    }
+
+    public void setOperatedate(Date operatedate) {
+        super.set("operatedate", operatedate);
+    }
+
+    /**
+     * 序号
+     */
+    public Integer getRow_id() {
+        return super.getInt("row_id");
+    }
+
+    public void setRow_id(Integer row_id) {
+        super.set("row_id", row_id);
+    }
+
+    /**
+     * 年份标识
+     */
+    public String getYearflag() {
+        return super.get("yearflag");
+    }
+
+    public void setYearflag(String yearflag) {
+        super.set("yearflag", yearflag);
+    }
+
+    /**
+     * 默认主键字段
+     */
+    public String getRowguid() {
+        return super.get("rowguid");
+    }
+
+    public void setRowguid(String rowguid) {
+        super.set("rowguid", rowguid);
+    }
+
+}

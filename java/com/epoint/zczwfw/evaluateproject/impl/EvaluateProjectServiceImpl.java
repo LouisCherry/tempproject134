@@ -1,0 +1,160 @@
+package com.epoint.zczwfw.evaluateproject.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Component;
+
+import com.alibaba.dubbo.config.annotation.Service;
+import com.epoint.zczwfw.evaluateproject.api.IEvaluateProjectService;
+import com.epoint.zczwfw.evaluateproject.api.entity.EvaluateProject;
+
+/**
+ * 评价办件信息表对应的后台service实现类
+ * 
+ * @author yrchan
+ * @version [版本号, 2022-04-11 15:52:28]
+ */
+@Component
+@Service
+public class EvaluateProjectServiceImpl implements IEvaluateProjectService
+{
+    private static final long serialVersionUID = 6711547317289892368L;
+
+    /**
+     * 插入数据
+     * 
+     * @param record
+     *            BaseEntity或Record对象 <必须继承Record>
+     * @return int
+     */
+    public int insert(EvaluateProject record) {
+        return new EvaluateProjectService().insert(record);
+    }
+
+    /**
+     * 删除数据
+     * 
+     * @param record
+     *            BaseEntity或Record对象 <必须继承Record>
+     * @return int
+     */
+    public int deleteByGuid(String guid) {
+        return new EvaluateProjectService().deleteByGuid(guid);
+    }
+
+    /**
+     * 更新数据
+     * 
+     * @param record
+     *            BaseEntity或Record对象 <必须继承Record>
+     * @return int
+     */
+    public int update(EvaluateProject record) {
+        return new EvaluateProjectService().update(record);
+    }
+
+    /**
+     * 根据ID查找单个实体
+     * 
+     * @param clazz
+     *            类<必须继承BaseEntity>
+     * @param primaryKey
+     *            主键
+     * @return T extends BaseEntity
+     */
+    public EvaluateProject find(Object primaryKey) {
+        return new EvaluateProjectService().find(primaryKey);
+    }
+
+    /**
+     * 查找单条记录
+     * 
+     * @param sql
+     *            查询语句
+     * @param clazz
+     *            可以是[Record.class(弱类型);FrameOu.class(强类型);Object[].class，返回一个数组
+     *            ;String.class;Integer.class;Long.class]
+     * @param args
+     *            参数值数组
+     * @return T {String、Integer、Long、Record、FrameOu、Object[]等}
+     */
+    public EvaluateProject find(String sql, Object... args) {
+        return new EvaluateProjectService().find(sql, args);
+    }
+
+    /**
+     * 查找一个list
+     * 
+     * @param sql
+     *            查询语句
+     * @param clazz
+     *            可以是[Record.class(弱类型);FrameOu.class(强类型);Object[].class]
+     * @param args
+     *            参数值数组
+     * @return T extends BaseEntity
+     */
+    public List<EvaluateProject> findList(String sql, Object... args) {
+        return new EvaluateProjectService().findList(sql, args);
+    }
+
+    /**
+     * 分页查找一个list
+     * 
+     * @param sql
+     *            查询语句
+     * @param pageNumber
+     *            记录行的偏移量
+     * @param pageSize
+     *            记录行的最大数目
+     * @param clazz
+     *            可以是[Record.class(弱类型);FrameOu.class(强类型);Object[].class]
+     * @param args
+     *            参数值数组
+     * @return T extends BaseEntity
+     */
+    public List<EvaluateProject> findList(String sql, int pageNumber, int pageSize, Object... args) {
+        return new EvaluateProjectService().findList(sql, pageNumber, pageSize, args);
+    }
+
+    /**
+     * 查询数量
+     * 
+     * @param sql
+     *            执行语句
+     * @param args
+     *            参数
+     * @return Integer
+     */
+    @Override
+    public Integer countEvaluateProject(String sql, Object... args) {
+        return new EvaluateProjectService().countEvaluateProject(sql, args);
+    }
+
+    /**
+     * 
+     * 判断办结时间为同一天且同一个手机号的评价办件信息是否存在
+     * 
+     * @param link_phone
+     * @param handleDate
+     * @return
+     */
+    @Override
+    public boolean isExistPhoneAndHandleDate(String link_phone, String handleDate) {
+        return new EvaluateProjectService().isExistPhoneAndHandleDate(link_phone, handleDate);
+    }
+
+    /**
+     * 
+     * 通过条件（时间）获取最大编号
+     * 
+     * @param map
+     *            条件
+     * @return
+     */
+    @Override
+    public String getMaxNoByCondition(Map<String, String> map) {
+        return new EvaluateProjectService().getMaxNoByCondition(map);
+    }
+
+}
