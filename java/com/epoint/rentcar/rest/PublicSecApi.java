@@ -127,7 +127,8 @@ public class PublicSecApi {
                 }
                 String idnumber = onlineRegister.getIdnumber();
                 String username = onlineRegister.getUsername();
-                if (StringUtil.isBlank(idnumber) && StringUtil.isBlank(username)){
+                String phone = onlineRegister.getMobile();
+                if (StringUtil.isBlank(idnumber) || StringUtil.isBlank(username) || StringUtil.isBlank(phone)){
                     return JsonUtils.zwdtRestReturn("0", "个人信息不完整，请完善个人信息！", dataJson.toString());
                 }
                 // 构建参数
@@ -140,9 +141,9 @@ public class PublicSecApi {
                 param.put("operatorIp",request.getRemoteAddr());
                 param.put("operatorUnitName", RentCarConstant.UNIT_NAME);
                 param.put("operatorQueryReason", RentCarConstant.QUERY_REASON);
-                param.put("requesterPhoneNum", RentCarConstant.PHONENUM);
                 param.put("operatorIdCard", RentCarConstant.ID_CARD);
                 param.put("operatorPhoneNum", RentCarConstant.PHONENUM);
+                param.put("requesterPhoneNum", phone);
                 map.put("GASJGX_PARAM",param.toJSONString());
 
                 // 密文
@@ -150,21 +151,20 @@ public class PublicSecApi {
                 SymmetricCrypto symmetricCrypto = SmUtil.sm4(RentCarConstant.KEY.getBytes());
                 // 解密
                 String returnJson = symmetricCrypto.decryptStr(text);
+                log.info("GASJGXHY接口返回的数据：" + returnJson);
                 if (StringUtil.isBlank(returnJson)) {
                     return JsonUtils.zwdtRestReturn("0", "核验失败，请稍后再试！", dataJson.toString());
                 }
                 JSONObject returnJsonObject = JSONObject.parseObject(returnJson);
-                if(!"200".equals(returnJsonObject.getString("code"))){
-                    log.info("接口调用失败！错误信息：" + returnJsonObject.getString("msg"));
-                    return JsonUtils.zwdtRestReturn("0", "查询失败，请稍后重试！", "");
-                }
                 JSONArray data = returnJsonObject.getJSONArray("data");
-                if (data.isEmpty()) {
-                    return JsonUtils.zwdtRestReturn("1", "", dataJson.toString());
+                log.info("=======isBgv接口=======");
+                if (data.size() > 1 ) {
+                    return JsonUtils.zwdtRestReturn("0", "经查询您在某个时间有不良记录，不允许申报该业务，详情请去柜台！", dataJson.toString());
+                }else {
+                	return JsonUtils.zwdtRestReturn("1", "背景核验正常！", dataJson.toString());
                 }
 
-                log.info("=======isBgv接口=======");
-                return JsonUtils.zwdtRestReturn("1", "经查询您在某个时间有不良记录，不允许申报该业务，详情请去柜台！", dataJson.toString());
+                
             }
             else {
                 return JsonUtils.zwdtRestReturn("0", "身份验证失败！", "");
@@ -196,6 +196,7 @@ public class PublicSecApi {
 
                 String id = params1.getString("id");
                 String name = params1.getString("name");
+                String phone = params1.getString("phone");
                 String projectGuid = params1.getString("project_guid");
 
                 // 参数的必填检验
@@ -212,11 +213,14 @@ public class PublicSecApi {
                 param.put("operatorIp",request.getRemoteAddr());
                 param.put("operatorUnitName", RentCarConstant.UNIT_NAME);
                 param.put("operatorQueryReason", RentCarConstant.QUERY_REASON);
-                param.put("requesterPhoneNum", RentCarConstant.PHONENUM);
+                param.put("operatorPhoneNum", RentCarConstant.PHONENUM);
+                param.put("operatorIdCard", RentCarConstant.ID_CARD);
+                param.put("requesterPhoneNum", phone);
                 paramMap.put("GASJGX_PARAM",param.toJSONString());
 
                 // 密文
                 String text = HttpUtil.httpPostWithForm(RentCarConstant.JSZ_URL, paramMap);
+                log.info("获取驾驶证材料："+text);
                 SymmetricCrypto symmetricCrypto = SmUtil.sm4(RentCarConstant.KEY.getBytes());
                 // 解密
                 String returnJson = symmetricCrypto.decryptStr(text);
@@ -225,17 +229,24 @@ public class PublicSecApi {
                     return JsonUtils.zwdtRestReturn("0", "核验失败，请稍后再试！", dataJson.toString());
                 }
                 JSONObject returnJsonObject = JSONObject.parseObject(returnJson);
-                if(!"200".equals(returnJsonObject.getString("code"))){
-                    log.info("接口调用失败！错误信息：" + returnJsonObject.getString("msg"));
-                    return JsonUtils.zwdtRestReturn("0", "查询失败，请稍后重试！", "");
-                }
                 JSONArray dataArray = returnJsonObject.getJSONArray("data");
 
                 if (dataArray.isEmpty()) {
                     return JsonUtils.zwdtRestReturn("1", "无驾驶证信息", dataJson.toString());
                 }
                 JSONObject data = dataArray.getJSONObject(0);
+                
+                dataJson.put("sex", data.getString("XBMC"));
+                dataJson.put("zjcx", data.getString("ZJCX"));
+                dataJson.put("csrq", data.getString("CSRQ"));
+                dataJson.put("lzrq", data.getString("CCLZRQ"));
+                dataJson.put("yxrqs", data.getString("YXQS"));
+                dataJson.put("yxrqz", data.getString("YXQZ"));
+                dataJson.put("zj", data.getString("ZJ"));
+                dataJson.put("zs", data.getString("ZS"));
+                dataJson.put("hdzzl", data.getString("HDZZL"));
 
+                // 填充模板域
                 Map<String, String> map = getJszDocValue(params1, id, name, data);
                 AuditTaskMaterial auditTaskMaterial = new RentCarService().getAuditTaskMaterial(projectGuid, 1);
                 if (auditTaskMaterial == null){
@@ -248,8 +259,9 @@ public class PublicSecApi {
                         return JsonUtils.zwdtRestReturn("0", "模板获取错误，请联系管理员维护模板！", dataJson.toString());
                     }
                     FrameAttachStorage attach = attachListByGuid.get(0);
-                    if (attach != null && (".doc".equals(attach.getDocumentType()) || ".docx".equals(attach.getDocumentType()))){
-                        String[] fieldNames = null;
+                    if (attach != null && (".doc".equals(attach.getContentType()) || ".docx".equals(attach.getContentType()))){
+                        log.info("找到对应的附件文件！");
+                    	String[] fieldNames = null;
                         Object[] values = null;
                         activeLicense();
                         Document doc = new Document(attach.getContent());
@@ -281,10 +293,15 @@ public class PublicSecApi {
                         auditProjectMaterial.setAttachfilefrom("1");
                         iAuditProjectMaterial.updateProjectMaterial(auditProjectMaterial);
                         return JsonUtils.zwdtRestReturn("1", "成功", dataJson.toString());
+                    }else {
+                      	 log.info("=======relaDriMater接口=======");
+                         return JsonUtils.zwdtRestReturn("0", "未找到对应的附件文件！", dataJson.toString());
                     }
-                }
-                log.info("=======relaDriMater接口=======");
-                return JsonUtils.zwdtRestReturn("1", "未上传模板，请联系管理员上传！", dataJson.toString());
+                }else {
+               	 log.info("=======relaDriMater接口=======");
+                 return JsonUtils.zwdtRestReturn("0", "未上传模板，请联系管理员上传！", dataJson.toString());
+            }
+               
             }
             else {
                 return JsonUtils.zwdtRestReturn("0", "身份验证失败！", "");
@@ -316,6 +333,8 @@ public class PublicSecApi {
 
                 String syr = params1.getString("syr");
                 String hphm = params1.getString("hphm");
+                String phone = params1.getString("phone");
+                
                 String projectGuid = params1.getString("project_guid");
 
                 // 参数的必填检验
@@ -332,80 +351,98 @@ public class PublicSecApi {
                 param.put("operatorIp",request.getRemoteAddr());
                 param.put("operatorUnitName", RentCarConstant.UNIT_NAME);
                 param.put("operatorQueryReason", RentCarConstant.QUERY_REASON);
-                param.put("requesterPhoneNum", RentCarConstant.PHONENUM);
+                param.put("operatorPhoneNum", RentCarConstant.PHONENUM);
+                param.put("operatorIdCard", RentCarConstant.ID_CARD);
+                param.put("requesterPhoneNum", phone);
                 paramMap.put("GASJGX_PARAM",param.toJSONString());
-                try {
-                    // 密文
-                    String text = HttpUtil.httpPostWithForm(RentCarConstant.JSZ_URL, paramMap);
-                    SymmetricCrypto symmetricCrypto = SmUtil.sm4(RentCarConstant.KEY.getBytes());
-                    // 解密
-                    String returnJson = symmetricCrypto.decryptStr(text);
-                    log.info("V_DRV接口返回的数据：" + returnJson);
-                    if (StringUtil.isBlank(returnJson)) {
-                        return JsonUtils.zwdtRestReturn("0", "核验失败，请稍后再试！", dataJson.toString());
-                    }
-                    JSONObject returnJsonObject = JSONObject.parseObject(returnJson);
-                    JSONArray dataArray = returnJsonObject.getJSONArray("data");
-
-                    if (dataArray.isEmpty()) {
-                        return JsonUtils.zwdtRestReturn("1", "无行驶证信息", dataJson.toString());
-                    }
-
-                    JSONObject data = dataArray.getJSONObject(0);
-                    Map<String, String> map = new HashMap<>();
-
-                    getXszDocValue(params1, data, map);
-                    AuditTaskMaterial auditTaskMaterial = new RentCarService().getAuditTaskMaterial(projectGuid, 2);
-                    if (auditTaskMaterial == null) {
-                        return JsonUtils.zwdtRestReturn("0", "该办件没有行驶证材料！", dataJson.toString());
-                    }
-                    String templateClientGuid = auditTaskMaterial.getTemplateattachguid();
-                    if (StringUtil.isNotBlank(templateClientGuid)) {
-                        List<FrameAttachStorage> attachListByGuid = iAttachService.getAttachListByGuid(templateClientGuid);
-                        if (attachListByGuid.isEmpty() || attachListByGuid.size() > 1){
-                            return JsonUtils.zwdtRestReturn("0", "模板获取错误，请联系管理员维护模板！", dataJson.toString());
-                        }
-                        FrameAttachStorage attach = attachListByGuid.get(0);
-                        if (attach != null && (".doc".equals(attach.getDocumentType()) || ".docx".equals(attach.getDocumentType()))) {
-                            String[] fieldNames = null;
-                            Object[] values = null;
-                            activeLicense();
-                            Document doc = new Document(attach.getContent());
-                            fieldNames = new String[map == null ? 0 : map.size()];
-                            values = new Object[map == null ? 0 : map.size()];
-                            int num = 0;
-                            for (Map.Entry<String, String> entry : map.entrySet()) {
-                                fieldNames[num] = entry.getKey();
-                                values[num] = entry.getValue();
-                                num++;
-                            }
-                            // 替换域
-                            doc.getMailMerge().execute(fieldNames, values);
-                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                            // 保存成PDF
-                            doc.save(outputStream, SaveFormat.PDF);
-                            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-                            long size = inputStream.available();
-                            String attachGuid = UUID.randomUUID().toString();
-                            String cliengGuid = UUID.randomUUID().toString();
-                            AttachUtil.saveFileInputStream(attachGuid,
-                                    cliengGuid, syr + "-行驶证.pdf", ".pdf", "办件材料", size, inputStream, "",
-                                    "系统生成");
-                            log.info("附件下载地址:http://localhost:8093/epoint-web-zwfw/rest/frame/base/attach/attachAction/getContent?isCommondto=true&attachGuid=" + attachGuid);
-                            // 关联材料
-                            AuditProjectMaterial auditProjectMaterial = new RentCarService().getAuditProjectMaterial(projectGuid, auditTaskMaterial.getRowguid());
-                            auditProjectMaterial.setCliengguid(cliengGuid);
-                            auditProjectMaterial.setStatus(20);
-                            auditProjectMaterial.setAttachfilefrom("1");
-                            iAuditProjectMaterial.updateProjectMaterial(auditProjectMaterial);
-                            return JsonUtils.zwdtRestReturn("1", "成功", dataJson.toString());
-                        }
-                    }
-                }catch (Exception e){
-                    log.info("接口调用失败！错误信息：" + e.getMessage());
+                
+                // 密文
+                String text = HttpUtil.httpPostWithForm(RentCarConstant.XSZ_URL, paramMap);
+                log.info("行驶证信息:"+text);
+                SymmetricCrypto symmetricCrypto = SmUtil.sm4(RentCarConstant.KEY.getBytes());
+                // 解密
+                String returnJson = symmetricCrypto.decryptStr(text);
+                log.info("V_VEH_VIEW接口返回的数据:" + returnJson);
+                if (StringUtil.isBlank(returnJson)) {
+                    return JsonUtils.zwdtRestReturn("0", "核验失败，请稍后再试！", dataJson.toString());
                 }
-                log.info("=======relaGDriMater接口=======");
-                return JsonUtils.zwdtRestReturn("1", "未上传模板，请联系管理员上传！", dataJson.toString());
+                JSONObject returnJsonObject = JSONObject.parseObject(returnJson);
+                JSONArray dataArray = returnJsonObject.getJSONArray("data");
+
+                if (dataArray.isEmpty()) {
+                    return JsonUtils.zwdtRestReturn("1", "无行驶证信息", dataJson.toString());
+                }
+                JSONObject data = dataArray.getJSONObject(0);
+                
+                dataJson.put("SYR", data.getString("SYR"));
+                dataJson.put("CLLXMC", data.getString("CLLXMC"));
+                dataJson.put("CLPP2", data.getString("CLPP2"));
+                dataJson.put("CSYSMC", data.getString("CSYSMC"));
+                dataJson.put("HBDBQK", data.getString("HBDBQK"));
+                dataJson.put("DJZSBH", data.getString("DJZSBH"));
+                dataJson.put("FZRQ", data.getString("FZRQ"));
+//                dataJson.put("DJZSBH", data.getString("DJZSBH"));
+//                dataJson.put("DJZSBH", data.getString("DJZSBH"));
+                dataJson.put("SYXZMC", data.getString("SYXZMC"));
+                dataJson.put("FZJG", data.getString("FZJG"));
+                
+                
+                Map<String, String> map = new HashMap<>();
+
+                getXszDocValue(params1, data, map);
+                AuditTaskMaterial auditTaskMaterial = new RentCarService().getAuditTaskMaterial(projectGuid, 2);
+                if (auditTaskMaterial == null) {
+                    return JsonUtils.zwdtRestReturn("0", "该办件没有行驶证材料！", dataJson.toString());
+                }
+                String templateClientGuid = auditTaskMaterial.getTemplateattachguid();
+                if (StringUtil.isNotBlank(templateClientGuid)) {
+                    List<FrameAttachStorage> attachListByGuid = iAttachService.getAttachListByGuid(templateClientGuid);
+                    if (attachListByGuid.isEmpty() || attachListByGuid.size() > 1){
+                        return JsonUtils.zwdtRestReturn("0", "模板获取错误，请联系管理员维护模板！", dataJson.toString());
+                    }
+                    FrameAttachStorage attach = attachListByGuid.get(0);
+                    if (attach != null && (".doc".equals(attach.getContentType()) || ".docx".equals(attach.getContentType()))) {
+                        String[] fieldNames = null;
+                        Object[] values = null;
+                        activeLicense();
+                        Document doc = new Document(attach.getContent());
+                        fieldNames = new String[map == null ? 0 : map.size()];
+                        values = new Object[map == null ? 0 : map.size()];
+                        int num = 0;
+                        for (Map.Entry<String, String> entry : map.entrySet()) {
+                            fieldNames[num] = entry.getKey();
+                            values[num] = entry.getValue();
+                            num++;
+                        }
+                        // 替换域
+                        doc.getMailMerge().execute(fieldNames, values);
+                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                        // 保存成PDF
+                        doc.save(outputStream, SaveFormat.PDF);
+                        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+                        long size = inputStream.available();
+                        String attachGuid = UUID.randomUUID().toString();
+                        String cliengGuid = UUID.randomUUID().toString();
+                        AttachUtil.saveFileInputStream(attachGuid,
+                                cliengGuid, syr + "-行驶证.pdf", ".pdf", "办件材料", size, inputStream, "",
+                                "系统生成");
+                        log.info("附件下载地址:http://localhost:8093/epoint-web-zwfw/rest/frame/base/attach/attachAction/getContent?isCommondto=true&attachGuid=" + attachGuid);
+                        // 关联材料
+                        AuditProjectMaterial auditProjectMaterial = new RentCarService().getAuditProjectMaterial(projectGuid, auditTaskMaterial.getRowguid());
+                        auditProjectMaterial.setCliengguid(cliengGuid);
+                        auditProjectMaterial.setStatus(20);
+                        auditProjectMaterial.setAttachfilefrom("1");
+                        iAuditProjectMaterial.updateProjectMaterial(auditProjectMaterial);
+                        return JsonUtils.zwdtRestReturn("1", "成功", dataJson.toString());
+                    }else {
+                    	log.info("=======relaDriMater接口=======");
+                        return JsonUtils.zwdtRestReturn("0", "未找到对应的附件文件！", dataJson.toString());
+                    }
+                }else {
+                	  log.info("=======relaGDriMater接口=======");
+                      return JsonUtils.zwdtRestReturn("0", "未上传模板，请联系管理员上传！", dataJson.toString());
+                }
+              
             }
             else {
                 return JsonUtils.zwdtRestReturn("0", "身份验证失败！", "");
@@ -416,6 +453,7 @@ public class PublicSecApi {
             return JsonUtils.zwdtRestReturn("0", "获取行驶证信息并关联材料失败", "");
         }
     }
+
 
     /**
      * 驾驶证模板域的值
@@ -430,10 +468,10 @@ public class PublicSecApi {
 
         Map<String, String> map = new HashMap<>();
         map.put("姓名", name);
-        map.put("性别", params1.getString("sex"));
+        map.put("性别", data.getString("XBMC"));
         map.put("身份证号", id);
         map.put("家庭住址", params1.getString("jtdz"));
-        map.put("出生日期",EpointDateUtil.convertDate2String(params1.getDate("csrq"),EpointDateUtil.DATE_FORMAT));
+        map.put("出生日期",EpointDateUtil.convertDate2String(data.getDate("CSRQ"),EpointDateUtil.DATE_FORMAT));
         if (StringUtil.isNotBlank(data.getString("ZJCX"))){
             map.put("准驾车型", data.getString("ZJCX"));
         }else {
@@ -474,12 +512,6 @@ public class PublicSecApi {
         return map;
     }
 
-    /**
-     * 行驶证模板域的值
-     * @param params1
-     * @param data
-     * @param map
-     */
     private void getXszDocValue(JSONObject params1, JSONObject data, Map<String, String> map) {
         if (StringUtil.isBlank(data.getString("SYR"))){
             map.put("所有人", params1.getString("syr"));
@@ -568,18 +600,22 @@ public class PublicSecApi {
             String path = ClassPathUtil.getClassesPath() + licname;
             // 若文件存在，则直接激活
             if (FileManagerUtil.isExist(path, false)) {
+            	log.info("查询到文件");
                 license.setLicense(path);
             }
             else {
+            	log.info("未查询到文件");
                 // 若路径下不存在许可证，则直接使用许可证名称（适用于tomcat中）激活许可证
                 license.setLicense(licname);
             }
             // 设置字体否则pdf乱码
-//            FontSettings.setFontsFolder(ClassPathUtil.getClassesPath() + "font" + File.separator, true);
+            FontSettings.setFontsFolder(ClassPathUtil.getClassesPath() + "font" + File.separator, true);
         }
         catch (Exception e) {
             e.printStackTrace();
-            // log.error("Aspose.Words许可证激活失败，请检查许可证信息是否正确！许可证是否存在，或许可证名称是否准确。");
+             log.error("Aspose.Words许可证激活失败，请检查许可证信息是否正确！许可证是否存在，或许可证名称是否准确。");
         }
     }
+
+
 }

@@ -50,7 +50,7 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
      */
     private Logger log = Logger.getLogger(this.getClass());
     
-    private static String HCPEVALUATE = ConfigUtil.getConfigValue("hcp", "HcpEvaluateUrl");
+    private static String HCPEVALUATE = ConfigUtil.getConfigValue("hcp", "HcpEvaluateUrlOld");
     private static String HCPARRAYCODEURL = ConfigUtil.getConfigValue("hcp", "HcpCodeArrayUrl");
 	private static String HCPOFFLINETEMPURL = ConfigUtil.getConfigValue("hcp", "HcpOfflineTempUrl");
 	private static String HCPAPPMARK = ConfigUtil.getConfigValue("hcp", "HcpAppMark");
@@ -81,12 +81,12 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
     }
 
     public void dealResult() {
-        int recordNum = 2000;
+        int recordNum = 1000;
         boolean flag = true;
         
         //List<String> gssOrgList = service.getGssRowguids();
         ExecutorService exService = null;
-        int size = 200;
+        int size = 100;
         int start = 0;
         if (recordNum % size == 0) {
             latch = new CountDownLatch(recordNum / size);
@@ -175,14 +175,30 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
    			            
    			            
    						String s = turnhcpevaluate(project, 1,"提交申请信息",newserviceTime);
+   						EpointFrameDsManager.commit();
    						String ss = turnhcpevaluate(project, 2,"待受理",newserviceTime1);
+   						EpointFrameDsManager.commit();
    						String sss = turnhcpevaluate(project, 3,"出证办结",newserviceTime2);
+   						EpointFrameDsManager.commit();
    						String status = "1";
-   						if("1".equals(s) || "1".equals(ss) || "1".equals(sss)) {
-   							status = "1";
+   						
+   						if("1".equals(s)) {
+   							status += "1";
    						}else {
-   							status = "99";
+   							status += "97,";
    						}
+   						if("1".equals(ss)) {
+   							status += "1";
+   						}else {
+   							status += "98,";
+   						}
+   						if("1".equals(sss)) {
+   							status += "1";
+   						}else {
+   							status += "99,";
+   						}
+   						
+   						
    						iHcpService.updateLcProjecteight(status, project.getRowguid());
    						EpointFrameDsManager.commit();
    				}
@@ -217,6 +233,25 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
     public String turnhcpevaluate(lcprojecteight auditProject, int serviceNumber,String servicename,String newserviceTime) {
 		AuditTask auditTask = iAuditTask.getUseTaskAndExtByTaskid(auditProject.getTaskid()).getResult();
 		if (auditTask != null) {
+				String taskType = auditTask.getShenpilb();
+			    // 公共服务类型不一致，优先转换
+			    if ("11".equals(taskType)) {
+			        taskType = "20";
+			    }
+			    switch (taskType) {
+			        case "01":
+			        case "05":
+			        case "07":
+			        case "08":
+			        case "09":
+			        case "10":
+			        case "20":
+			            break;
+			        default:
+			            taskType = "99";
+			            break;
+			    }
+		    
 				//log.info("=====================开始推送社保办件服务数据=================");
 	            JSONObject json = new JSONObject();
 	            String ouguid = auditProject.getOuguid();
@@ -271,7 +306,7 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
 	                json.put("resultDate",
 	                        EpointDateUtil.convertDate2String(auditProject.getBanjiedate(), "yyyy-MM-dd HH:mm:ss"));
 	            }
-	            json.put("tasktype", auditProject.getTasktype());
+	            json.put("taskType", auditProject.getTasktype());
 	            json.put("mobile", StringUtil.isNotBlank(auditProject.getContactmobile()) ? auditProject.getContactmobile().trim() : "0");
 	            json.put("deptCode", deptcode);
 	            json.put("projectName", "关于" + auditProject.getApplyername().trim() + auditTask.getTaskname() + "的业务");
@@ -294,7 +329,7 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
 	                JSONObject result = JSONObject.parseObject(resultsign);
 	                JSONObject custom = result.getJSONObject("custom");
 	                if ("1".equals(custom.getString("code")) || "已存在该条服务信息，请勿重复提交！".equals(custom.getString("text"))) {
-	                	turnEvaluate(auditProject.getAreacode().replace("370882", "370812"),"37"+auditProject.getFlowsn(),StringUtil.isNotBlank(auditProject.getApplyername()) ? auditProject.getApplyername().trim() : "无", String.valueOf(serviceNumber));
+	                	turnEvaluate(taskType,auditProject.getAreacode().replace("370882", "370812"),"37"+auditProject.getFlowsn(),StringUtil.isNotBlank(auditProject.getApplyername()) ? auditProject.getApplyername().trim() : "无", String.valueOf(serviceNumber));
 	    				return "1";
 	        			//auditProject.set("hcpstatus", "1");
 	        			//iHcpService.updateLcProject("1", auditProject.getRowguid());
@@ -304,6 +339,7 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
 	                	//iHcpService.updateLcProject("3", auditProject.getRowguid());
 //	    				r.set("status", "2");
 //	    				iHcpService.addEvaluate(r);
+	                	turnEvaluate(taskType,auditProject.getAreacode().replace("370882", "370812"),"37"+auditProject.getFlowsn(),StringUtil.isNotBlank(auditProject.getApplyername()) ? auditProject.getApplyername().trim() : "无", String.valueOf(serviceNumber));
 	                	log.info("社保保存办件服务数据失败:" + auditProject.getFlowsn()+"原因："+resultsign);
 	                	return "0";
 	                	
@@ -312,6 +348,7 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
 	            else {
 //	            	r.set("status", "2");
 //    				iHcpService.addEvaluate(r);
+                	turnEvaluate(taskType,auditProject.getAreacode().replace("370882", "370812"),"37"+auditProject.getFlowsn(),StringUtil.isNotBlank(auditProject.getApplyername()) ? auditProject.getApplyername().trim() : "无", String.valueOf(serviceNumber));
 	            	log.info("社保保存办件服务数据失败：" + auditProject.getFlowsn()+"原因："+resultsign);
 	            	return "0";
 //	            	
@@ -325,10 +362,12 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
        
     }
     
-    private void turnEvaluate(String areacode,String projectno,String userName,String serviceNumber) {
+    private void turnEvaluate(String taskType,String areacode,String projectno,String userName,String serviceNumber) {
 		
 		JSONObject json = new JSONObject();
 
+		json.put("taskType", taskType);
+		
 		json.put("projectNo", projectno);
 
 		json.put("satisfaction", "5");
@@ -346,7 +385,7 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
 
         Calendar c = new GregorianCalendar();
         c.setTime(date);//设置参数时间
-        c.add(Calendar.MINUTE, -2);//把日期往后增加SECOND 秒.整数往后推,负数往前移动
+        c.add(Calendar.HOUR, -1);//把日期往后增加SECOND 秒.整数往后推,负数往前移动
         date = c.getTime(); //这个时间就是日期往后推一天的结果
         String newassessTime = EpointDateUtil.convertDate2String(date, "yyyy-MM-dd HH:mm:ss");
         
@@ -399,57 +438,69 @@ public class HcpLcProjectEvaluateEightCheck implements Callable<String>
 		submitString.put("txnCommCom", new JSONObject());
 		//log.info("办件数据所有入参：" + contentOnlineMap.toString());
 		//log.info("办件数据url：" + HCPOFFLINETEMPURL);
-
+		Record r = new Record();
+		r.setSql_TableName("evainstanceeight");
+		String[] primarykeys = { "projectno", "assessNumber" };
+		r.setPrimaryKeys(primarykeys);
+		r.set("Rowguid", UUID.randomUUID().toString());
+		r.set("Flag", "I");
+		r.set("Appstatus", Integer.valueOf(0));
+		r.set("projectno", projectno);
+		r.set("areacode", areacode);
+		r.set("Datasource", "165");
+		r.set("isdefault", "0");
+		r.set("EffectivEvalua", "1");
+		r.set("Evalevel", "5");
+		r.set("Evacontant", "");
+		r.set("evalDetail", "510,517");
+		r.set("writingEvaluation", "");
+		r.set("Promisetime", "1");
+		r.set("createDate", new Date());
+		r.set("sync_sign", "0");
+		r.set("answerStatus", "0");
+		r.set("pf", "1");
+		r.set("satisfaction", "5");
+		r.set("assessTime",  newassessTime);
+		r.set("assessNumber", Integer.valueOf(serviceNumber));
+		
+		JSONObject result = new JSONObject();
 		String resultOnline = "";
 		try {
 			resultOnline = HttpUtil.doPostJson(HCPOFFLINETEMPURL, submitString.toString());
-//			log.info("添加评价数据返回结果如下：" + resultOnline);
+			//log.info("添加评价数据返回结果如下：" + resultOnline);
+			if (StringUtil.isNotBlank(resultOnline)) {
+				result = JSONObject.parseObject(resultOnline);
+				String code = result.getString("C-Response-Desc");
+				JSONObject body = result.getJSONObject("C-Response-Body");
+				if ("success".equals(code)) {
+					String status = body.getString("success");
+					if ("false".equals(status)) {
+						String message = body.getString("message");
+						r.set("sbsign", "98");
+						r.set("sberrordesc", message);
+						iHcpService.addEvaluate(r);
+					}else {
+						r.set("sbsign", "1");
+						r.set("sberrordesc", "同步成功");
+						iHcpService.addEvaluate(r);
+					}
+					
+				}else {
+					r.set("sbsign", "99");
+					r.set("sberrordesc", code);
+					iHcpService.addEvaluate(r);
+					log.info("评价数据推送失败！");
+				}
+			}
 		} catch (Exception e) {
+			r.set("sbsign", "98");
+			r.set("sberrordesc", "接口调用失败");
+			iHcpService.addEvaluate(r);
+			EpointFrameDsManager.commit();
+			log.info("评价数据推送失败！");
 			e.printStackTrace();
 		}
-		JSONObject result = new JSONObject();
-		JSONObject dataJson = new JSONObject();
-		if (StringUtil.isNotBlank(resultOnline)) {
-			result = JSONObject.parseObject(resultOnline);
-			String code = result.getString("C-Response-Desc");
-			Record r = new Record();
-			r.setSql_TableName("evainstanceeight");
-			String[] primarykeys = { "projectno", "assessNumber" };
-			r.setPrimaryKeys(primarykeys);
-			r.set("Rowguid", UUID.randomUUID().toString());
-			r.set("Flag", "I");
-			r.set("Appstatus", Integer.valueOf(0));
-			r.set("projectno", projectno);
-			r.set("Datasource", "165");
-			r.set("areacode", areacode);
-			r.set("Assessnumber", Integer.valueOf(1));
-			r.set("isdefault", "0");
-			r.set("EffectivEvalua", "1");
-			r.set("Evalevel", "5");
-			r.set("Evacontant", "");
-			r.set("evalDetail", "510,517");
-			r.set("writingEvaluation", "");
-			r.set("Promisetime", "1");
-			r.set("createDate", new Date());
-			r.set("sync_sign", "0");
-			r.set("answerStatus", "0");
-			r.set("pf", "1");
-			r.set("satisfaction", "5");
-			r.set("assessTime",  newassessTime);
-			r.set("assessNumber", Integer.valueOf(serviceNumber));
-			
-			if ("success".equals(code)) {
-				r.set("sbsign", "1");
-				r.set("sberrordesc", "同步成功");
-				iHcpService.addEvaluate(r);
-				dataJson.put("success", "success");
-			}else {
-				r.set("sbsign", "99");
-				r.set("sberrordesc", "同步失败");
-				iHcpService.addEvaluate(r);
-				log.info("评价数据推送失败！");
-			}
-		}
+		
 	}
     
     

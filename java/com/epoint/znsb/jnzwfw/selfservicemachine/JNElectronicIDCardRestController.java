@@ -28,24 +28,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.epoint.common.util.AttachUtil;
-import com.epoint.common.util.HttpRequestUtils;
 import com.epoint.common.util.JsonUtils;
-import com.epoint.common.znsb.util.QueueCommonUtil;
 import com.epoint.composite.auditorga.handleconfig.inter.IHandleConfig;
-import com.epoint.core.grammar.Record;
-import com.epoint.core.utils.code.Base64Util;
-import com.epoint.core.utils.config.ConfigUtil;
-import com.epoint.core.utils.date.EpointDateUtil;
 import com.epoint.core.utils.string.StringUtil;
-import com.epoint.core.utils.web.WebUtil;
 import com.epoint.frame.service.attach.api.IAttachService;
 import com.epoint.frame.service.attach.entity.FrameAttachInfo;
 import com.epoint.frame.service.metadata.code.api.ICodeItemsService;
-import com.epoint.officeweb365.DESEncrypt;
-import com.epoint.ta.httprequest.util.TaHttpRequestUtils;
 import com.itextpdf.text.pdf.PdfReader;
 
 @RestController

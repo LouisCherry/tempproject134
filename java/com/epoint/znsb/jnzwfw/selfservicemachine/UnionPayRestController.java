@@ -4,14 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.epoint.common.util.JsonUtils;
-import com.epoint.common.util.StringUtil;
 import com.epoint.common.util.ZwfwRedisCacheUtil;
 import com.epoint.common.znsb.util.HttpUtil;
+import com.epoint.common.znsb.util.QueueCommonUtil;
 import com.epoint.core.utils.code.MD5Util;
 import com.epoint.core.utils.date.EpointDateUtil;
 import com.epoint.core.utils.log.LogUtil;
-import com.epoint.zoucheng.znsb.worktablecomment.util.QueueCommonUtil;
-
+import com.epoint.core.utils.string.StringUtil;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -52,9 +51,7 @@ public class UnionPayRestController
     public String query(@RequestBody String params) {
 
         try {
-            String url = "https://tyzf1.sdgdwl.com:16889/sdp/query.jspx";
-
-            //https://tyzf1.sdgdwl.com:16889/sdp/
+            String url = "http://60.208.112.74:9889/sdp/query.jspx";
             JSONObject obj = JSONObject.parseObject(params);
 
             JSONObject query = new JSONObject();
@@ -110,7 +107,7 @@ public class UnionPayRestController
     public String charge(@RequestBody String params) {
         try {
         JSONObject obj = JSONObject.parseObject(params);
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/charge.jspx";
+        String url = "http://60.208.112.74:9889/sdp/charge.jspx";
         JSONObject charge = new JSONObject();
         charge.put("commonTradeInfo", getBackKey(obj.getString("sn")));
         SimpleDateFormat f1 = new SimpleDateFormat("yyyyMMdd");
@@ -145,9 +142,9 @@ public class UnionPayRestController
         charge.put("payModeCode", payModeCode);
         charge.put("defaultPayWay", defaultPayWay);
         charge.put("wxCode",wxCode);
-        //charge.put("sign","6ad0482c1bd3d3422eb8bd3d75c7fc67000")
-           // findCustomerProductSummary();
-        ////system.out.println(MD5Util.getMD5(source+tID+callBackUrl+ Integer.valueOf(payHourage)+accountDate+reqTime+Integer.valueOf(amount)+productDesc+obj.getString("prodId")+obj.getString("prodName")+1+isUsePayPlatform+payModeCode).toLowerCase() + defaultPayWay.toLowerCase()+ wxCode.toLowerCase());;
+        //charge.put("sign","6ad0482c1bd3d3422eb8bd3d75c7fc67000");
+
+        //System.out.println(MD5Util.getMD5(source+tID+callBackUrl+ Integer.valueOf(payHourage)+accountDate+reqTime+Integer.valueOf(amount)+productDesc+obj.getString("prodId")+obj.getString("prodName")+1+isUsePayPlatform+payModeCode).toLowerCase() + defaultPayWay.toLowerCase()+ wxCode.toLowerCase());;
         charge.put("sign",MD5Util.getMD5(source+tID+callBackUrl+ Integer.valueOf(payHourage)+accountDate+reqTime+Integer.valueOf(amount)+productDesc+obj.getString("prodId")+obj.getString("prodName")+1+isUsePayPlatform+payModeCode).toLowerCase() + defaultPayWay.toLowerCase()+ wxCode.toLowerCase());
         JSONObject purchaseProductOrderInfo = new JSONObject();
         purchaseProductOrderInfo.put("customerCode",obj.getString("code"));
@@ -221,9 +218,9 @@ public class UnionPayRestController
         }
 
 
-        String key = "&M3oOKJwY2";
+        String key = "pF2zj29A";
 
-        commonTradeInfo.put("source", "JN001");
+        commonTradeInfo.put("source", "SD022");
         commonTradeInfo.put("sn", flowsnno);
         @SuppressWarnings("deprecation")
         String backstring = MD5Util.getMD5(flowsnno + key);
@@ -247,24 +244,22 @@ public class UnionPayRestController
      * @exception/throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
      */
-    private static String chargeString(JSONObject commonTradeInfo,String productID, String productName, int productNum,int amount) {
+    private static String chargeString(JSONObject commonTradeInfo,String productID, String productName, String productNum) {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/charge.jspx";
+        String url = "http://60.208.112.74:9889/sdp/charge.jspx";
         JSONObject charge = new JSONObject();
-
-        commonTradeInfo = getBackKey(commonTradeInfo.getString(""));
 
         charge.put("commonTradeInfo", commonTradeInfo);
         SimpleDateFormat f1 = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat f2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat f3 = new SimpleDateFormat("yyyyMMddHHmmss");
-        String source = "JN001";
+        String source = "SD022";
         String tID = f3.format(new Date());
         String callBackUrl = "http://baidu.com.cn";
-        int payHourage = 1;
+        String payHourage = "1";
         String accountDate = f1.format(new Date());
         String reqTime =  f2.format(new Date());
-        //int amount = 100;
+        String amount = "100";
         String productDesc = productName;
         String isUsePayPlatform = "Y";
         String payModeCode = "BANK_CHANNEL";
@@ -287,9 +282,7 @@ public class UnionPayRestController
         charge.put("payModeCode", payModeCode);
         charge.put("defaultPayWay", defaultPayWay);
         charge.put("wxCode",wxCode);
-
-        charge.put("sign",MD5Util.getMD5(source+tID+callBackUrl+ Integer.valueOf(payHourage)+accountDate+reqTime+Integer.valueOf(amount)+productDesc+productID+productName+1+isUsePayPlatform+payModeCode).toLowerCase() + defaultPayWay.toLowerCase()+ wxCode.toLowerCase());
-        //charge.put("sign",MD5Util.getMD5( source+tID+callBackUrl+payHourage+accountDate+reqTime+amount+productDesc+productID+productName+productNum+isUsePayPlatform+payModeCode).toLowerCase() + defaultPayWay.toLowerCase()+ wxCode.toLowerCase());
+        charge.put("sign",MD5Util.getMD5( source+tID+callBackUrl+payHourage+accountDate+reqTime+amount+productDesc+productID+productName+productNum+isUsePayPlatform+payModeCode).toLowerCase() + defaultPayWay.toLowerCase()+ wxCode.toLowerCase());
         JSONObject purchaseProductOrderInfo = new JSONObject();
         purchaseProductOrderInfo.put("customerCode","08100218720");
         purchaseProductOrderInfo.put("prodId",productID);
@@ -322,9 +315,9 @@ public class UnionPayRestController
 
         Map<String, String> map = new HashMap<>();
         map.put("params", params.toString());
-        //system.out.println(params);
+        System.out.println(params);
         String backString = HttpUtil.sendGet(url, map);
-        //system.out.println(backString);
+        System.out.println(backString);
         return backString;
     }
 
@@ -357,7 +350,7 @@ public class UnionPayRestController
                     .setSSLHostnameVerifier((x, y) -> true).build();
 
             String result = HTTPSClientUtil.doPost(httpClient,
-                    "http://112.6.110.176:28080/jnzwfwznsb/rest/companycredit/getUrlBack", headermap,
+                    "http://112.6.110.176:8080/jnzwfwznsb/rest/companycredit/getUrlBack", headermap,
                     JSONObject.parseObject(params));
             log.info("济宁共享平台接口返回数据：:" + result);
             return result;
@@ -379,7 +372,7 @@ public class UnionPayRestController
 
     private static String findCustomerProducts() {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/findCustomerProducts.action";
+        String url = "http://60.208.112.74:9889/sdp/findCustomerProducts.action";
         JSONObject findCustomerProducts = new JSONObject();
 
         JSONObject commonTradeInfo = new JSONObject();
@@ -404,7 +397,7 @@ public class UnionPayRestController
         Map<String, String> map = new HashMap<>();
         map.put("params", params.toString());
         String backString = HttpUtil.sendGet(url, map);
-        //system.out.println(backString);
+        System.out.println(backString);
         return backString;
     }
 
@@ -420,7 +413,7 @@ public class UnionPayRestController
      */
     private static String findCustomerPayments(String startTime, String endTime) {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/findCustomerPayments.action";
+        String url = "http://60.208.112.74:9889/sdp/findCustomerPayments.action";
         JSONObject findCustomerPayments = new JSONObject();
 
         JSONObject commonTradeInfo = new JSONObject();
@@ -444,7 +437,7 @@ public class UnionPayRestController
         Map<String, String> map = new HashMap<>();
         map.put("params", params.toString());
         String backString = HttpUtil.sendGet(url, map);
-        //system.out.println(backString);
+        System.out.println(backString);
         return backString;
     }
 
@@ -460,26 +453,29 @@ public class UnionPayRestController
      */
     private static String findCustomerProductSummary() {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/findCustomerProducts4bus.action";
-        JSONObject findCustomerProducts4Bus = new JSONObject();
+        String url = "http://60.208.112.74:9889/sdp/findCustomerProductSummary.action";
+        JSONObject findCustomerProductSummary = new JSONObject();
 
-        JSONObject commonTradeInfo = getBackKey("");
+        JSONObject commonTradeInfo = new JSONObject();
 
+        commonTradeInfo.put("source", "0212");
+        commonTradeInfo.put("sn", "2016110300001");
+        commonTradeInfo.put("verificationCode", "9a3d73c17ed4a1938a71c0d059fa9905");
+        commonTradeInfo.put("areaCode", "TA");
+        commonTradeInfo.put("operation", "");
+        commonTradeInfo.put("token", "");
 
-        findCustomerProducts4Bus.put("commonTradeInfo", commonTradeInfo);
-        findCustomerProducts4Bus.put("customerCode", "08100218720");
-        findCustomerProducts4Bus.put("forScene", "000");
-        findCustomerProducts4Bus.put("productStatusType", "2");
+        findCustomerProductSummary.put("commonTradeInfo", commonTradeInfo);
+        findCustomerProductSummary.put("customerCode", "09010249783");
 
         JSONObject params = new JSONObject();
 
-        params.put("findCustomerProducts", findCustomerProducts4Bus);
+        params.put("findCustomerProductSummary", findCustomerProductSummary);
 
         Map<String, String> map = new HashMap<>();
         map.put("params", params.toString());
-        //system.out.println(params.toString());
         String backString = HttpUtil.sendGet(url, map);
-        //system.out.println(backString);
+        System.out.println(backString);
         return backString;
     }
 
@@ -495,7 +491,7 @@ public class UnionPayRestController
      */
     private static String findPurchaseableProductOfferingTrees() {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/findPurchaseableProductOfferingTrees.action";
+        String url = "http://60.208.112.74:9889/sdp/findPurchaseableProductOfferingTrees.action";
         JSONObject findPurchaseableProductOfferingTrees = new JSONObject();
 
         JSONObject commonTradeInfo = new JSONObject();
@@ -517,7 +513,7 @@ public class UnionPayRestController
         Map<String, String> map = new HashMap<>();
         map.put("params", params.toString());
         String backString = HttpUtil.sendGet(url, map);
-        //system.out.println(backString);
+        System.out.println(backString);
         return backString;
     }
 
@@ -530,10 +526,10 @@ public class UnionPayRestController
      *  @return    
      * @exception/throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
-     =-\
+     */
     private static String findProductOfferingPreferentialPolicys() {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/findProductOfferingPreferentialPolicys.action";
+        String url = "http://60.208.112.74:9889/sdp/findProductOfferingPreferentialPolicys.action";
         JSONObject findProductOfferingPreferentialPolicys = new JSONObject();
 
         JSONObject commonTradeInfo = new JSONObject();
@@ -558,7 +554,7 @@ public class UnionPayRestController
         Map<String, String> map = new HashMap<>();
         map.put("params", params.toString());
         String backString = HttpUtil.sendGet(url, map);
-        //system.out.println(backString);
+        System.out.println(backString);
         return backString;
     }
 
@@ -576,7 +572,7 @@ public class UnionPayRestController
      */
     private static String getNoLoginLevelToken() {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/getNoLoginLevelToken.jspx";
+        String url = "http://60.208.112.74:9889/sdp/getNoLoginLevelToken.jspx";
       
         JSONObject getNoLoginLevelTokenReq = new JSONObject();
 
@@ -589,7 +585,7 @@ public class UnionPayRestController
         Map<String, String> map = new HashMap<>();
         map.put("params", params.toString());
         String backString = HttpUtil.sendGet(url, map);
-        //system.out.println(backString);
+        System.out.println(backString);
         return backString;
     }
     
@@ -605,7 +601,7 @@ public class UnionPayRestController
      */
     private static String getBusinessLevelToken() {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/getBusinessLevelToken.jspx";
+        String url = "http://60.208.112.74:9889/sdp/getBusinessLevelToken.jspx";
       
         JSONObject getBusinessLevelTokenReq = new JSONObject();
 
@@ -642,7 +638,7 @@ public class UnionPayRestController
      */
     private static String getOrderLevelToken() {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/getOrderLevelToken.jspx";
+        String url = "http://60.208.112.74:9889/sdp/getOrderLevelToken.jspx";
 
         JSONObject getOrderLevelTokenReq = new JSONObject();
 
@@ -675,7 +671,7 @@ public class UnionPayRestController
      */
     private static String verifyToken(String token,Integer level) {
 
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/verifyToken.jspx";
+        String url = "http://60.208.112.74:9889/sdp/verifyToken.jspx";
       
         JSONObject verifyTokenReq = new JSONObject();
 
@@ -689,11 +685,14 @@ public class UnionPayRestController
         Map<String, String> map = new HashMap<>();
         map.put("params", params.toString());
         String backString = HttpUtil.sendGet(url, map);
-        //system.out.println(backString);
+        System.out.println(backString);
         return backString;
     }
-
-
+    
+    
+  
+    
+    
     public static void main(String[] args) {
         /* findCustomerProducts();
           findCustomerPayments("2000-01-01 00:00:00","2016-10-31 00:00:00");
@@ -701,19 +700,19 @@ public class UnionPayRestController
           findPurchaseableProductOfferingTrees();
           query();
         */
-
+        
         String backString = getBusinessLevelToken();
         JSONObject backJson = JSON.parseObject(backString);
-
+        
         JSONObject getNoLoginLevelTokenRes = backJson.getJSONObject("getBusinessLevelTokenRes");
-
+   
         String token = getNoLoginLevelTokenRes.getString("token");
-
+        
         verifyToken(token,15);
 
-
-
-        String url = "https://tyzf1.sdgdwl.com:16889/sdp/query.jspx";
+        
+        
+        String url = "http://60.208.112.74:9889/sdp/query.jspx";
 
         JSONObject query = new JSONObject();
 
@@ -727,30 +726,30 @@ public class UnionPayRestController
         dataJson.put("queryReq", query);
 
         Map<String, String> map = new HashMap<>();
-        //system.out.println(dataJson);
+        System.out.println(dataJson);
         map.put("params", dataJson.toString());
         String chargeString = HttpUtil.sendGet(url, map);
 
-        //system.out.println(chargeString);
+        System.out.println(chargeString);
 
         JSONObject queryResJson = JSON.parseObject(chargeString);
         JSONObject queryRes = queryResJson.getJSONObject("queryRes");
 
         JSONObject  commonResultInfo = queryRes.getJSONObject("commonResultInfo");
 
-        if("000".equals(commonResultInfo.getString("returnCode"))){
+      if("000".equals(commonResultInfo.getString("returnCode"))){
             JSONArray productInfos = queryRes.getJSONArray("productInfos");
 
             JSONObject productInfo = productInfos.getJSONObject(0);
             String prodId = productInfo.getString("prodId");
             String prodName = productInfo.getString("prodName");
-            int sort = productInfo.getInteger("sort");
-            int price = productInfo.getInteger("price");
+            String sort = productInfo.getString("sort");
+            String price = productInfo.getString("price");
 
-            chargeString(commonTradeInfo,prodId,prodName,sort,price);
+          chargeString(commonTradeInfo,prodId,prodName,sort);
         }
 
-
+       
     }
 
 

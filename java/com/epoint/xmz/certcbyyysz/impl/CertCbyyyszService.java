@@ -10,7 +10,6 @@ import com.epoint.basic.faces.util.DataUtil;
 import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.dao.CommonDao;
 import com.epoint.xmz.certcbyyysz.api.entity.CertCbyyysz;
-import com.epoint.xmz.certggxkws.api.entity.CertGgxkws;
 
 /**
  * 船舶营业运输证本地库对应的后台service
@@ -141,9 +140,5 @@ public class CertCbyyyszService
     public CertCbyyysz getCertByCertno(String certno) {
     	String sql = "select * from cert_cbyyysz where jyxkzbh = ? and is_enable = '1'";
         return baseDao.find(sql,CertCbyyysz.class, certno);
-    }
-    public CertCbyyysz getYywszBhCertByCertno(String certno) {
-    	String sql = "select * from cert_cbyyysz where yyzbh = ? and is_enable = '1'";
-    	return baseDao.find(sql,CertCbyyysz.class, certno);
     }
 }

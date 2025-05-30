@@ -1,14 +1,12 @@
 package com.epoint.sm2util;
 
-
-
-import java.math.BigInteger;
-
 import org.bouncycastle154.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle154.crypto.digests.SM3Digest;
 import org.bouncycastle154.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle154.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle154.math.ec.ECPoint;
+
+import java.math.BigInteger;
 
 public class Cipher {
     private int ct;

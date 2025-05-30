@@ -1,5 +1,7 @@
 package com.epoint.sm2util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.math.BigInteger;
 
 public class Util {
@@ -136,7 +138,7 @@ public class Util {
             }
             System.out.print("0x" + hex.toUpperCase() + ",");
         }
-        //system.out.println("");
+        System.out.println("");
     }
 
     /**
@@ -589,17 +591,22 @@ public class Util {
      */
     public static byte[] hexToByte(String hex)
             throws IllegalArgumentException {
-        if (hex.length() % 2 != 0) {
-            throw new IllegalArgumentException();
+        if(StringUtils.isNotEmpty(hex)){
+            if (hex.length() % 2 != 0) {
+                throw new IllegalArgumentException();
+            }
+            char[] arr = hex.toCharArray();
+            byte[] b = new byte[hex.length() / 2];
+            for (int i = 0, j = 0, l = hex.length(); i < l; i++, j++) {
+                String swap = "" + arr[i++] + arr[i];
+                int byteint = Integer.parseInt(swap, 16) & 0xFF;
+                b[j] = new Integer(byteint).byteValue();
+            }
+            return b;
+        }else{
+            return null;
         }
-        char[] arr = hex.toCharArray();
-        byte[] b = new byte[hex.length() / 2];
-        for (int i = 0, j = 0, l = hex.length(); i < l; i++, j++) {
-            String swap = "" + arr[i++] + arr[i];
-            int byteint = Integer.parseInt(swap, 16) & 0xFF;
-            b[j] = new Integer(byteint).byteValue();
-        }
-        return b;
+
     }
 
     /**

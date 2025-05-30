@@ -1,9 +1,9 @@
 package com.epoint.xmz.certhwslysjyxk.api.entity;
 
+import java.util.Date;
 import com.epoint.core.BaseEntity;
 import com.epoint.core.annotation.Entity;
-
-import java.util.Date;
+import com.epoint.core.utils.EnumClazz.StrategyType;
 
 /**
  * 省际普通货物水路运输经营许可本地库实体
@@ -293,11 +293,11 @@ public class CertHwslysjyxk extends BaseEntity implements Cloneable {
 	/**
 	 * 批准机关及文号
 	 */
-	public String getPzjg() {
-		return super.getStr("pzjg");
+	public Date getPzjg() {
+		return super.getDate("pzjg");
 	}
 
-	public void setPzjg(String pzjg) {
+	public void setPzjg(Date pzjg) {
 		super.set("pzjg", pzjg);
 	}
 

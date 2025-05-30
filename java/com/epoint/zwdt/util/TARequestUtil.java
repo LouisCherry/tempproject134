@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -274,6 +275,8 @@ public class TARequestUtil
             }
             UrlEncodedFormEntity uefe = new UrlEncodedFormEntity(pairList, "utf-8");
             post.setEntity(uefe);
+            RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(5000).build();
+            post.setConfig(config);
             // 创建一个http客户端
             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
             // 发送post请求

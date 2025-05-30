@@ -1,9 +1,9 @@
 package com.epoint.auditsp.auditspapplymaterial.api.entity;
 
-import java.util.Date;
-
 import com.epoint.core.BaseEntity;
 import com.epoint.core.annotation.Entity;
+
+import java.util.Date;
 
 /**
  * 一件事申报材料实体
@@ -157,17 +157,6 @@ public class AuditSpApplymaterial extends BaseEntity implements Cloneable
 
     public void setBelongxiaqucode(String belongxiaqucode) {
         super.set("belongxiaqucode", belongxiaqucode);
-    }
-
-    /**
-     * 排序号
-     */
-    public Integer getOrdernum() {
-        return super.getInt("ordernum");
-    }
-
-    public void setOrdernum(Integer ordernum) {
-        super.set("ordernum", ordernum);
     }
 
 }

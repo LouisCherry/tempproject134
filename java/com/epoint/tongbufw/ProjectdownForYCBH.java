@@ -57,14 +57,15 @@ public class ProjectdownForYCBH implements Job
         String url = "";
         String result = "";
         List<String> list = new ArrayList<String>();
+        int count = 0;
         for (Record record : infolist) {
             url = "http://60.208.61.158:8088/socialorg/socExternal/querywaiw.action?morgArea="+record.getStr("areacode")+"&ID="+record.getStr("areaid");
             result = HttpUtil.doGet(url);
             log.info("=========================>开始同步省民政厅办件数据");
             JSONObject json = JSON.parseObject(result);
             JSONArray array = json.getJSONArray("rows");
-            //system.out.println("等待同步的民政厅办件有："+array.size());
             for (int i = 0;i<array.size();i++) {
+                count++;
                 JSONObject jsonobject = array.getJSONObject(i);
                 String flowsn = jsonobject.getString("PROJID");
                 String taskname = jsonobject.getString("ITEMNAME");
@@ -129,14 +130,13 @@ public class ProjectdownForYCBH implements Job
                             //is_lczj null,0：一窗受理系统办件，1，浪潮对接自建办件，2：新点对接济宁市自建办件,4 电力对接的办件，3扫码办件,5:对接省民政厅接口数据
                             project.set("is_lczj", 5);
                             projectService.addProject(project);
-                            EpointFrameDsManager.commit();
                         }
                     }
                     else {
                         if (!list.contains(taskname)) {
                             list.add(taskname);
                         }
-                        log.info("同步省民政厅推送数据 =====办件对应事项不存在:" + taskname + "办件编号为：" + flowsn +"辖区："+areacode);
+                        //log.info("同步省民政厅推送数据 =====办件对应事项不存在:" + taskname + "办件编号为：" + flowsn +"辖区："+areacode);
                     }
                 }
                 catch (Exception e) {

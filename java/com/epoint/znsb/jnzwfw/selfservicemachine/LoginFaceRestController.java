@@ -7,6 +7,7 @@ import com.epoint.basic.auditonlineuser.auditonlineregister.domain.AuditOnlineRe
 import com.epoint.basic.auditonlineuser.auditonlineregister.inter.IAuditOnlineRegister;
 import com.epoint.common.service.AuditCommonService;
 import com.epoint.common.util.JsonUtils;
+import com.epoint.common.znsb.util.HttpUtil;
 import com.epoint.core.utils.string.StringUtil;
 import com.epoint.core.utils.log.LogUtil;
 import org.apache.log4j.Logger;
@@ -137,11 +138,14 @@ public class LoginFaceRestController extends AuditCommonService
             String name = obj.getString("name");
             String CurPage = obj.getString("curpage");
             Map<String,Object> map = new HashMap<>();
+            Map<String,String> headers = new HashMap<>();
             map.put("CurPage",CurPage);
             map.put("KeyWord",name);
             //调用接口
             String url = "http://60.211.225.19:7080/api/PostSearchPosition";
+  
             String bacKString = HTTPSClientUtil.doPost(url,map);
+           
             List<JSONObject> RecruitList = new ArrayList<>();
             JSONObject backJson = JSONObject.parseObject(bacKString);
             log.info("==================招聘职位=================" + bacKString);
@@ -157,6 +161,7 @@ public class LoginFaceRestController extends AuditCommonService
             dataJson.put("RecruitList",RecruitList);
             return JsonUtils.zwdtRestReturn("1", "", dataJson);
         } catch (Exception e) {
+            System.out.println(e);
             return JsonUtils.zwdtRestReturn("0", "出现异常：" + e.getMessage(), "");
         }
     }
@@ -193,8 +198,5 @@ public class LoginFaceRestController extends AuditCommonService
             return JsonUtils.zwdtRestReturn("0", "出现异常：" + e.getMessage(), "");
         }
     }
-    
-    
-
 
 }

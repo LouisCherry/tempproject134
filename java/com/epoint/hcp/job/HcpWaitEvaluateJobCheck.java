@@ -1,19 +1,5 @@
 package com.epoint.hcp.job;
 
-import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.apache.log4j.Logger;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.epoint.core.EpointFrameDsManager;
@@ -25,7 +11,15 @@ import com.epoint.core.utils.httpclient.HttpUtil;
 import com.epoint.core.utils.log.LogUtil;
 import com.epoint.core.utils.string.StringUtil;
 import com.epoint.hcp.api.IHcpService;
-import com.epoint.util.TARequestUtil;
+import com.epoint.zwdt.util.TARequestUtil;
+import org.apache.log4j.Logger;
+
+import java.lang.invoke.MethodHandles;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *  [实施主体表数据检查]
@@ -58,7 +52,7 @@ public class HcpWaitEvaluateJobCheck implements Callable<String>
     }
 
     public void dealResult() {
-        int recordNum = 2000;
+        int recordNum = 1000;
         boolean flag = true;
         
         //List<String> gssOrgList = service.getGssRowguids();
@@ -134,29 +128,22 @@ public class HcpWaitEvaluateJobCheck implements Callable<String>
 //                		if(hours > 1) {
                 			String projectno = record.getStr("projectno");
          					String servicenumber = record.getStr("servicenumber");
-         					Record evainstance = iHcpService.findEvaluateservice(projectno, servicenumber);
+         					Record evainstance = iHcpService.findEvaluateserviceck(projectno, servicenumber);
          					if (evainstance != null) {
          						if ("1".equals(evainstance.getStr("sbsign"))) {
-         							/*Record res = new Record();
-         							res.setSql_TableName("evaservice_record");
-         							res.set("rowguid", UUID.randomUUID().toString());
-         							res.set("projectguid", projectno);
-         							res.set("servicenumber", servicenumber);
-         							res.set("status", "4");
-         							iHcpService.addEvaluate(res);*/
          							record.set("sbsign", "4");
          							record.set("sberrordesc", "该评价数据已经正常推送");
-         							iHcpService.updateProService(record);
+         							iHcpService.updateProService(record,"ck");
          						} else {
          							String result =  turnEvaluate(record);
          							if("1".equals(result)) {
          								record.set("sbsign", "4");
              							record.set("sberrordesc", "该评价数据已经正常推送");
-             							iHcpService.updateProService(record);
+             							iHcpService.updateProService(record,"ck");
          							}else {
          								record.set("sbsign", "99");
              							record.set("sberrordesc", "该评价数据已经正常推送");
-             							iHcpService.updateProService(record);
+             							iHcpService.updateProService(record,"ck");
          							}
          							
          						}
@@ -165,11 +152,11 @@ public class HcpWaitEvaluateJobCheck implements Callable<String>
          						if("1".equals(result)) {
      								record.set("sbsign", "4");
          							record.set("sberrordesc", "该评价数据已经正常推送");
-         							iHcpService.updateProService(record);
+         							iHcpService.updateProService(record,"ck");
      							}else {
      								record.set("sbsign", "99");
          							record.set("sberrordesc", "该评价数据已经正常推送");
-         							iHcpService.updateProService(record);
+         							iHcpService.updateProService(record,"ck");
      							}
          					}
          					EpointFrameDsManager.commit();
@@ -192,27 +179,27 @@ public class HcpWaitEvaluateJobCheck implements Callable<String>
             }
         }
     }
-
-	/**
-	 * 推送到省里
-	 * @param record
-	 * @return
-	 */
-	private String turnEvaluate(Record record) {
-    	//long startTime = System.currentTimeMillis();
+    
+    private String turnEvaluate(Record record) {
 		String projectno = record.getStr("projectno");
 		String userName = record.getStr("userName");
 		String serviceNumber = record.getStr("serviceNumber");
+		String taskType = record.getStr("taskType");
     			
-//    	Record res = new Record();
-//		res.setSql_TableName("evaservice_record");
-//		res.set("rowguid", UUID.randomUUID().toString());
-//		res.set("projectguid", projectno);
-//		res.set("servicenumber", serviceNumber);
+		Date date = new Date();
+
+        Calendar c = new GregorianCalendar();
+        c.setTime(date);//设置参数时间
+        c.add(Calendar.SECOND, -30);//把日期往后增加SECOND 秒.整数往后推,负数往前移动
+        date = c.getTime(); //这个时间就是日期往后推一天的结果
+        String newassessTime = EpointDateUtil.convertDate2String(date, "yyyy-MM-dd HH:mm:ss");
+        
 		
 		JSONObject json = new JSONObject();
 
 		json.put("projectNo", projectno);
+		
+		json.put("taskType", taskType);
 
 		json.put("satisfaction", "5");
 
@@ -224,7 +211,7 @@ public class HcpWaitEvaluateJobCheck implements Callable<String>
 
 		json.put("writingEvaluation", "");
 
-		json.put("assessTime", EpointDateUtil.convertDate2String(new Date(), "yyyy-MM-dd HH:mm:ss"));
+		json.put("assessTime", newassessTime);
 
 		json.put("serviceNumber", serviceNumber);
 
@@ -273,87 +260,80 @@ public class HcpWaitEvaluateJobCheck implements Callable<String>
 		//log.info("办件数据所有入参：" + contentOnlineMap.toString());
 		//log.info("办件数据url：" + HCPOFFLINETEMPURL);
 
+		Record r = new Record();
+		r.setSql_TableName("evainstance_ck");
+		String[] primarykeys = { "projectno", "assessNumber" };
+		r.setPrimaryKeys(primarykeys);
+		r.set("Rowguid", UUID.randomUUID().toString());
+		r.set("Flag", "I");
+		r.set("Appstatus", Integer.valueOf(0));
+		r.set("projectno", projectno);
+		r.set("areacode", record.getStr("areacode"));
+		r.set("Datasource", "165");
+		r.set("Assessnumber", Integer.valueOf(1));
+		r.set("isdefault", "0");
+		r.set("EffectivEvalua", "1");
+		r.set("Evalevel", "5");
+		r.set("Evacontant", "");
+		r.set("evalDetail", "510,517");
+		r.set("writingEvaluation", "");
+		r.set("Promisetime", "1");
+		r.set("createDate", new Date());
+		r.set("sync_sign", "0");
+		r.set("answerStatus", "0");
+		r.set("pf", "1");
+		r.set("satisfaction", "5");
+		r.set("assessTime",  newassessTime);
+		r.set("assessNumber", Integer.valueOf(serviceNumber));
+		
+		JSONObject result = new JSONObject();
 		String resultOnline = "";
 		try {
 			resultOnline = HttpUtil.doPostJson(HCPOFFLINETEMPURL, submitString.toString());
 			//log.info("添加评价数据返回结果如下：" + resultOnline);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		JSONObject result = new JSONObject();
-		JSONObject dataJson = new JSONObject();
-		if (StringUtil.isNotBlank(resultOnline)) {
-			result = JSONObject.parseObject(resultOnline);
-			String code = result.getString("C-Response-Desc");
-			if ("success".equals(code)) {
-				Record r = new Record();
-				r.setSql_TableName("evainstance");
-				String[] primarykeys = { "projectno", "assessNumber" };
-				r.setPrimaryKeys(primarykeys);
-				r.set("Rowguid", UUID.randomUUID().toString());
-				r.set("Flag", "I");
-				r.set("Appstatus", Integer.valueOf(0));
-				r.set("projectno", projectno);
-				r.set("Datasource", "165");
-				r.set("Assessnumber", Integer.valueOf(1));
-				r.set("isdefault", "0");
-				r.set("EffectivEvalua", "1");
-				r.set("Areacode", record.getStr("areacode"));
-				r.set("Prostatus", record.getStr("proStatus"));
-				r.set("Evalevel", "5");
-				r.set("Evacontant", "");
-				r.set("evalDetail", "510,517");
-				r.set("writingEvaluation", "");
-				r.set("Taskname", record.getStr("Taskname"));
-				r.set("Taskcode", record.getStr("Taskcode"));
-				r.set("Promisetime", "1");
-				r.set("Deptcode", record.getStr("orgcode"));
-				r.set("Userprop", record.getStr("Userprop"));
-				r.set("Username", record.getStr("Username"));
-				r.set("Applicant", record.getStr("Username"));
-				r.set("Certkey", record.getStr("Certkey"));
-				r.set("Certkeygov", record.getStr("Certkeygov").trim());
-				r.set("Acceptdate", record.getStr("Acceptdate"));
-				r.set("createDate", new Date());
-				r.set("sync_sign", "0");
-				r.set("answerStatus", "0");
-				r.set("pf", "1");
-				r.set("satisfaction", "5");
-				r.set("assessTime", EpointDateUtil.convertDate2String(new Date(), "yyyy-MM-dd HH:mm:ss"));
-				r.set("assessNumber", Integer.valueOf(serviceNumber));
-				r.set("sbsign", "1");
-				r.set("sberrordesc", "同步成功");
-				iHcpService.addEvaluate(r);
-				dataJson.put("success", "success");
-				//log.info("新增服务评价数据成功");
-//				record.set("sbsign", "2");
-//				record.set("sberrordesc", "评价数据重新推送成功");
-//				iHcpService.updateProService(record);
-//				res.set("status", "2");
-//				iHcpService.addEvaluate(res);
-				
-				return "1";
-				
-			}else
-			{
-//				record.set("sbsign", "4");
-//				record.set("sberrordesc", "评价数据推送成功了");
-//				iHcpService.updateProService(record);
-//				res.set("status", "4");
-//				iHcpService.addEvaluate(res);
+			if (StringUtil.isNotBlank(resultOnline)) {
+				result = JSONObject.parseObject(resultOnline);
+				log.info("窗口好差评评价服务："+result);
+				String code = result.getString("C-Response-Desc");
+				JSONObject body = result.getJSONObject("C-Response-Body");
+				if ("success".equals(code)) {
+					String status = body.getString("success");
+					if ("false".equals(status)) {
+						String message = body.getString("message");
+						r.set("sbsign", "98");
+						r.set("sberrordesc", message);
+						iHcpService.addEvaluate(r);
+						EpointFrameDsManager.commit();
+						return "1";
+					}else {
+						r.set("sbsign", "1");
+						r.set("sberrordesc", "同步成功");
+						iHcpService.addEvaluate(r);
+						EpointFrameDsManager.commit();
+						return "1";
+					}
+					
+				}else {
+					r.set("sbsign", "99");
+					r.set("sberrordesc", code);
+					iHcpService.addEvaluate(r);
+					EpointFrameDsManager.commit();
+					log.info("评价数据推送失败！");
+					return "0";
+				}
+			}
+			else {
 				return "0";
 			}
-		} else {
+		} catch (Exception e) {
+			r.set("sbsign", "98");
+			r.set("sberrordesc", "接口调用失败");
+			iHcpService.addEvaluate(r);
+			EpointFrameDsManager.commit();
+			log.info("评价数据推送失败！");
+			e.printStackTrace();
 			return "0";
-			//log.info("新增服务评价数据失败,result:" + resultOnline);
-//			res.set("status", "3");
-//			iHcpService.addEvaluate(res);
-//			record.set("sbsign", "3");
-//			record.set("sberrordesc", "评价数据重新推送失败");
-//			iHcpService.updateProService(record);
 		}
-		//long endTime = System.currentTimeMillis();
-		//log.info("办件推送省好差评运行时间为：" + (endTime - startTime)/1000 + "秒");
 	}
     
 

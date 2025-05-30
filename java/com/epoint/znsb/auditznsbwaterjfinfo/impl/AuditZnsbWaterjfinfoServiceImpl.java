@@ -1,10 +1,12 @@
 package com.epoint.znsb.auditznsbwaterjfinfo.impl;
-import java.util.List;
 
-import org.springframework.stereotype.Component;
-import com.epoint.znsb.auditznsbwaterjfinfo.api.entity.AuditZnsbWaterjfinfo;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.znsb.auditznsbwaterjfinfo.api.IAuditZnsbWaterjfinfoService;
+import com.epoint.znsb.auditznsbwaterjfinfo.api.entity.AuditZnsbWaterjfinfo;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
 /**
  * 水务缴费信息对应的后台service实现类
  * 

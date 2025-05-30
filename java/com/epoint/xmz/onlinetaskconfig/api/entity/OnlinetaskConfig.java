@@ -92,6 +92,7 @@ public class OnlinetaskConfig extends BaseEntity implements Cloneable {
     public void setUrl(String url) {
         super.set("url", url);
     }
+
     /**
      * 信息类型
      */
@@ -102,6 +103,7 @@ public class OnlinetaskConfig extends BaseEntity implements Cloneable {
     public void setInfoKind(String infokind) {
         super.set("infokind", infokind);
     }
+
     /**
      * 默认主键字段
      */

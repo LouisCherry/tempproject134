@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import com.epoint.core.grammar.Record;
-import com.epoint.core.utils.date.EpointDateUtil;
-import com.epoint.core.utils.string.StringUtil;
 import com.epoint.core.BaseEntity;
 import com.epoint.basic.controller.BaseController;
 import com.epoint.basic.faces.util.DataUtil;
@@ -138,56 +136,4 @@ public class JnYjsEvaluateService
     public Integer countJnYjsEvaluate(String sql, Object... args){
         return baseDao.queryInt(sql, args);
     }
-    
-    public List<Record> findEvaluateList( int pageNumber, int pageSize,String applydateStart,String applydateEnd) {
-    	String sql = "select  SUM(CASE WHEN satisfaction = '5' THEN 1 ELSE 0 END) satisfy5,"
-    			+"SUM(CASE WHEN satisfaction = '2' THEN 1 ELSE 0 END) satisfy4,"
-    			+"SUM(CASE WHEN satisfaction = '3' THEN 1 ELSE 0 END) satisfy3,"
-    			+"SUM(CASE WHEN satisfaction = '2' THEN 1 ELSE 0 END) satisfy2,"
-    			+"SUM(CASE WHEN satisfaction = '1' THEN 1 ELSE 0 END) satisfy1,businessname,businessguid"
-    			+" from jn_yjs_evaluate where 1=1 ";
-    	
-    	// 申请时间条件判断
-        if (StringUtil.isNotBlank(applydateStart) && StringUtil.isNotBlank(applydateEnd)) {
-        	sql += " and operatedate >= '" + EpointDateUtil.convertDate2String(EpointDateUtil.getBeginOfDateStr(applydateStart), "yyyy-MM-dd HH:mm:ss") ;
-        	sql	+= "' and operatedate <= '" + EpointDateUtil.convertDate2String(EpointDateUtil.getEndOfDateStr(applydateEnd), "yyyy-MM-dd HH:mm:ss")+"'";
-        }
-        else if (StringUtil.isNotBlank(applydateStart) && StringUtil.isBlank(applydateEnd)) {
-            sql += " and operatedate >= '" +EpointDateUtil.convertDate2String(EpointDateUtil.getBeginOfDateStr(applydateStart), "yyyy-MM-dd HH:mm:ss") + "'";
-        }
-        else if (StringUtil.isBlank(applydateStart) && StringUtil.isNotBlank(applydateEnd)) {
-        	 sql += " and operatedate <= '" +EpointDateUtil.convertDate2String(EpointDateUtil.getBeginOfDateStr(applydateStart), "yyyy-MM-dd HH:mm:ss") + "'";
-        }
-        
-        sql += " group by businessname";
-        return baseDao.findList(sql, pageNumber, pageSize, Record.class);
-    }
-    
-    public Integer countEvaluate(String applydateStart,String applydateEnd){
-    	String sql = "select  SUM(CASE WHEN satisfaction = '5' THEN 1 ELSE 0 END) satisfy5,"
-    			+"SUM(CASE WHEN satisfaction = '2' THEN 1 ELSE 0 END) satisfy4,"
-    			+"SUM(CASE WHEN satisfaction = '3' THEN 1 ELSE 0 END) satisfy3,"
-    			+"SUM(CASE WHEN satisfaction = '2' THEN 1 ELSE 0 END) satisfy2,"
-    			+"SUM(CASE WHEN satisfaction = '1' THEN 1 ELSE 0 END) satisfy1,businessname,businessguid"
-    			+" from jn_yjs_evaluate where 1=1 ";
-    	
-    	// 申请时间条件判断
-        if (StringUtil.isNotBlank(applydateStart) && StringUtil.isNotBlank(applydateEnd)) {
-        	sql += " and operatedate >= '" + EpointDateUtil.convertDate2String(EpointDateUtil.getBeginOfDateStr(applydateStart), "yyyy-MM-dd HH:mm:ss");
-        	sql	+= "' and operatedate <= '" + EpointDateUtil.convertDate2String(EpointDateUtil.getEndOfDateStr(applydateEnd), "yyyy-MM-dd HH:mm:ss")+"'";
-        }
-        else if (StringUtil.isNotBlank(applydateStart) && StringUtil.isBlank(applydateEnd)) {
-            sql += " and operatedate >= '" +EpointDateUtil.convertDate2String(EpointDateUtil.getBeginOfDateStr(applydateStart), "yyyy-MM-dd HH:mm:ss") + "'";
-        }
-        else if (StringUtil.isBlank(applydateStart) && StringUtil.isNotBlank(applydateEnd)) {
-        	 sql += " and operatedate <= '" +EpointDateUtil.convertDate2String(EpointDateUtil.getBeginOfDateStr(applydateStart), "yyyy-MM-dd HH:mm:ss") + "'";
-        }
-        
-        sql += " group by businessname";
-    	
-    	
-    	String newsql = "select count(1) from ("+sql + ") s";
-        return baseDao.queryInt(newsql);
-    }
-    
 }

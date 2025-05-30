@@ -2,23 +2,19 @@ package com.epoint.newshow2.api;
 
 import java.util.List;
 
-import com.epoint.basic.auditsp.auditspspsgxk.domain.AuditSpSpSgxk;
 import com.epoint.core.grammar.Record;
-import com.epoint.frame.service.organ.ou.entity.FrameOu;
 
 public interface Newshow2Service {
 
 	Record getcitySatisfy(String areaCode);
 
-	List<Record> geteventType();
-	
+	List<Record> geteventType(String areaCode);
+
 	List<Record> getmapData();
-	
-	List<Record> getLsmapData();
 
 	Record gethandleEvent(String areaCode);
 
-	Record getcityDatabyid(String areaCode);
+	Record getcityDatabyid();
 
 	Record getsource(String areaCode);
 
@@ -27,8 +23,6 @@ public interface Newshow2Service {
 	List<Record> gettrend(String areaCode);
 
 	List<Record> getmapbanjian();
-	
-	List<Record> getLsmapbanjian();
 
     Record getDaycount(String centerGuid);
 
@@ -36,21 +30,10 @@ public interface Newshow2Service {
 
     String findOushortname(Object object);
 
-    String getDayQueue(String centerGuid);
+    String getDayQueue();
     
-    Record getYqByRowguid(String rowguid);
+    Record getBusinessDetail(String certnum);
     
-    List<Record> getYcProjectList(int pageNumber, int pageSize);
+    int updateBusinessDetailStatus(String itemcode);
 
-    int getYcProjectCount();
-    
-    AuditSpSpSgxk getSgxkProjectBySubappGuid(String subappguid);
-    
-    List<FrameOu> getOuListByAreacode(String areacode);
-
-	List<Record> getWindowNumByCenterguid(String centerGuid);
-
-	Record getQueueNumByOuguid(String weekbegin, String centerguid, String ouguid);
-
-	List<Record> getapplyerTypeByAreacode(String areaCode);
 }

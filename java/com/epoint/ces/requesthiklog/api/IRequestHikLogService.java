@@ -1,10 +1,7 @@
 package com.epoint.ces.requesthiklog.api;
-
-import com.epoint.ces.requesthiklog.api.entity.RequestHikLog;
-import com.epoint.core.grammar.Record;
-
 import java.io.Serializable;
 import java.util.List;
+import com.epoint.ces.requesthiklog.api.entity.RequestHikLog;
 
 /**
  * 请求海康日志信息表对应的后台service接口
@@ -13,8 +10,8 @@ import java.util.List;
  * @version [版本号, 2021-11-22 14:30:42]
  */
 public interface IRequestHikLogService extends Serializable
-{
-
+{ 
+   
     /**
      * 插入数据
      * 
@@ -22,7 +19,7 @@ public interface IRequestHikLogService extends Serializable
      *            BaseEntity或Record对象 <必须继承Record>
      * @return int
      */
-    public int insert(Record record);
+    public int insert(RequestHikLog record);
 
     /**
      * 删除数据
@@ -65,7 +62,7 @@ public interface IRequestHikLogService extends Serializable
      *            参数值数组
      * @return T {String、Integer、Long、Record、FrameOu、Object[]等}
      */
-    public RequestHikLog find(String sql, Object... args);
+    public RequestHikLog find(String sql,Object... args);
 
     /**
      * 查找一个list
@@ -95,9 +92,9 @@ public interface IRequestHikLogService extends Serializable
      *            参数值数组
      * @return T extends BaseEntity
      */
-    public List<RequestHikLog> findList(String sql, int pageNumber, int pageSize, Object... args);
+    public List<RequestHikLog> findList(String sql, int pageNumber, int pageSize,Object... args);
 
-    /**
+	 /**
      * 查询数量
      * 
      * @param sql
@@ -106,19 +103,12 @@ public interface IRequestHikLogService extends Serializable
      *            参数
      * @return Integer
      */
-    public Integer countRequestHikLog(String sql, Object... args);
+	 public Integer countRequestHikLog(String sql, Object... args);
 
     /**
      * 根据时间删除数据
-     * 
      * @param convertDate2String
      */
     void deleteByDate(String convertDate2String);
-
-    public List<String> getAllUserGh();
-
-    public List<Record> getAllUser();
-
-    void CloseConnection();
 
 }

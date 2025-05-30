@@ -104,4 +104,12 @@ public interface IOnlinetaskConfigService extends Serializable
      * @return Integer
      */
 	 public Integer countOnlinetaskConfig(String sql, Object... args);
+
+	 /*获取全部配置信息*/
+	 public List<OnlinetaskConfig> getAllConfg();
+
+    /*根据部门获取配置信息*/
+    public List<OnlinetaskConfig> getAllConfgByOu(String ou);
+
+    public List<OnlinetaskConfig> getConfigByOuname(String ouname);
 }

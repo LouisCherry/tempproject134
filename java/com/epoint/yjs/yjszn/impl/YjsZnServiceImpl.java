@@ -1,15 +1,18 @@
 package com.epoint.yjs.yjszn.impl;
-import java.util.List;
 
-import org.springframework.stereotype.Component;
-import com.epoint.yjs.yjszn.api.entity.YjsZn;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.yjs.yjszn.api.IYjsZnService;
+import com.epoint.yjs.yjszn.api.entity.YjsZn;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * 一件事指南配置对应的后台service实现类
  * 
  * @author panshunxing
- * @version [版本号, 2024-10-08 19:07:22]
+ * @version [版本号, 2024-10-08 15:22:37]
  */
 @Component
 @Service
@@ -125,12 +128,18 @@ public class YjsZnServiceImpl implements IYjsZnService
         return new YjsZnService().countYjsZn(sql, args);
     }
 
-    /**
-     * 删除数据
-     *
-     * @return int
-     */
-    public int deleteByBusinessGuid(String businessguid) {
-        return new YjsZnService().deleteByBusinessGuid(businessguid);
+    @Override
+    public List<YjsZn> findList(Map<String, Object> conditionMap) {
+        return new YjsZnService().findList(conditionMap);
     }
+
+    /**
+     * 查找一个list
+     *
+     */
+    @Override
+    public List<YjsZn> findList(Map<String, Object> conditionMap,int pageNumber, int pageSize){
+        return new YjsZnService().findList(conditionMap,pageNumber,pageSize);
+    }
+
 }

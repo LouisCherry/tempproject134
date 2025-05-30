@@ -88,6 +88,6 @@ public interface IAuditProjectDeliveryService extends Serializable {
      */
     public Integer countAuditProjectDelivery(String sql, Object... args);
 
-    AuditProjectDelivery getDeliveryByProjectguid(String projectguid);
+    AuditProjectDelivery getDeliveryByprojectguid(String projectguid);
 
 }

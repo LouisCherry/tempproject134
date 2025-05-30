@@ -2,7 +2,6 @@ package com.epoint.xmz.certcbyyysz.api;
 import java.io.Serializable;
 import java.util.List;
 import com.epoint.xmz.certcbyyysz.api.entity.CertCbyyysz;
-import com.epoint.xmz.certggxkws.api.entity.CertGgxkws;
 
 /**
  * 船舶营业运输证本地库对应的后台service接口
@@ -107,6 +106,4 @@ public interface ICertCbyyyszService extends Serializable
 	 public Integer countCertCbyyysz(String sql, Object... args);
 	 
 	 public CertCbyyysz getCertByCertno(String certno);
-	 
-	 public CertCbyyysz getYywszBhCertByCertno(String certno);
 }

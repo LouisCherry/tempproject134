@@ -1,8 +1,9 @@
 package com.epoint.xmz.xmztaskguideconfig.api.entity;
-import java.util.Date;
+
 import com.epoint.core.BaseEntity;
 import com.epoint.core.annotation.Entity;
-import com.epoint.core.utils.EnumClazz.StrategyType;
+
+import java.util.Date;
 
 /**
  * 事项指南配置表实体

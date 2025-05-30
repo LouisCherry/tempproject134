@@ -1,15 +1,10 @@
 package com.epoint.xmz.jncertrecord.impl;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import com.epoint.core.grammar.Record;
-import com.epoint.core.BaseEntity;
-import com.epoint.basic.controller.BaseController;
-import com.epoint.basic.faces.util.DataUtil;
-import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.dao.CommonDao;
+import com.epoint.core.dao.ICommonDao;
+import com.epoint.core.grammar.Record;
 import com.epoint.xmz.jncertrecord.api.entity.JnCertRecord;
+
+import java.util.List;
 
 /**
  * 证照调用次数统计表对应的后台service
@@ -136,4 +131,15 @@ public class JnCertRecordService
     public Integer countJnCertRecord(String sql, Object... args){
         return baseDao.queryInt(sql, args);
     }
+    
+    public JnCertRecord getTotalByAreacode(String areacode) {
+    	String sql = "select * from jn_cert_record where areacode = ?";
+        return baseDao.find(sql, JnCertRecord.class, areacode);
+    }
+
+    public int getCountByIdnumber(String idnumber) {
+        String sql = "select count(1) from jn_cert_record where idnumber = ? and to_days(operateDate)= to_days(now()) ";
+        return baseDao.queryInt(sql,idnumber);
+    }
+
 }

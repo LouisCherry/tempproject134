@@ -29,8 +29,6 @@ public interface IJNauditRsItemBaseinfoservice
     AuditProject getProjectByTaskguid(String taskguid,String biguid);
     
     Record getSumOfInstance(String areacode,String type);
-
-	String findMaxItemCodeByParentId(String rowguid);
     
     //List<AuditSpInstance> getSpInstansList(String areacode);
 }

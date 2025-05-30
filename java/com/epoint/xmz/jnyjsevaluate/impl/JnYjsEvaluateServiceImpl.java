@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import com.epoint.xmz.jnyjsevaluate.api.entity.JnYjsEvaluate;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.epoint.core.grammar.Record;
 import com.epoint.xmz.jnyjsevaluate.api.IJnYjsEvaluateService;
 /**
  * 一件事评价表对应的后台service实现类
@@ -125,15 +124,5 @@ public class JnYjsEvaluateServiceImpl implements IJnYjsEvaluateService
     public Integer countJnYjsEvaluate(String sql, Object... args){
         return new JnYjsEvaluateService().countJnYjsEvaluate(sql, args);
     }
-     
-     public List<Record> findEvaluateList(int pageNumber, int pageSize,String applydateStart,String applydateEnd) {
-         return new JnYjsEvaluateService().findEvaluateList(pageNumber,pageSize,applydateStart,applydateEnd);
-      }
-     
-     public Integer countEvaluate(String applydateStart,String applydateEnd){
-         return new JnYjsEvaluateService().countEvaluate(applydateStart, applydateEnd);
-     }
-     
-     
 
 }

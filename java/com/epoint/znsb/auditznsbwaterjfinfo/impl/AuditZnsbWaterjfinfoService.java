@@ -1,15 +1,11 @@
 package com.epoint.znsb.auditznsbwaterjfinfo.impl;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import com.epoint.core.grammar.Record;
-import com.epoint.core.BaseEntity;
-import com.epoint.basic.controller.BaseController;
-import com.epoint.basic.faces.util.DataUtil;
-import com.epoint.core.dao.ICommonDao;
+
 import com.epoint.core.dao.CommonDao;
+import com.epoint.core.dao.ICommonDao;
+import com.epoint.core.grammar.Record;
 import com.epoint.znsb.auditznsbwaterjfinfo.api.entity.AuditZnsbWaterjfinfo;
+
+import java.util.List;
 
 /**
  * 水务缴费信息对应的后台service

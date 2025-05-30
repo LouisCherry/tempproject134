@@ -1,6 +1,7 @@
 package com.epoint.takan.kanyanproject.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.epoint.takan.kanyanmain.impl.KanyanmainService;
 import com.epoint.takan.kanyanproject.api.IKanyanprojectService;
 import com.epoint.takan.kanyanproject.api.entity.Kanyanproject;
 import org.springframework.stereotype.Component;

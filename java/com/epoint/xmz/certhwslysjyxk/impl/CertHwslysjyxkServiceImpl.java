@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.epoint.xmz.certcbyyysz.api.entity.CertCbyyysz;
 import com.epoint.xmz.certhwslysjyxk.api.ICertHwslysjyxkService;
 import com.epoint.xmz.certhwslysjyxk.api.entity.CertHwslysjyxk;
 
@@ -141,13 +142,22 @@ public class CertHwslysjyxkServiceImpl implements ICertHwslysjyxkService
         return new CertHwslysjyxkService().getCertByCertno(certno);
     }
 
+    public CertCbyyysz getYyysCertByCertno(String certno) {
+        return new CertHwslysjyxkService().getYyysCertByCertno(certno);
+    }
+
+    public CertCbyyysz getYyysZxCertByCertno(String yyzbh) {
+        return new CertHwslysjyxkService().getYyysZxCertByCertno(yyzbh);
+    }
+
     public CertHwslysjyxk getCertByCertno(String certno, String jyzmc) {
         return new CertHwslysjyxkService().getCertByCertno(certno, jyzmc);
     }
 
     @Override
-    public CertHwslysjyxk getGhslysCertByCertJyxkzbh(String zzbh) {
-        return new CertHwslysjyxkService().getGhslysCertByCertJyxkzbh(zzbh);
+    public CertHwslysjyxk getGhslysCertByCertJyxkzbh(String jyxkzbh) {
+
+        return new CertHwslysjyxkService().getGhslysCertByCertJyxkzbh(jyxkzbh);
     }
 
 }

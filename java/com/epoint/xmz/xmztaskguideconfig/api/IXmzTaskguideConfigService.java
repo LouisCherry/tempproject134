@@ -1,10 +1,11 @@
 package com.epoint.xmz.xmztaskguideconfig.api;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 import com.epoint.basic.audittask.basic.domain.AuditTask;
 import com.epoint.xmz.xmztaskguideconfig.api.entity.XmzTaskguideConfig;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 事项指南配置表对应的后台service接口
@@ -111,4 +112,6 @@ public interface IXmzTaskguideConfigService extends Serializable
     public List<XmzTaskguideConfig> selectTaskGuidefigList(Map<String, String> map, int pagenum, int pagesize);
 
     public List<AuditTask> selectTaskList(String areacode);
+
+    XmzTaskguideConfig getXmzTaskguidByTaskId(String task_id);
 }

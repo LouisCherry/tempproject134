@@ -136,4 +136,19 @@ public class OnlinetaskConfigService
     public Integer countOnlinetaskConfig(String sql, Object... args){
         return baseDao.queryInt(sql, args);
     }
+
+    public List<OnlinetaskConfig> getAllConfg() {
+        String sql = "select * from onlinetask_config where 1=1 ";
+        return baseDao.findList(sql,OnlinetaskConfig.class);
+    }
+
+    public List<OnlinetaskConfig> getAllConfgByOu(String ou) {
+        String sql = "select * from onlinetask_config where ouguid = ? ";
+        return baseDao.findList(sql,OnlinetaskConfig.class,ou);
+    }
+
+    public List<OnlinetaskConfig> getConfigByOuname(String ouname) {
+        String sql = "select * from onlinetask_config where ouname like '%"+ouname+"%' ";
+        return baseDao.findList(sql,OnlinetaskConfig.class);
+    }
 }

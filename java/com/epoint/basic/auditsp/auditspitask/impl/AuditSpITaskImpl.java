@@ -43,7 +43,7 @@ public class AuditSpITaskImpl implements IAuditSpITask
         AuditSpITask auditSpITask = new AuditSpITask();
         AuditCommonResult<String> result = new AuditCommonResult<String>();
         try {
-//            auditSpITask.setProjectguid(UUID.randomUUID().toString());
+            auditSpITask.setProjectguid(UUID.randomUUID().toString());
             auditSpITask.setOperatedate(new Date());
             auditSpITask.setBiguid(biGuid);
             auditSpITask.setBusinessguid(businessGuid);
@@ -69,7 +69,7 @@ public class AuditSpITaskImpl implements IAuditSpITask
         AuditSpITask auditSpITask = new AuditSpITask();
         AuditCommonResult<String> result = new AuditCommonResult<String>();
         try {
-//            auditSpITask.setProjectguid(UUID.randomUUID().toString());
+            auditSpITask.setProjectguid(UUID.randomUUID().toString());
             auditSpITask.setOperatedate(new Date());
             auditSpITask.setBiguid(biGuid);
             auditSpITask.setBusinessguid(businessGuid);
@@ -96,7 +96,7 @@ public class AuditSpITaskImpl implements IAuditSpITask
         AuditSpITask auditSpITask = new AuditSpITask();
         AuditCommonResult<String> result = new AuditCommonResult<String>();
         try {
-//            auditSpITask.setProjectguid(UUID.randomUUID().toString());
+            auditSpITask.setProjectguid(UUID.randomUUID().toString());
             auditSpITask.setOperatedate(new Date());
             auditSpITask.setBiguid(biGuid);
             auditSpITask.setBusinessguid(businessGuid);
@@ -125,7 +125,7 @@ public class AuditSpITaskImpl implements IAuditSpITask
         AuditSpITask auditSpITask = new AuditSpITask();
         AuditCommonResult<String> result = new AuditCommonResult<String>();
         try {
-//            auditSpITask.setProjectguid(UUID.randomUUID().toString());
+            auditSpITask.setProjectguid(UUID.randomUUID().toString());
             auditSpITask.setOperatedate(new Date());
             auditSpITask.setBiguid(biGuid);
             auditSpITask.setBusinessguid(businessGuid);
@@ -227,21 +227,6 @@ public class AuditSpITaskImpl implements IAuditSpITask
         AuditSpITaskService spITaskService = new AuditSpITaskService();
         try {
             List<String> idlist = spITaskService.getTaskIDBySubappGuid(subappGuid);
-            result.setResult(idlist);
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    @Override
-    public AuditCommonResult<List<String>> getTaskIDByReviewguid(String reviewguid) {
-        AuditCommonResult<List<String>> result = new AuditCommonResult<List<String>>();
-        AuditSpITaskService spITaskService = new AuditSpITaskService();
-        try {
-            List<String> idlist = spITaskService.getTaskIDByReviewguid(reviewguid);
             result.setResult(idlist);
 
         }
@@ -461,7 +446,7 @@ public class AuditSpITaskImpl implements IAuditSpITask
             else {
                 auditSpITask.set("township", "0");
             }
-//            auditSpITask.setProjectguid(UUID.randomUUID().toString());
+            auditSpITask.setProjectguid(UUID.randomUUID().toString());
             auditSpITask.setOperatedate(new Date());
             auditSpITask.setBiguid(biGuid);
             auditSpITask.setBusinessguid(businessGuid);

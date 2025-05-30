@@ -98,7 +98,7 @@ public class ProjectdownForBdcService
     
     //办件同步状态，null：未同步，0：同步未办结，1：同步并办结，2：同步但事项不存在，3：同步但报错
     public List<Record> getDoneFromQzk(){
-        String sql = "SELECT PROJID from EA_JC_STEP_DONE_BDC where NVL(gtsync,'0')='0' and rownum <= 20 and OCCURTIME = to_date('2021/01/26 00:00:00', 'YYYY/MM/DD HH24:MI:SS')";
+        String sql = "SELECT PROJID from EA_JC_STEP_DONE_BDC where NVL(gtsync,'0')='0' and rownum <= 20 and OCCURTIME >= to_date('2021/02/03 00:00:00', 'YYYY/MM/DD HH24:MI:SS') " ;
         List<Record> recordList = commonDaoFrom.findList(sql, Record.class);
         commonDaoFrom.close();
         return recordList;
@@ -106,7 +106,7 @@ public class ProjectdownForBdcService
 
     //办件同步状态，null：未同步，0：同步未办结，1：同步并办结，2：同步但事项不存在，3：同步但报错
     public List<Record> getInfoFromQzk(String fields){
-        String sql = "SELECT "+fields+" from EA_JC_STEP_BASICINFO_BDC where NVL(gtsync,'0')='0' and rownum <= 20 and OCCURTIME = to_date('2021/01/26 00:00:00', 'YYYY/MM/DD HH24:MI:SS')";
+        String sql = "SELECT "+fields+" from EA_JC_STEP_BASICINFO_BDC where NVL(gtsync,'0')='0' and rownum <= 20 and OCCURTIME >= to_date('2021/02/03 00:00:00', 'YYYY/MM/DD HH24:MI:SS') ";
         List<Record> recordList = commonDaoFrom.findList(sql, Record.class);
         commonDaoFrom.close();
         return recordList;

@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.epoint.core.grammar.Record;
 import com.epoint.xmz.xmycslspinfo.api.entity.XmYcslSpinfo;
-import com.epoint.zjcs.zjcsprojectinfo.bizlogic.domain.ZjcsProjectInfo;
 
 /**
  * 一窗受理审批环节信息表对应的后台service接口
@@ -130,8 +129,4 @@ public interface IXmYcslSpinfoService extends Serializable
       * @see [类、类#方法、类#成员]
       */
      public XmYcslSpinfo findXmYcslSpinfoByFlowsn(String flowsn);
-     
-     public List<ZjcsProjectInfo> getZjcsProjectInfoByItemcode(String itemcode);
-     
-     public Record getZjcsProjectResultByProjectGuid(String projectguid);
 }

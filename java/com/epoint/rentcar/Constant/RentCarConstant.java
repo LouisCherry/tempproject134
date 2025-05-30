@@ -21,11 +21,6 @@ public interface RentCarConstant {
      * 用户的手机号
      */
     String PHONENUM = "13605373532";
-    
-    /**
-     * 用户的手机号
-     */
-    String CZRPHONENUM = "13605373530";
 
     /**
      * 操作用户ID

@@ -11,6 +11,8 @@ import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.grammar.Record;
 import com.epoint.core.utils.config.ConfigUtil;
 import com.epoint.database.jdbc.connection.DataSourceConfig;
+import com.epoint.hcp.api.entity.Evainstance;
+import com.epoint.hcp.api.entity.EvainstanceRecord;
 import com.epoint.hcp.api.entity.lcproject;
 import com.epoint.hcp.api.entity.lcprojecteight;
 import com.epoint.hcp.api.entity.lcprojectfive;
@@ -21,6 +23,7 @@ import com.epoint.hcp.api.entity.lcprojectsix;
 import com.epoint.hcp.api.entity.lcprojectten;
 import com.epoint.hcp.api.entity.lcprojectthree;
 import com.epoint.hcp.api.entity.lcprojecttwo;
+import com.epoint.hcp.externalprojectinfo.api.entity.ExternalProjectInfo;
 
 /**
  * 好差评相关接口的详细实现
@@ -57,9 +60,54 @@ public class HcpService {
      * @exception/throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
      */
-    public Record getServiceByProjectno(String projectno, int assessNumber) {
-        String sql = "SELECT * FROM evaluateservice WHERE projectNo = ? AND serviceNumber = ?";
+    public Record getServiceByProjectno(String projectno, int assessNumber,String month) {
+    	String tablename = "evaluateservice";
+    	 if ("1".equals(month)) {
+        	 tablename = " evaluateservice_1 ";
+        }
+        else if ("2".equals(month)) {
+        	 tablename = " evaluateservice_2 ";
+        }
+        else if ("3".equals(month)) {
+        	tablename = " evaluateservice_3 ";
+        }
+        else if ("4".equals(month)) {
+        	tablename = " evaluateservice_4 ";
+        }
+        else if ("5".equals(month)) {
+        	tablename = " evaluateservice_5 ";
+        }
+        else if ("6".equals(month)) {
+        	tablename = " evaluateservice_6 ";
+        }
+        else if ("7".equals(month)) {
+        	tablename = " evaluateservice_7 ";
+        }
+        else if ("8".equals(month)) {
+        	tablename = " evaluateservice_8 ";
+        }
+        else if ("9".equals(month)) {
+        	tablename = " evaluateservice_9 ";
+        }
+        else if ("10".equals(month)) {
+        	tablename = " evaluateservice_10 ";
+        }
+        else if ("11".equals(month)) {
+        	tablename = " evaluateservice_11 ";
+        }
+        else if ("12".equals(month)) {
+        	tablename = " evaluateservice_12 ";
+        }
+        else if ("ck".equals(month)) {
+        	tablename = " evaluateservice_ck ";
+        }
+        String sql = "SELECT * FROM " + tablename + " WHERE projectNo = ? AND serviceNumber = ?";
         return dao.find(sql, Record.class, projectno, assessNumber);
+    }
+    
+    public Record getServiceByProjectnooneold(String projectno, int assessNumber) {
+    	String sql = "SELECT * FROM evaluateserviceone WHERE projectNo = ? AND serviceNumber = ?";
+    	return dao.find(sql, Record.class, projectno, assessNumber);
     }
     public Record getServiceByProjectnotwo(String projectno, int assessNumber) {
     	String sql = "SELECT * FROM evaluateservicetwo WHERE projectNo = ? AND serviceNumber = ?";
@@ -112,6 +160,19 @@ public class HcpService {
     }
 
     /**
+     * 根据rowguid获取lcprojecttwo
+     *
+     * @param rowguid
+     * @return
+     * @exception/throws [违例类型] [违例说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public lcprojecttwo getlcprojecttwoByRowguid(String rowguid) {
+        String sql = "SELECT * FROM lc_project_two WHERE rowguid = ? ";
+        return dao.find(sql, lcprojecttwo.class, rowguid);
+    }
+
+    /**
      * 修改评价数据
      *
      * @param r
@@ -126,6 +187,25 @@ public class HcpService {
         String sql = "update evainstance set sbsign =?,sberrordesc =? where projectno = ? and assessNumber = ?";
         dao.execute(sql, sbsign, sberrordesc, projectno, assessNumber);
     }
+    
+    public void updateEvaRecord(Record r) {
+        String projectno = r.getStr("projectno");
+        String assessNumber = r.getStr("assessNumber");
+        String sbsign = r.getStr("sbsign");
+        String sberrordesc = r.getStr("sberrordesc");
+        String sql = "update evainstance_record set sbsign =?,sberrordesc =? where projectno = ? and assessNumber = ?";
+        dao.execute(sql, sbsign, sberrordesc, projectno, assessNumber);
+    }
+    
+    
+    public void updateEvaCk(Record r) {
+        String projectno = r.getStr("projectno");
+        String assessNumber = r.getStr("assessNumber");
+        String sbsign = r.getStr("sbsign");
+        String sberrordesc = r.getStr("sberrordesc");
+        String sql = "update evainstance_ck set sbsign =?,sberrordesc =? where projectno = ? and assessNumber = ?";
+        dao.execute(sql, sbsign, sberrordesc, projectno, assessNumber);
+    }
 
     /**
      * 修改办件服务数据
@@ -134,13 +214,64 @@ public class HcpService {
      * @exception/throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
      */
-    public void updateProService(Record r) {
+    public void updateProService(Record r,String month) {
         String projectno = r.getStr("projectno");
         String servicenumber = r.getStr("servicenumber");
         String sbsign = r.getStr("sbsign");
         String sberrordesc = r.getStr("sberrordesc");
-        String sql = "update evaluateservice set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
+        String tablename = "evaluateservice";
+        if ("1".equals(month)) {
+       	 tablename = " evaluateservice_1 ";
+       }
+       else if ("2".equals(month)) {
+       	 tablename = " evaluateservice_2 ";
+       }
+       else if ("3".equals(month)) {
+       	tablename = " evaluateservice_3 ";
+       }
+       else if ("4".equals(month)) {
+       	tablename = " evaluateservice_4 ";
+       }
+       else if ("5".equals(month)) {
+       	tablename = " evaluateservice_5 ";
+       }
+       else if ("6".equals(month)) {
+       	tablename = " evaluateservice_6 ";
+       }
+       else if ("7".equals(month)) {
+       	tablename = " evaluateservice_7 ";
+       }
+       else if ("8".equals(month)) {
+       	tablename = " evaluateservice_8 ";
+       }
+       else if ("9".equals(month)) {
+       	tablename = " evaluateservice_9 ";
+       }
+       else if ("10".equals(month)) {
+       	tablename = " evaluateservice_10 ";
+       }
+       else if ("11".equals(month)) {
+       	tablename = " evaluateservice_11 ";
+       }
+       else if ("12".equals(month)) {
+       	tablename = " evaluateservice_12 ";
+       }
+       else if ("ck".equals(month)) {
+    	   tablename = " evaluateservice_ck ";
+       }
+
+        String sql = "update " + tablename
+        		+ " set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
         dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
+    }
+
+    public void updateProServiceoneold(Record r) {
+    	String projectno = r.getStr("projectno");
+    	String servicenumber = r.getStr("servicenumber");
+    	String sbsign = r.getStr("sbsign");
+    	String sberrordesc = r.getStr("sberrordesc");
+    	String sql = "update evaluateserviceone set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
+    	dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
     }
     
     public void updateProServicetwo(Record r) {
@@ -151,7 +282,7 @@ public class HcpService {
     	String sql = "update evaluateservicetwo set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
     	dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
     }
-    
+
     public void updateProServicethree(Record r) {
     	String projectno = r.getStr("projectno");
     	String servicenumber = r.getStr("servicenumber");
@@ -160,7 +291,7 @@ public class HcpService {
     	String sql = "update evaluateservicethree set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
     	dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
     }
-    
+
     public void updateProServicefour(Record r) {
     	String projectno = r.getStr("projectno");
     	String servicenumber = r.getStr("servicenumber");
@@ -169,7 +300,7 @@ public class HcpService {
     	String sql = "update evaluateservicefour set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
     	dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
     }
-    
+
     public void updateProServicefive(Record r) {
     	String projectno = r.getStr("projectno");
     	String servicenumber = r.getStr("servicenumber");
@@ -178,7 +309,7 @@ public class HcpService {
     	String sql = "update evaluateservicefive set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
     	dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
     }
-    
+
     public void updateProServicesix(Record r) {
     	String projectno = r.getStr("projectno");
     	String servicenumber = r.getStr("servicenumber");
@@ -187,7 +318,7 @@ public class HcpService {
     	String sql = "update evaluateservicesix set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
     	dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
     }
-    
+
     public void updateProServiceseven(Record r) {
     	String projectno = r.getStr("projectno");
     	String servicenumber = r.getStr("servicenumber");
@@ -196,7 +327,7 @@ public class HcpService {
     	String sql = "update evaluateserviceseven set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
     	dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
     }
-    
+
     public void updateProServiceeight(Record r) {
     	String projectno = r.getStr("projectno");
     	String servicenumber = r.getStr("servicenumber");
@@ -205,7 +336,7 @@ public class HcpService {
     	String sql = "update evaluateserviceeight set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
     	dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
     }
-    
+
     public void updateProServicenine(Record r) {
     	String projectno = r.getStr("projectno");
     	String servicenumber = r.getStr("servicenumber");
@@ -214,7 +345,7 @@ public class HcpService {
     	String sql = "update evaluateservicenine set sbsign =?,sberrordesc =? where projectno = ? and servicenumber = ?";
     	dao.execute(sql, sbsign, sberrordesc, projectno, servicenumber);
     }
-    
+
     public void updateProServiceten(Record r) {
     	String projectno = r.getStr("projectno");
     	String servicenumber = r.getStr("servicenumber");
@@ -349,50 +480,50 @@ public class HcpService {
 
 
     public List<Record> getWaitEvaluateList(int start, int size) {
-        String sql = "select a.* from evaluateservice a where sbsign in ('1','88')  limit ?1,?2";
+        String sql = "select a.* from evaluateservice_ck a where (UNIX_TIMESTAMP(now())-UNIX_TIMESTAMP(createdate))/60 >= 5 and sbsign in ('1','88') and YEAR(Createdate) = year(now()) limit ?1,?2";
         return dao.findList(sql, Record.class, start, size);
     }
-    
+
     public List<Record> getWaitEvaluateTwoList(int start, int size) {
-    	String sql = "select a.* from evaluateservicetwo a where sbsign in ('1','88')  limit ?1,?2";
+    	String sql = "select a.* from evaluateservice a where sbsign in ('1','88')  limit ?1,?2";
     	return dao.findList(sql, Record.class, start, size);
     }
-    
+
     public List<Record> getWaitEvaluateThreeList(int start, int size) {
     	String sql = "select a.* from evaluateservicethree a where sbsign in ('1','88')  limit ?1,?2";
     	return dao.findList(sql, Record.class, start, size);
     }
-    
+
     public List<Record> getWaitEvaluateFourList(int start, int size) {
     	String sql = "select a.* from evaluateservicefour a where sbsign in ('1','88')  limit ?1,?2";
     	return dao.findList(sql, Record.class, start, size);
     }
-    
+
     public List<Record> getWaitEvaluateFiveList(int start, int size) {
     	String sql = "select a.* from evaluateservicefive a where sbsign in ('1','88')  limit ?1,?2";
     	return dao.findList(sql, Record.class, start, size);
     }
-    
+
     public List<Record> getWaitEvaluateSixList(int start, int size) {
     	String sql = "select a.* from evaluateservicesix a where sbsign in ('1','88')  limit ?1,?2";
     	return dao.findList(sql, Record.class, start, size);
     }
-    
+
     public List<Record> getWaitEvaluateSevenList(int start, int size) {
     	String sql = "select a.* from evaluateserviceseven a where sbsign in ('1','88')  limit ?1,?2";
     	return dao.findList(sql, Record.class, start, size);
     }
-    
+
     public List<Record> getWaitEvaluateEightList(int start, int size) {
     	String sql = "select a.* from evaluateserviceeight a where sbsign in ('1','88')  limit ?1,?2";
     	return dao.findList(sql, Record.class, start, size);
     }
-    
+
     public List<Record> getWaitEvaluateNineList(int start, int size) {
     	String sql = "select a.* from evaluateservicenine a where sbsign in ('1','88')  limit ?1,?2";
     	return dao.findList(sql, Record.class, start, size);
     }
-    
+
     public List<Record> getWaitEvaluateTenList(int start, int size) {
     	String sql = "select a.* from evaluateserviceten a where sbsign in ('1','88')  limit ?1,?2";
     	return dao.findList(sql, Record.class, start, size);
@@ -408,95 +539,163 @@ public class HcpService {
         return dao.find(sql, Record.class, projectno, servicenumber);
     }
     
+    public Record findEvaluateserviceck(String projectno, String servicenumber) {
+    	String sql = "SELECT * FROM evainstance_ck WHERE projectNo = ? AND assessNumber = ? and sbsign = '1'";
+    	return dao.find(sql, Record.class, projectno, servicenumber);
+    }
+
     public Record findEvaluateservicetwo(String projectno, String servicenumber) {
     	String sql = "SELECT * FROM evainstancetwo WHERE projectNo = ? AND assessNumber = ?";
     	return dao.find(sql, Record.class, projectno, servicenumber);
     }
-    
+
     public Record findEvaluateservicethree(String projectno, String servicenumber) {
     	String sql = "SELECT * FROM evainstancethree WHERE projectNo = ? AND assessNumber = ?";
     	return dao.find(sql, Record.class, projectno, servicenumber);
     }
-    
+
     public Record findEvaluateservicefour(String projectno, String servicenumber) {
     	String sql = "SELECT * FROM evainstancefour WHERE projectNo = ? AND assessNumber = ?";
     	return dao.find(sql, Record.class, projectno, servicenumber);
     }
-    
+
     public Record findEvaluateservicefive(String projectno, String servicenumber) {
     	String sql = "SELECT * FROM evainstancefive WHERE projectNo = ? AND assessNumber = ?";
     	return dao.find(sql, Record.class, projectno, servicenumber);
     }
-    
+
     public Record findEvaluateservicesix(String projectno, String servicenumber) {
     	String sql = "SELECT * FROM evainstancesix WHERE projectNo = ? AND assessNumber = ?";
     	return dao.find(sql, Record.class, projectno, servicenumber);
     }
-    
+
     public Record findEvaluateserviceseven(String projectno, String servicenumber) {
     	String sql = "SELECT * FROM evainstanceseven WHERE projectNo = ? AND assessNumber = ?";
     	return dao.find(sql, Record.class, projectno, servicenumber);
     }
-    
+
     public Record findEvaluateserviceeight(String projectno, String servicenumber) {
     	String sql = "SELECT * FROM evainstanceeight WHERE projectNo = ? AND assessNumber = ?";
     	return dao.find(sql, Record.class, projectno, servicenumber);
     }
-    
+
     public Record findEvaluateservicenine(String projectno, String servicenumber) {
     	String sql = "SELECT * FROM evainstancenine WHERE projectNo = ? AND assessNumber = ?";
     	return dao.find(sql, Record.class, projectno, servicenumber);
     }
-    
+
     public Record findEvaluateserviceten(String projectno, String servicenumber) {
     	String sql = "SELECT * FROM evainstanceten WHERE projectNo = ? AND assessNumber = ?";
     	return dao.find(sql, Record.class, projectno, servicenumber);
     }
 
     public List<AuditProject> getWaitEvaluateSbList() {
-		String sql = "select * from audit_project where ROUND((UNIX_TIMESTAMP(now())-UNIX_TIMESTAMP(applydate))/60/60/24) <= 5 and is_lczj in ('2','8','9') and ifnull(hcpstatus,0) = 0 limit 200";
+		String sql = "select * from audit_project where year(operatedate) = year(now()) and is_lczj in ('2','5','8','9') and (hcpstatus = 0 OR hcpstatus IS NULL) limit 200";
         return dao.findList(sql, AuditProject.class);
     }
 
+    public List<Evainstance> getHcpInstacneSuppList() {
+    	String sql = "select * from evainstance where year(Createdate) = year(now()) and IFNULL(sbsign,0)  = 0 limit 200";
+    	return dao.findList(sql, Evainstance.class);
+    }
+    
+    public List<EvainstanceRecord> getHcpInstacneTwoSuppList() {
+    	String sql = "select * from evainstance_record where year(Createdate) = year(now()) and IFNULL(sbsign,0)  = 0 limit 200";
+    	return dao.findList(sql, EvainstanceRecord.class);
+    }
+
     public List<lcproject> getLcEvaluateSbList(int start, int size) {
-        String sql = "select a.* from lc_project a where ROUND((UNIX_TIMESTAMP(now())-UNIX_TIMESTAMP(applydate))/60/60/24) <= 5  and ifnull(hcpstatus,0) = 0 limit ?1,?2";
+        String sql = "select a.* from lc_project a where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
         return dao.findList(sql, lcproject.class, start, size);
     }
     
+    public List<lcprojectten> getProjectMoveList(int start, int size) {
+    	String sql = "select *  from lc_project_ten where  IFNULL(sync,0) = 0 and DATE_FORMAT(operatedate,'%Y-%m-%d') = date_sub(curdate(),interval 1 day) limit ?1,?2";
+    	return dao.findList(sql, lcprojectten.class, start, size);
+    }
+
+    public List<ExternalProjectInfo> getExterEvaluateList(int start, int size,String month) {
+    	String tablename = " external_project_info ";
+        String sql = "select * from ";
+
+        if ("1".equals(month)) {
+        	 tablename = " external_project_info_1 ";
+        }
+        else if ("2".equals(month)) {
+        	 tablename = " external_project_info_2 ";
+        }
+        else if ("3".equals(month)) {
+        	tablename = " external_project_info_3 ";
+        }
+        else if ("4".equals(month)) {
+        	tablename = " external_project_info_4 ";
+        }
+        else if ("5".equals(month)) {
+        	tablename = " external_project_info_5 ";
+        }
+        else if ("6".equals(month)) {
+        	tablename = " external_project_info_6 ";
+        }
+        else if ("7".equals(month)) {
+        	tablename = " external_project_info_7 ";
+        }
+        else if ("8".equals(month)) {
+        	tablename = " external_project_info_8 ";
+        }
+        else if ("9".equals(month)) {
+        	tablename = " external_project_info_9 ";
+        }
+        else if ("10".equals(month)) {
+        	tablename = " external_project_info_10 ";
+        }
+        else if ("11".equals(month)) {
+        	tablename = " external_project_info_11 ";
+        }
+        else if ("12".equals(month)) {
+        	tablename = " external_project_info_12 ";
+        }
+
+        sql = sql + tablename + " where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
+
+        return dao.findList(sql, ExternalProjectInfo.class, start, size);
+    }
+
+
     public List<lcprojecttwo> getLcEvaluateSbTwoList(int start, int size) {
-    	String sql = "select a.* from lc_project_two a where ifnull(hcpstatus,0) = 0 limit ?1,?2";
+//    	String sql = "select a.* from lc_project_two a where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
+        String sql = "(SELECT hcpstatus,rowguid FROM lc_project_two a WHERE hcpstatus = 0 ) UNION ALL SELECT hcpstatus,rowguid FROM lc_project_two a WHERE hcpstatus IS NULL)LIMIT ?1,?2";
     	return dao.findList(sql, lcprojecttwo.class, start, size);
     }
     public List<lcprojectthree> getLcEvaluateSbThreeList(int start, int size) {
-    	String sql = "select a.* from lc_project_three a where ifnull(hcpstatus,0) = 0 limit ?1,?2";
+    	String sql = "select a.* from lc_project_three a where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
     	return dao.findList(sql, lcprojectthree.class, start, size);
     }
     public List<lcprojectfour> getLcEvaluateSbFourList(int start, int size) {
-    	String sql = "select a.* from lc_project_four a where  ifnull(hcpstatus,0) = 0 limit ?1,?2";
+    	String sql = "select a.* from lc_project_four a where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
     	return dao.findList(sql, lcprojectfour.class, start, size);
     }
     public List<lcprojectfive> getLcEvaluateSbFiveList(int start, int size) {
-    	String sql = "select a.* from lc_project_five a where  ifnull(hcpstatus,0) = 0 limit ?1,?2";
+    	String sql = "select a.* from lc_project_five a where  hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
     	return dao.findList(sql, lcprojectfive.class, start, size);
     }
     public List<lcprojectsix> getLcEvaluateSbSixList(int start, int size) {
-    	String sql = "select a.* from lc_project_six a where  ifnull(hcpstatus,0) = 0 limit ?1,?2";
+    	String sql = "select a.* from lc_project_six a where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
     	return dao.findList(sql, lcprojectsix.class, start, size);
     }
     public List<lcprojectseven> getLcEvaluateSbSevenList(int start, int size) {
-    	String sql = "select a.* from lc_project_seven a where ifnull(hcpstatus,0) = 0 limit ?1,?2";
+    	String sql = "select a.* from lc_project_seven a where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
     	return dao.findList(sql, lcprojectseven.class, start, size);
     }
     public List<lcprojecteight> getLcEvaluateSbEightList(int start, int size) {
-    	String sql = "select a.* from lc_project_eight a where ifnull(hcpstatus,0) = 0 limit ?1,?2";
+    	String sql = "select a.* from lc_project_eight a where  hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
     	return dao.findList(sql, lcprojecteight.class, start, size);
     }
     public List<lcprojectnine> getLcEvaluateSbNineList(int start, int size) {
-    	String sql = "select a.* from lc_project_nine a where  ifnull(hcpstatus,0) = 0 limit ?1,?2";
+    	String sql = "select a.* from lc_project_nine a where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
     	return dao.findList(sql, lcprojectnine.class, start, size);
     }
     public List<lcprojectten> getLcEvaluateSbTenList(int start, int size) {
-    	String sql = "select a.* from lc_project_ten a where  ifnull(hcpstatus,0) = 0 limit ?1,?2";
+    	String sql = "select a.* from lc_project_ten a where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
     	return dao.findList(sql, lcprojectten.class, start, size);
     }
 
@@ -504,47 +703,93 @@ public class HcpService {
         String sql = "update lc_project set hcpstatus = ? where rowguid = ? ";
         dao.execute(sql, status, rowguid);
     }
-    
+
     public void updateLcProjecttwo(String status, String rowguid) {
     	String sql = "update lc_project_two set hcpstatus = ? where rowguid = ? ";
     	dao.execute(sql, status, rowguid);
     }
-    
+
     public void updateLcProjectthree(String status, String rowguid) {
     	String sql = "update lc_project_three set hcpstatus = ? where rowguid = ? ";
     	dao.execute(sql, status, rowguid);
     }
-    
+
+    public void updateExterProject(String status, String rowguid,String month) {
+    	String tablename = " external_project_info ";
+        String sql = "update ";
+
+        if ("1".equals(month)) {
+        	 tablename = " external_project_info_1 ";
+        }
+        else if ("2".equals(month)) {
+        	 tablename = " external_project_info_2 ";
+        }
+        else if ("3".equals(month)) {
+        	tablename = " external_project_info_3 ";
+        }
+        else if ("4".equals(month)) {
+        	tablename = " external_project_info_4 ";
+        }
+        else if ("5".equals(month)) {
+        	tablename = " external_project_info_5 ";
+        }
+        else if ("6".equals(month)) {
+        	tablename = " external_project_info_6 ";
+        }
+        else if ("7".equals(month)) {
+        	tablename = " external_project_info_7 ";
+        }
+        else if ("8".equals(month)) {
+        	tablename = " external_project_info_8 ";
+        }
+        else if ("9".equals(month)) {
+        	tablename = " external_project_info_9 ";
+        }
+        else if ("10".equals(month)) {
+        	tablename = " external_project_info_10 ";
+        }
+        else if ("11".equals(month)) {
+        	tablename = " external_project_info_11 ";
+        }
+        else if ("12".equals(month)) {
+        	tablename = " external_project_info_12 ";
+        }
+
+    	sql = sql + tablename + " set hcpstatus = ? where rowguid = ? ";
+
+    	dao.execute(sql, status, rowguid);
+    }
+
     public void updateLcProjectfour(String status, String rowguid) {
     	String sql = "update lc_project_four set hcpstatus = ? where rowguid = ? ";
     	dao.execute(sql, status, rowguid);
     }
-    
+
     public void updateLcProjectfive(String status, String rowguid) {
     	String sql = "update lc_project_five set hcpstatus = ? where rowguid = ? ";
     	dao.execute(sql, status, rowguid);
     }
-    
+
     public void updateLcProjectsix(String status, String rowguid) {
     	String sql = "update lc_project_six set hcpstatus = ? where rowguid = ? ";
     	dao.execute(sql, status, rowguid);
     }
-    
+
     public void updateLcProjectseven(String status, String rowguid) {
     	String sql = "update lc_project_seven set hcpstatus = ? where rowguid = ? ";
     	dao.execute(sql, status, rowguid);
     }
-    
+
     public void updateLcProjecteight(String status, String rowguid) {
     	String sql = "update lc_project_eight set hcpstatus = ? where rowguid = ? ";
     	dao.execute(sql, status, rowguid);
     }
-    
+
     public void updateLcProjectnine(String status, String rowguid) {
     	String sql = "update lc_project_nine set hcpstatus = ? where rowguid = ? ";
     	dao.execute(sql, status, rowguid);
     }
-    
+
     public void updateLcProjectten(String status, String rowguid) {
     	String sql = "update lc_project_ten set hcpstatus = ? where rowguid = ? ";
     	dao.execute(sql, status, rowguid);
@@ -570,4 +815,23 @@ public class HcpService {
         }
     }
 
+    public List<Record> getAuditProjectZjxtList(int start, int size,String month) {
+        String tablename = " audit_project_zjxt ";
+        String sql = "select * from ";
+
+
+        sql = sql + tablename + " where hcpstatus = 0 OR hcpstatus IS NULL limit ?1,?2";
+
+        return dao.findList(sql, Record.class, start, size);
+    }
+
+    public void updateAuditProjectZjxt(String status, String rowguid) {
+        String tablename = " audit_project_zjxt ";
+        String sql = "update ";
+
+
+        sql = sql + tablename + " set hcpstatus = ? where rowguid = ? ";
+
+        dao.execute(sql, status, rowguid);
+    }
 }

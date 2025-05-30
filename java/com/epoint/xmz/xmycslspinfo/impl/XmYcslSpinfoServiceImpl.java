@@ -6,7 +6,6 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.core.grammar.Record;
 import com.epoint.xmz.xmycslspinfo.api.IXmYcslSpinfoService;
 import com.epoint.xmz.xmycslspinfo.api.entity.XmYcslSpinfo;
-import com.epoint.zjcs.zjcsprojectinfo.bizlogic.domain.ZjcsProjectInfo;
 /**
  * 一窗受理审批环节信息表对应的后台service实现类
  * 
@@ -135,14 +134,6 @@ public class XmYcslSpinfoServiceImpl implements IXmYcslSpinfoService
     @Override
     public XmYcslSpinfo findXmYcslSpinfoByFlowsn(String flowsn) {
         return new XmYcslSpinfoService().findXmYcslSpinfoByFlowsn(flowsn);
-    }
-    
-    public List<ZjcsProjectInfo> getZjcsProjectInfoByItemcode(String itemcode) {
-        return new XmYcslSpinfoService().getZjcsProjectInfoByItemcode(itemcode);
-    }
-    
-    public Record getZjcsProjectResultByProjectGuid(String projectguid) {
-    	return new XmYcslSpinfoService().getZjcsProjectResultByProjectGuid(projectguid);
     }
 
 }

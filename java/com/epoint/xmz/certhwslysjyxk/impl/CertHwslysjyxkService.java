@@ -5,6 +5,7 @@ import java.util.List;
 import com.epoint.core.dao.CommonDao;
 import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.grammar.Record;
+import com.epoint.xmz.certcbyyysz.api.entity.CertCbyyysz;
 import com.epoint.xmz.certhwslysjyxk.api.entity.CertHwslysjyxk;
 
 /**
@@ -139,14 +140,24 @@ public class CertHwslysjyxkService
         return baseDao.find(sql, CertHwslysjyxk.class, certno);
     }
 
+    public CertCbyyysz getYyysCertByCertno(String certno) {
+        String sql = "select * from cert_cbyyysz where jyxkzbh = ? and is_enable = '1'";
+        return baseDao.find(sql, CertCbyyysz.class, certno);
+    }
+
+    public CertCbyyysz getYyysZxCertByCertno(String yyzbh) {
+        String sql = "select * from cert_cbyyysz where yyzbh = ? and is_enable = '1'";
+        return baseDao.find(sql, CertCbyyysz.class, yyzbh);
+    }
+
     public CertHwslysjyxk getCertByCertno(String certno, String jyzmc) {
-        String sql = "select * from cert_hwslysjyxk where (bh = ? and jyzmc = ?)and is_enable = '1'";
+        String sql = "select * from cert_hwslysjyxk where (bh = ? or jyzmc = ?) and is_enable = '1'";
         return baseDao.find(sql, CertHwslysjyxk.class, certno, jyzmc);
     }
 
-    public CertHwslysjyxk getGhslysCertByCertJyxkzbh(String zzbh) {
+    public CertHwslysjyxk getGhslysCertByCertJyxkzbh(String jyxkzbh) {
         String sql = "select * from cert_hwslysjyxk where jyxkzbh=? and is_enable = '1'";
-        return baseDao.find(sql, CertHwslysjyxk.class, zzbh);
+        return baseDao.find(sql, CertHwslysjyxk.class, jyxkzbh);
     }
 
 }

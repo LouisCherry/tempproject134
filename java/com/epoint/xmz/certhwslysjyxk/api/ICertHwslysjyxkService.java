@@ -3,6 +3,7 @@ package com.epoint.xmz.certhwslysjyxk.api;
 import java.io.Serializable;
 import java.util.List;
 
+import com.epoint.xmz.certcbyyysz.api.entity.CertCbyyysz;
 import com.epoint.xmz.certhwslysjyxk.api.entity.CertHwslysjyxk;
 
 /**
@@ -109,8 +110,12 @@ public interface ICertHwslysjyxkService extends Serializable
 
     public CertHwslysjyxk getCertByCertno(String certno);
 
+    public CertCbyyysz getYyysCertByCertno(String certno);
+
+    public CertCbyyysz getYyysZxCertByCertno(String yyzbh);
+
     public CertHwslysjyxk getCertByCertno(String certno, String jyzmc);
 
-    public CertHwslysjyxk getGhslysCertByCertJyxkzbh(String zzbh);
+    public CertHwslysjyxk getGhslysCertByCertJyxkzbh(String jyxkzbh);
 
 }

@@ -1,11 +1,15 @@
 package com.epoint.xmz.realestateinfo.impl;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.epoint.basic.audittask.basic.domain.AuditTask;
 import com.epoint.core.dao.CommonDao;
 import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.grammar.Record;
+import com.epoint.core.utils.sql.SqlConditionUtil;
+import com.epoint.core.utils.sql.SqlHelper;
+import com.epoint.database.peisistence.crud.impl.model.PageData;
 import com.epoint.xmz.realestateinfo.api.entity.RealEstateInfo;
 
 /**
@@ -16,7 +20,7 @@ import com.epoint.xmz.realestateinfo.api.entity.RealEstateInfo;
  */
 public class RealEstateInfoService
 {
-    /**
+ /**
      * 数据增删改查组件
      */
     protected ICommonDao baseDao;
@@ -24,7 +28,6 @@ public class RealEstateInfoService
     public RealEstateInfoService() {
         baseDao = CommonDao.getInstance();
     }
-
     /**
      * 插入数据
      * 
@@ -84,7 +87,7 @@ public class RealEstateInfoService
      *            参数值数组
      * @return T {String、Integer、Long、Record、FrameOu、Object[]等}
      */
-    public RealEstateInfo find(String sql, Object... args) {
+    public RealEstateInfo find(String sql,  Object... args) {
         return baseDao.find(sql, RealEstateInfo.class, args);
     }
 
@@ -122,7 +125,7 @@ public class RealEstateInfoService
         return baseDao.findList(sql, pageNumber, pageSize, RealEstateInfo.class, args);
     }
 
-    /**
+	/**
      * 查询数量
      * 
      * @param sql
@@ -131,18 +134,44 @@ public class RealEstateInfoService
      *            参数
      * @return Integer
      */
-    public Integer countRealEstateInfo(String sql, Object... args) {
+    public Integer countRealEstateInfo(String sql, Object... args){
         return baseDao.queryInt(sql, args);
     }
-
-    public List<AuditTask> getCertListByProjectNum(String projectnum) {
-        String sql = " select a.PROJECTGUID ,b.rowguid,b.ITEM_ID,a.TASKGUID,a.TASKNAME ,d.CERTROWGUID ,e.CERTCLIENGGUID ,a.BIGUID,c.ITEMCODE "
-                + " from audit_sp_i_task  a " + " left join audit_task b on a.TASKGUID  = b.rowguid "
-                + " left join audit_rs_item_baseinfo c on c.BIGUID = a.biguid "
-                + " left join audit_project d on a.PROJECTGUID  = d.RowGuid  "
-                + " left join cert_info e on d.CERTROWGUID  =  e.rowguid " + " where 1=1 "
-                + " and a.biguid in (select BIGUID from audit_rs_item_baseinfo  where itemcode = ? ) "
-                + "  and e.CERTCLIENGGUID is not null  and d.status >= 90 group by a.PROJECTGUID";
-        return baseDao.findList(sql, AuditTask.class, projectnum);
+    
+    /**
+     * 分页查找一个list
+     *
+     * @param conditionMap 查询条件集合
+     * @param pageNumber   记录行的偏移量
+     * @param pageSize     记录行的最大数目
+     * @return T extends BaseEntity
+     */
+    public PageData<RealEstateInfo> paginatorList(Map<String, Object> conditionMap, int pageNumber, int pageSize) {
+        List<Object> params = new ArrayList<>();
+        String sql = new SqlHelper().getSqlComplete(RealEstateInfo.class, conditionMap, params);
+        List<RealEstateInfo> list = baseDao.findList(sql, pageNumber, pageSize, RealEstateInfo.class, params.toArray());
+        int count = countRealEstateInfo(conditionMap);
+        return new PageData<RealEstateInfo>(list, count);
     }
+    
+    
+    public Integer countRealEstateInfo(Map<String, Object> conditionMap) {
+        List<Object> params = new ArrayList<>();
+        SqlConditionUtil conditionUtil = new SqlConditionUtil(getSqlCondition(conditionMap));
+        conditionUtil.setSelectFields("count(*)");
+        String sql = new SqlHelper().getSqlComplete(RealEstateInfo.class, conditionUtil.getMap(), params);
+        return baseDao.queryInt(sql, params.toArray());
+    }
+    
+    public Map<String, String> getSqlCondition(Map<String, Object> conditionMap) {
+        HashMap<String, String> map = new HashMap<>();
+        for (Map.Entry<String, Object> stringObjectEntry : conditionMap.entrySet()) {
+            map.put(stringObjectEntry.getKey(), stringObjectEntry.getValue().toString());
+        }
+        return map;
+    }
+
+    
+    
+    
 }

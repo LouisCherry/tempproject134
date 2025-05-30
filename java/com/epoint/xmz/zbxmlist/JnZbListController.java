@@ -22,7 +22,7 @@ import com.epoint.core.utils.string.StringUtil;
 import com.google.gson.JsonObject;
 
 @RestController
-@RequestMapping("/jnshebao")
+@RequestMapping("/jnzblist")
 public class JnZbListController {
 	/**
 	 * 日志

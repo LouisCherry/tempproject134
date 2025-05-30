@@ -1,10 +1,10 @@
 package com.epoint.xmz.jncertrecord.impl;
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-import com.epoint.xmz.jncertrecord.api.entity.JnCertRecord;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.xmz.jncertrecord.api.IJnCertRecordService;
+import com.epoint.xmz.jncertrecord.api.entity.JnCertRecord;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 /**
  * 证照调用次数统计表对应的后台service实现类
  * 
@@ -124,5 +124,15 @@ public class JnCertRecordServiceImpl implements IJnCertRecordService
     public Integer countJnCertRecord(String sql, Object... args){
         return new JnCertRecordService().countJnCertRecord(sql, args);
     }
+     
+     public JnCertRecord getTotalByAreacode(String areacode) {
+         return new JnCertRecordService().getTotalByAreacode(areacode);
+     }
+
+    @Override
+    public int getCountByIdnumber(String idnumber) {
+        return new JnCertRecordService().getCountByIdnumber(idnumber);
+    }
+
 
 }

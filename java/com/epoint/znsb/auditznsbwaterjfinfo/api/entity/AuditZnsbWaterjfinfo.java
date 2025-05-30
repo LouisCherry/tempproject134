@@ -1,8 +1,9 @@
 package com.epoint.znsb.auditznsbwaterjfinfo.api.entity;
-import java.util.Date;
+
 import com.epoint.core.BaseEntity;
 import com.epoint.core.annotation.Entity;
-import com.epoint.core.utils.EnumClazz.StrategyType;
+
+import java.util.Date;
 
 /**
  * 水务缴费信息实体
@@ -66,6 +67,6 @@ public void setWatertime(String  watertime){ super.set("watertime",watertime);}
      * 欠费结束时间
      */
     public  String  getEndtime(){ return super.get("endtime");}
-    public void setEndtime(String  endtime){ super.set("endtime",endtime);}
+    public void Endtime(String  endtime){ super.set("endtime",endtime);}
 
 }

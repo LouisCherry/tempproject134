@@ -1,12 +1,11 @@
 package com.epoint.auditsp.auditsppolicy.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.auditsp.auditsppolicy.api.IAuditSpPolicyService;
 import com.epoint.auditsp.auditsppolicy.api.entity.AuditSpPolicy;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * 一件事政策解读对应的后台service实现类

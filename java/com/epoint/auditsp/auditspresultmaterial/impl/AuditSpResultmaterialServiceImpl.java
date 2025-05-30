@@ -1,12 +1,11 @@
 package com.epoint.auditsp.auditspresultmaterial.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.auditsp.auditspresultmaterial.api.IAuditSpResultmaterialService;
 import com.epoint.auditsp.auditspresultmaterial.api.entity.AuditSpResultmaterial;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * 一件事结果材料对应的后台service实现类

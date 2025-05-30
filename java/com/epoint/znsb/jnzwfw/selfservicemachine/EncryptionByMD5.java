@@ -39,7 +39,7 @@ public class EncryptionByMD5 {
 	public static void main(String[] args) {
 
 		String test = EncryptionByMD5.getMD5("wanghuan".getBytes());
-		//system.out.println(test);
+		System.out.println(test);
 
 	}
 }

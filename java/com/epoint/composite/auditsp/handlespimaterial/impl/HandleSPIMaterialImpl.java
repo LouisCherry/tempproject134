@@ -1222,6 +1222,115 @@ public class HandleSPIMaterialImpl implements IHandleSPIMaterial
         return result;
     }
 
+    /*    @Override
+    public AuditCommonResult<List<Record>> initTasklistBySelectedOptions(String selectedoptions, String Subappguid,
+            String areacode, String businessGuid) {
+        AuditCommonResult<List<Record>> result = new AuditCommonResult<List<Record>>();
+        IAuditSpSelectedOptionService iAuditSpSelectedOptionService = ContainerFactory.getContainInfo()
+                .getComponent(IAuditSpSelectedOptionService.class);
+        IAuditSpOptionService iAuditSpOptionService = ContainerFactory.getContainInfo()
+                .getComponent(IAuditSpOptionService.class);
+        IAuditSpBasetaskR iauditspbasetaskr = ContainerFactory.getContainInfo().getComponent(IAuditSpBasetaskR.class);
+        IAuditOrgaArea iauditorgaarea = ContainerFactory.getContainInfo().getComponent(IAuditOrgaArea.class);
+        IAuditTask iaudittask = ContainerFactory.getContainInfo().getComponent(IAuditTask.class);
+        IAuditSpTask iauditSpTask = ContainerFactory.getContainInfo().getComponent(IAuditSpTask.class);
+        //所有选项得guid列表
+        List<String> opguids = new ArrayList<>();
+        //所有事项id列表
+        List<String> taskidlist = new ArrayList<>();
+        //区域编码列表
+        List<String> arealist = new ArrayList<String>();
+    
+        AuditSpSelectedOption auditspselectedoption = iAuditSpSelectedOptionService
+                .getSelectedoptionsBySubappGuid(Subappguid).getResult();
+        // 将选择得数据添加到selected option表中去
+        if (auditspselectedoption == null) {
+            AuditSpSelectedOption SelectedOption = new AuditSpSelectedOption();
+            SelectedOption.setInsertdate(new Date());
+            SelectedOption.setRowguid(UUID.randomUUID().toString());
+            SelectedOption.setSubappguid(Subappguid);
+            SelectedOption.setSelectedoptions(selectedoptions);
+            iAuditSpSelectedOptionService.insert(SelectedOption);
+        }
+        else {
+            auditspselectedoption.setInsertdate(new Date());
+            auditspselectedoption.setSelectedoptions(selectedoptions);
+            iAuditSpSelectedOptionService.update(auditspselectedoption);
+        }
+    
+        //初始化areacode列表
+        arealist = iauditorgaarea.getAllAreacodeByAreacode(areacode).getResult();
+    
+        JSONObject jsonObject = JSONObject.parseObject(selectedoptions);
+        List<Map<String, Object>> jsona = (List<Map<String, Object>>) jsonObject.get("selectedoptions");
+        for (Map<String, Object> map : jsona) {
+            List<Map<String, Object>> maplist = (List<Map<String, Object>>) map.get("optionlist");
+            for (Map<String, Object> map2 : maplist) {
+                opguids.add(String.valueOf(map2.get("optionguid")));
+            }
+        }
+        //添加必办事项的optionguid
+        SqlConditionUtil sqlc = new SqlConditionUtil();
+        sqlc.eq("businessGuid", businessGuid);
+        sqlc.eq("elementguid", "root");
+        List<AuditSpOption> options = iAuditSpOptionService.findListByCondition(sqlc.getMap()).getResult();
+        if (options != null && !options.isEmpty()) {
+            opguids.add(options.get(0).getRowguid());
+        }
+        //根据选项guid
+        for (String opguid : opguids) {
+            AuditSpOption auditspoption = iAuditSpOptionService.find(opguid).getResult();
+            if (auditspoption != null) {
+                //获取选项绑定的事项id
+                String taskids = auditspoption.get("taskid");
+                if (StringUtil.isNotBlank(taskids)) {
+                    String[] taskid = taskids.split(";");
+                    for (String id : taskid) {
+                        if (!taskidlist.contains(id)) {
+                            taskidlist.add(id);
+                        }
+                    }
+                }
+            }
+        }
+        
+     // 查询主题下所有事项目录basetaskguid
+        List<AuditSpTask> allBasetask = iauditSpTask.getAllAuditSpTaskByBusinessGuid(businessGuid).getResult();
+        List<String> allBasetaskGuid = new ArrayList<String>();
+        for (AuditSpTask auditSpTask : allBasetask) {
+            if (!allBasetaskGuid.contains(auditSpTask.getBasetaskguid())) {
+                allBasetaskGuid.add(auditSpTask.getBasetaskguid());
+            }
+        }
+        
+        // 定义存储要素信息的List
+        List<Record> elementJsonList = new ArrayList<Record>();
+        if (ValidateUtil.isNotBlankCollection(taskidlist)) {
+            for (String id : taskidlist) {
+                //判断事项是否禁用
+                AuditTask audittask = iaudittask.selectUsableTaskByTaskID(id).getResult();
+                if(audittask == null){
+                    continue;
+                }
+              *//*  Record record = new Record();
+                  record.set("TASKNAME", audittask.getTaskname());
+                  record.set("TASKID", audittask.getTask_id());
+                  record.set("AREACODE", audittask.getAreacode());
+                  elementJsonList.add(record);*//*
+                                                  
+                                                  List<Record> recordlist = iauditspbasetaskr
+                                                  .getBasetaskByAreacodelistandTaskid(id, arealist, allBasetaskGuid).getResult();
+                                                  for (Record record : recordlist) {
+                                                  elementJsonList.add(record);
+                                                  //                    elementJson.put("multiselect", auditSpElement.getMultiselect());
+                                                  }
+                                                  }
+                                                  }
+                                                  // 定义返回的JSON
+                                                  result.setResult(elementJsonList);
+                                                  return result;
+                                                  }*/
+
     @Override
     public AuditCommonResult<List<Record>> initTasklistBySelectedOptions(String selectedoptions, String Subappguid,
             String areacode, String businessGuid) {
@@ -1234,7 +1343,8 @@ public class HandleSPIMaterialImpl implements IHandleSPIMaterial
         IAuditOrgaArea iauditorgaarea = ContainerFactory.getContainInfo().getComponent(IAuditOrgaArea.class);
         IAuditSpOptiontownshipService shipservice = ContainerFactory.getContainInfo()
                 .getComponent(IAuditSpOptiontownshipService.class);
-
+        
+        
         IAuditTask iaudittask = ContainerFactory.getContainInfo().getComponent(IAuditTask.class);
         IAuditSpTask iauditSpTask = ContainerFactory.getContainInfo().getComponent(IAuditSpTask.class);
         // 所有选项得guid列表
@@ -1243,7 +1353,7 @@ public class HandleSPIMaterialImpl implements IHandleSPIMaterial
         List<String> taskidlist = new ArrayList<>();
         // 区域编码列表
         List<String> arealist = new ArrayList<String>();
-
+        
         AuditSpSelectedOption auditspselectedoption = iAuditSpSelectedOptionService
                 .getSelectedoptionsBySubappGuid(Subappguid).getResult();
         // 将选择得数据添加到selected option表中去
@@ -1280,10 +1390,17 @@ public class HandleSPIMaterialImpl implements IHandleSPIMaterial
         if (options != null && !options.isEmpty()) {
             opguids.add(options.get(0).getRowguid());
         }
+        String optionFormIds = "";
         // 根据选项guid
         for (String opguid : opguids) {
             AuditSpOption auditspoption = iAuditSpOptionService.find(opguid).getResult();
             if (auditspoption != null) {
+            	
+            	if (StringUtil.isNotBlank(auditspoption.getOptionnote()) ) {
+            		optionFormIds += auditspoption.getOptionnote() + ",";
+            	}
+            	
+            	
                 // 获取选项绑定的事项id
                 String taskids = auditspoption.get("taskid");
                 if (StringUtil.isNotBlank(taskids)) {
@@ -1300,6 +1417,15 @@ public class HandleSPIMaterialImpl implements IHandleSPIMaterial
                 }
             }
         }
+        if (optionFormIds.contains(",")) {
+        	 optionFormIds = optionFormIds.substring(0, optionFormIds.length() - 1);
+        }
+       
+        	
+        	
+        	
+        
+        
 
         // 查询主题下所有事项目录basetaskguid
         List<AuditSpTask> allBasetask = iauditSpTask.getAllAuditSpTaskByBusinessGuid(businessGuid).getResult();
@@ -1332,30 +1458,34 @@ public class HandleSPIMaterialImpl implements IHandleSPIMaterial
                         .getBasetaskByAreacodelistandTaskid(id, arealist, allBasetaskGuid).getResult();*/
 
                 List<Record> recordlist = iauditspbasetaskr.getBasetaskByTaskid(id.split("_")[1]).getResult();
-                List<String> basetaskguid = auditsptasklist.stream().map(a->a.getBasetaskguid()).collect(Collectors.toList());
+                List<String> basetaskguid = auditsptasklist.stream().map(a -> a.getBasetaskguid())
+                        .collect(Collectors.toList());
                 recordlist.removeIf(a -> !basetaskguid.contains(a.get("basetaskguid")));
                 for (Record record : recordlist) {
-                    //如果是市级事项.则判断该事项在audit_sp_optiontownship表中是否存在记录,如果有则添加
-                    if(record.getStr("areacode").length() == 6) {
+                	record.set("optionfromid", optionFormIds);
+                    record.set("optionguid", id.split("_")[0]);
+                    // 如果是市级事项.则判断该事项在audit_sp_optiontownship表中是否存在记录,如果有则添加
+                    if (record.getStr("areacode").length() == 6) {
                         sqlc.clear();
                         sqlc.eq("optionguid", id.split("_")[0]);
                         sqlc.eq("taskid", id.split("_")[1]);
                         List<AuditSpOptiontownship> list2 = shipservice.findListByCondition(sqlc.getMap());
                         for (AuditSpOptiontownship auditspoptiontownship : list2) {
-                            record = (Record) record.clone();//防止一个事项市级和乡镇都办理
+                            record = (Record) record.clone();// 防止一个事项市级和乡镇都办理
                             String str = auditspoptiontownship.getTownshipcode() + record.getStr("taskid");
-                            AuditOrgaArea area = iauditorgaarea.getAreaByAreacode(auditspoptiontownship.getTownshipcode()).getResult();
+                            AuditOrgaArea area = iauditorgaarea
+                                    .getAreaByAreacode(auditspoptiontownship.getTownshipcode()).getResult();
                             record.set("xiaquname", area.getXiaquname());
                             record.set("areacode", auditspoptiontownship.getTownshipcode());
-                            if(!list.contains(str)) {
+                            if (!list.contains(str)) {
                                 list.add(str);
                                 elementJsonList.add(record);
                             }
                         }
                     }
-                    else {//乡镇法定不存在下放功能，直接添加
+                    else {// 乡镇法定不存在下放功能，直接添加
                         String s = record.getStr("areacode") + record.getStr("taskid");
-                        if(list.contains(s)) {
+                        if (list.contains(s)) {
                             continue;
                         }
                         AuditOrgaArea area = iauditorgaarea.getAreaByAreacode(record.getStr("areacode")).getResult();
@@ -1366,7 +1496,7 @@ public class HandleSPIMaterialImpl implements IHandleSPIMaterial
 
                 }
 
-/*                for (Record record : recordlist) {
+                /*                for (Record record : recordlist) {
                     elementJsonList.add(record);
                     // elementJson.put("multiselect",
                     // auditSpElement.getMultiselect());
@@ -2149,7 +2279,7 @@ public class HandleSPIMaterialImpl implements IHandleSPIMaterial
                         .compareTo(a.getOrdernum() != null ? a.getOrdernum() : Integer.valueOf(0)));
                 for (AuditTaskMaterial auditMaterial : listMaterial) {
                     // 根据情形过滤,如果是非必须，并且不再上面材料的提交范围中，则不初始化这个磁疗
-                    if (Integer.valueOf(ZwfwConstant.NECESSITY_SET_NO).equals(auditMaterial.getNecessity())) {
+                    /*if (Integer.valueOf(ZwfwConstant.NECESSITY_SET_NO).equals(auditMaterial.getNecessity())) {
                         if (!materialids.contains(auditMaterial.getMaterialid())) {
                             continue;
                         }
@@ -2158,8 +2288,12 @@ public class HandleSPIMaterialImpl implements IHandleSPIMaterial
                         if (!necessity_materialids.contains(auditMaterial.getMaterialid())) {
                             necessity_materialids.add(auditMaterial.getMaterialid());
                         }
-                    }
+                    }*/
 
+                	if (!necessity_materialids.contains(auditMaterial.getMaterialid())) {
+                        necessity_materialids.add(auditMaterial.getMaterialid());
+                    }
+                	
                     AuditSpIMaterial auditSpIMaterial = new AuditSpIMaterial();
                     // 直接添加
                     auditSpIMaterial.setEffictiverange("");

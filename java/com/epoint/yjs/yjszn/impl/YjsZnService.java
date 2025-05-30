@@ -1,20 +1,20 @@
 package com.epoint.yjs.yjszn.impl;
-import java.util.*;
 
-import com.epoint.core.dto.model.SelectItem;
-import com.epoint.core.grammar.Record;
-import com.epoint.core.BaseEntity;
-import com.epoint.basic.controller.BaseController;
-import com.epoint.basic.faces.util.DataUtil;
-import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.dao.CommonDao;
+import com.epoint.core.dao.ICommonDao;
+import com.epoint.core.grammar.Record;
+import com.epoint.core.utils.sql.SqlHelper;
 import com.epoint.yjs.yjszn.api.entity.YjsZn;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 一件事指南配置对应的后台service
  * 
  * @author panshunxing
- * @version [版本号, 2024-10-08 19:07:22]
+ * @version [版本号, 2024-10-08 15:22:37]
  */
 public class YjsZnService
 {
@@ -136,17 +136,21 @@ public class YjsZnService
         return baseDao.queryInt(sql, args);
     }
 
-
-    /**
-     * 删除数据
+        /**
+     * 查找一个list
      *
-     * @param record
-     *            BaseEntity或Record对象 <必须继承Record>
-     * @return int
+     * @param conditionMap 查询条件集合
+     * @return T extends BaseEntity
      */
-    public <T extends Record> int deleteByBusinessGuid(String businessguid) {
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("update YJS_ZN set businessguid=null where rowguid in(select * from(select rowguid from YJS_ZN where businessguid=?)a)");
-        return baseDao.execute(stringBuffer.toString(), businessguid);
+    public List<YjsZn> findList(Map<String, Object> conditionMap) {
+        List<Object> params = new ArrayList<>();
+        String sql = new SqlHelper().getSqlComplete(YjsZn.class, conditionMap, params);
+        return baseDao.findList(sql, YjsZn.class, params.toArray());
+    }
+
+    public List<YjsZn> findList(Map<String, Object> conditionMap, int pageNumber, int pageSize) {
+        List<Object> params = new ArrayList<>();
+        String sql = new SqlHelper().getSqlComplete(YjsZn.class, conditionMap, params);
+        return baseDao.findList(sql, pageNumber, pageSize, YjsZn.class, params.toArray());
     }
 }

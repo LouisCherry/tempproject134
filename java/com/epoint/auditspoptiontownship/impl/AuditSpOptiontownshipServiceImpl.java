@@ -3,11 +3,11 @@ package com.epoint.auditspoptiontownship.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Component;
+
+import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.auditspoptiontownship.api.IAuditSpOptiontownshipService;
 import com.epoint.auditspoptiontownship.api.entity.AuditSpOptiontownship;
-import com.epoint.basic.audittask.delegate.domain.AuditTaskDelegate;
-import org.springframework.stereotype.Component;
-import com.alibaba.dubbo.config.annotation.Service;
 
 /**
  * 情形引导选项乡镇延伸对应的后台service实现类

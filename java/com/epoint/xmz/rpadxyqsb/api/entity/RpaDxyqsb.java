@@ -9,7 +9,7 @@ import com.epoint.core.utils.EnumClazz.StrategyType;
  * 大型仪器设备协作共用网实体
  * 
  * @作者 1
- * @version [版本号, 2022-12-20 17:36:22]
+ * @version [版本号, 2022-12-20 16:59:00]
  */
 @Entity(table = "rpa_dxyqsb", id = "rowguid")
 public class RpaDxyqsb extends BaseEntity implements Cloneable {

@@ -5,6 +5,7 @@ import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.grammar.Record;
 import com.epoint.core.utils.sql.SqlHelper;
 import com.epoint.takan.kanyanmain.api.entity.Kanyanmain;
+import com.epoint.zwzt.xxfb.xxfbinfocolumn.api.entity.XxfbInfoColumn;
 
 import java.util.ArrayList;
 import java.util.List;

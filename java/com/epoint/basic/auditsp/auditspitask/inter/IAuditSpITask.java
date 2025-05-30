@@ -176,15 +176,6 @@ public interface IAuditSpITask
     AuditCommonResult<List<String>> getTaskIDBySubappGuid(String subappGuid);
 
     /**
-     * 根据事项征求id查询
-     *
-     * @param subappGuid
-     *            子申报唯一标识
-     * @return 事项id集合
-     */
-    AuditCommonResult<List<String>> getTaskIDByReviewguid(String reviewguid);
-
-    /**
      * 根据子申报标识，获取办件rowguid标识
      * 
      * @param subappGuid

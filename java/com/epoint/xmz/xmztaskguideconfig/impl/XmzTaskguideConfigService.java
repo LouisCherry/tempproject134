@@ -1,6 +1,4 @@
 package com.epoint.xmz.xmztaskguideconfig.impl;
-import java.util.List;
-import java.util.Map;
 
 import com.epoint.basic.audittask.basic.domain.AuditTask;
 import com.epoint.common.util.SQLManageUtil;
@@ -8,6 +6,9 @@ import com.epoint.core.dao.CommonDao;
 import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.grammar.Record;
 import com.epoint.xmz.xmztaskguideconfig.api.entity.XmzTaskguideConfig;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 事项指南配置表对应的后台service
@@ -143,5 +144,10 @@ public class XmzTaskguideConfigService
     public List<AuditTask> selectTaskList(String areacode) {
         String sql = "select a.RowGuid ,a.TaskName from AUDIT_TASK a inner join frame_ou_extendinfo foe on a.OUGUID = foe .OUGUID where 1=1  and IS_HISTORY=0 and IS_EDITAFTERIMPORT=1 and IS_ENABLE=1 and foe.areacode=? ;"; 
         return baseDao.findList(sql, AuditTask.class ,areacode);
+    }
+
+    public XmzTaskguideConfig getXmzTaskguidByTaskId(String task_id) {
+        String sql = "select * from xmz_taskguide_config where taskid=?";
+        return baseDao.find(sql, XmzTaskguideConfig.class, task_id);
     }
 }

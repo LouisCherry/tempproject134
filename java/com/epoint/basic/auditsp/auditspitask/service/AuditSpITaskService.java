@@ -32,11 +32,6 @@ public class AuditSpITaskService{
         String sql = "select b.task_id from audit_sp_i_task a ,audit_task b where a.taskguid = b.rowguid and a.SUBAPPGUID = ? ";
         return commonDao.findList(sql, String.class, subappGuid);
     }
-
-    public List<String> getTaskIDByReviewguid(String reviewguid) {
-        String sql = "select b.task_id from audit_sp_i_task a ,audit_task b where a.taskguid = b.rowguid and a.REVIEWGUID = ? ";
-        return commonDao.findList(sql, String.class, reviewguid);
-    }
     public List<String> getProjectguidsBySubappGuid(String subappGuid) {
         String sql = "select projectguid from audit_sp_i_task where subappguid=?";
         return commonDao.findList(sql, String.class, subappGuid);

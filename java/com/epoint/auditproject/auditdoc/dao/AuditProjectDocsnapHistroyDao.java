@@ -1,16 +1,17 @@
 package com.epoint.auditproject.auditdoc.dao;
 
 import com.epoint.auditproject.auditdoc.entity.AuditProjectDocsnapHistroy;
-
-import java.util.List;
-import java.util.Map;
-
 import com.epoint.common.util.SQLManageUtil;
 import com.epoint.core.dao.CommonDao;
 import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.grammar.Record;
-import com.epoint.cs.auditepidemiclog.api.entity.AuditEpidemicLog;
+import com.epoint.core.utils.sql.SqlHelper;
 import com.epoint.database.peisistence.crud.impl.model.PageData;
+import com.epoint.zwzt.xxfb.xxfbinfocolumn.api.entity.XxfbInfoColumn;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -92,6 +93,17 @@ public class AuditProjectDocsnapHistroyDao {
         return baseDao.findList(sql, AuditProjectDocsnapHistroy.class, args);
     }
 
+    /**
+     * 查找一个list
+     *
+     * @param conditionMap 查询条件集合
+     * @return T extends BaseEntity
+     */
+    public List<AuditProjectDocsnapHistroy> findList(Map<String, Object> conditionMap) {
+        List<Object> params = new ArrayList<>();
+        String sql = new SqlHelper().getSqlComplete(AuditProjectDocsnapHistroy.class, conditionMap, params);
+        return baseDao.findList(sql, AuditProjectDocsnapHistroy.class, params.toArray());
+    }
     /**
      * 通过条件执行语句
      *

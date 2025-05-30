@@ -1,14 +1,12 @@
 package com.epoint.znsb.jnzwfw.water;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.Vector;
 import org.apache.commons.io.IOUtils;

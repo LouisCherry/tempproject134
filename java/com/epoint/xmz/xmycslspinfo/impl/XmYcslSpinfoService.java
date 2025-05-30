@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import com.epoint.core.grammar.Record;
-import com.epoint.frame.service.attach.entity.FrameAttachInfo;
 import com.epoint.xmz.xmycslspinfo.api.entity.XmYcslSpinfo;
-import com.epoint.zjcs.zjcsprojectinfo.bizlogic.domain.ZjcsProjectInfo;
 import com.epoint.core.BaseEntity;
 import com.epoint.basic.controller.BaseController;
 import com.epoint.basic.faces.util.DataUtil;
@@ -165,15 +163,4 @@ public class XmYcslSpinfoService
         String sql = "select * from xm_yyyz_bjinfo where flowsn = ?";
         return this.find(sql, flowsn);
     }
-    
-    public List<ZjcsProjectInfo> getZjcsProjectInfoByItemcode(String itemcode) {
-    	 String sql = "select * from zjcs_project_info where txtitemcode  = ?";
-        return baseDao.findList(sql,ZjcsProjectInfo.class, itemcode);
-    }
-    
-    public Record getZjcsProjectResultByProjectGuid(String projectguid) {
-   	 String sql = "select * from zjcs_project_result where projectGuid = ?";
-       return baseDao.find(sql,Record.class, projectguid);
-   }
-    
 }

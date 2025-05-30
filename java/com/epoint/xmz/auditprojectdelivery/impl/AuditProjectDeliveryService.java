@@ -115,9 +115,8 @@ public class AuditProjectDeliveryService {
         return baseDao.queryInt(sql, args);
     }
 
-    public AuditProjectDelivery getDeliveryByProjectguid(String projectguid) {
+    public AuditProjectDelivery getDeliveryByprojectguid(String projectguid) {
         String sql = "select * from audit_project_delivery where projectguid = ? ";
         return baseDao.find(sql, AuditProjectDelivery.class, projectguid);
     }
-
 }

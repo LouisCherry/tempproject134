@@ -1,15 +1,11 @@
 package com.epoint.znsb.auditznsbwater.impl;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import com.epoint.core.grammar.Record;
-import com.epoint.core.BaseEntity;
-import com.epoint.basic.controller.BaseController;
-import com.epoint.basic.faces.util.DataUtil;
-import com.epoint.core.dao.ICommonDao;
+
 import com.epoint.core.dao.CommonDao;
+import com.epoint.core.dao.ICommonDao;
+import com.epoint.core.grammar.Record;
 import com.epoint.znsb.auditznsbwater.api.entity.Auditznsbwater;
+
+import java.util.List;
 
 /**
  * 水务对账信息对应的后台service
@@ -141,12 +137,5 @@ public class AuditznsbwaterService
         String sql = "select * from audit_znsb_water where isupload is  null  or isupload = 0";
 
         return baseDao.findList(sql,Auditznsbwater.class);
-    }
-
-    public List<Auditznsbwater> getLisrtByname(String name) {
-
-        String sql = " select * from audit_znsb_water where waterinfo = ?";
-
-        return baseDao.findList(sql,Auditznsbwater.class,name);
     }
 }

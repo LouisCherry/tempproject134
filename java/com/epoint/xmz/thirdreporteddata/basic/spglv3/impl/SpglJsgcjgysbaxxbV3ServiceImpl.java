@@ -1,9 +1,9 @@
 package com.epoint.xmz.thirdreporteddata.basic.spglv3.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.epoint.xmz.thirdreporteddata.basic.spglv3.domain.SpglJsgcjgysbaxxbV3;
 import com.epoint.xmz.thirdreporteddata.basic.spglv3.inter.ISpglJsgcjgysbaxxbV3Service;
 import com.epoint.xmz.thirdreporteddata.basic.spglv3.service.SpglJsgcjgysbaxxbV3Service;
+import com.epoint.zwdt.xmgxh.basic.spglv3.domain.SpglJsgcjgysbaxxbV3;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -116,6 +116,14 @@ public class SpglJsgcjgysbaxxbV3ServiceImpl implements ISpglJsgcjgysbaxxbV3Servi
     @Override
     public SpglJsgcjgysbaxxbV3 findDominByCondition(String xzqhdm, String gcdm, String spsxslbm) {
         return new SpglJsgcjgysbaxxbV3Service().findDominByCondition(xzqhdm, gcdm, spsxslbm);
+    }
+
+    /**
+     * 查询单个实体
+     */
+    @Override
+    public SpglJsgcjgysbaxxbV3 findDominByCondition(String xzqhdm, String gcdm) {
+        return new SpglJsgcjgysbaxxbV3Service().findDominByCondition(xzqhdm, gcdm);
     }
 
     /**

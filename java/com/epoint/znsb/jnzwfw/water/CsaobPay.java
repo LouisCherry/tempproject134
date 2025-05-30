@@ -82,12 +82,12 @@ public class CsaobPay {
         goodsList.add(new Goods("0002", "Goods Name", 2L, 200L, "Auto", "goods body"));
 
         json.put("goodsList", goodsList);*/
-        //system.out.println("请求报文:\n"+json);
+        System.out.println("请求报文:\n"+json);
 
         String url = "https://api-mop.chinaums.com/v1/netpay/bills/get-qrcode";
         String send = send(url, json.toString());
 
-        //system.out.println("返回结果:\n"+send);
+        System.out.println("返回结果:\n"+send);
         return send;
     }
 
@@ -108,12 +108,12 @@ public class CsaobPay {
         json.put("billDate", DateFormatUtils.format(new Date(), "yyyy-MM-dd")); // 账单日期
 
 
-        //system.out.println("请求报文:\n"+json);
+        System.out.println("请求报文:\n"+json);
 
         String url = "https://api-mop.chinaums.com/v1/netpay/bills/query";
         String send = send(url, json.toString());
 
-        //system.out.println("返回结果:\n"+send);
+        System.out.println("返回结果:\n"+send);
 
 
 
@@ -161,20 +161,20 @@ public class CsaobPay {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());   // eg:20190227113148
         String nonce = UUID.randomUUID().toString().replace("-", ""); // eg:be46cd581c9f46ecbd71b9858311ea12
         byte[] data = body.getBytes("UTF-8");
-        //system.out.println("data:\n" + body);
+        System.out.println("data:\n" + body);
         InputStream is = new ByteArrayInputStream(data);
         String bodyDigest = testSHA256(is); // eg:d60bc3aedeb853e2a11c0c096baaf19954dd9b752e48dea8e919e5fb29a42a8d
-        //system.out.println("bodyDigest:\n" + bodyDigest);
+        System.out.println("bodyDigest:\n" + bodyDigest);
         String str1_C = appId + timestamp + nonce + bodyDigest; // eg:f0ec96ad2c3848b5b810e7aadf369e2f + 20190227113148 + be46cd581c9f46ecbd71b9858311ea12 + d60bc3aedeb853e2a11c0c096baaf19954dd9b752e48dea8e919e5fb29a42a8d
 
-        //system.out.println("str1_C:" + str1_C);
+        System.out.println("str1_C:" + str1_C);
 
-//        //system.out.println("appKey_D:\n" + appKey);
+//        System.out.println("appKey_D:\n" + appKey);
 
         byte[] localSignature = hmacSHA256(str1_C.getBytes(), appKey.getBytes());
 
         String localSignatureStr = Base64.encodeBase64String(localSignature);   // Signature
-        //system.out.println("Authorization:\n" + "OPEN-BODY-SIG AppId=" + "\"" + appId + "\"" + ", Timestamp=" + "\"" + timestamp + "\"" + ", Nonce=" + "\"" + nonce + "\"" + ", Signature=" + "\"" + localSignatureStr + "\"\n");
+        System.out.println("Authorization:\n" + "OPEN-BODY-SIG AppId=" + "\"" + appId + "\"" + ", Timestamp=" + "\"" + timestamp + "\"" + ", Nonce=" + "\"" + nonce + "\"" + ", Signature=" + "\"" + localSignatureStr + "\"\n");
         return ("OPEN-BODY-SIG AppId=" + "\"" + appId + "\"" + ", Timestamp=" + "\"" + timestamp + "\"" + ", Nonce=" + "\"" + nonce + "\"" + ", Signature=" + "\"" + localSignatureStr + "\"");
     }
 
@@ -186,7 +186,7 @@ public class CsaobPay {
      */
     private static String testSHA256(InputStream is) {
         try {
-//            //system.out.println(is.hashCode());
+//            System.out.println(is.hashCode());
             return DigestUtils.sha256Hex(is);
         } catch (IOException e) {
             e.printStackTrace();

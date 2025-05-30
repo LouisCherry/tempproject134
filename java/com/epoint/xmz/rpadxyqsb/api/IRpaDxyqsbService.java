@@ -7,7 +7,7 @@ import com.epoint.xmz.rpadxyqsb.api.entity.RpaDxyqsb;
  * 大型仪器设备协作共用网对应的后台service接口
  * 
  * @author 1
- * @version [版本号, 2022-12-20 17:36:22]
+ * @version [版本号, 2022-12-20 16:59:00]
  */
 public interface IRpaDxyqsbService extends Serializable
 { 

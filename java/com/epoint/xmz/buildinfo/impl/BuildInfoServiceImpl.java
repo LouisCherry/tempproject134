@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import com.epoint.xmz.buildinfo.api.entity.BuildInfo;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.epoint.core.grammar.Record;
 import com.epoint.xmz.buildinfo.api.IBuildInfoService;
 /**
  * 工改二阶段建筑表对应的后台service实现类
@@ -89,7 +88,7 @@ public class BuildInfoServiceImpl implements IBuildInfoService
      *            参数值数组
      * @return T extends BaseEntity
      */
-    public List<Record> findList(String sql, Object... args) {
+    public List<BuildInfo> findList(String sql, Object... args) {
        return new BuildInfoService().findList(sql,args);
     }
 

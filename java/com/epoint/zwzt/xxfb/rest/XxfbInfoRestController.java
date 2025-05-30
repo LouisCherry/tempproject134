@@ -347,6 +347,10 @@ public class XxfbInfoRestController extends ApiBaseController
                             }
                         }
                     }
+                    
+                    if (infoContent.contains("getContent")) {
+                    	infoContent.replaceAll("/jnzwfw/rest/frame/base/attach/attachAction/getContent", "http://jizwfw.sd.gov.cn/jnzwdt/rest/frame/base/attach/attachAction/getContent");
+                    }
                     custom.put("infoContent", infoContent);
                     custom.put("linkUrl", linkUrl);
                     custom.put("attachList", array);

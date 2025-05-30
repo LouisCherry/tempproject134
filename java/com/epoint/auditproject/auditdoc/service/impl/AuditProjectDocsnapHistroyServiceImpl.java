@@ -1,15 +1,16 @@
 package com.epoint.auditproject.auditdoc.service.impl;
 
-import com.epoint.auditproject.auditdoc.entity.AuditProjectDocsnapHistroy;
 import com.epoint.auditproject.auditdoc.dao.AuditProjectDocsnapHistroyDao;
+import com.epoint.auditproject.auditdoc.entity.AuditProjectDocsnapHistroy;
 import com.epoint.auditproject.auditdoc.service.IAuditProjectDocsnapHistroyService;
 import com.epoint.database.peisistence.crud.impl.model.PageData;
+import com.epoint.zwzt.xxfb.xxfbinfocolumn.api.entity.XxfbInfoColumn;
+import com.epoint.zwzt.xxfb.xxfbinfocolumn.impl.XxfbInfoColumnService;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Resource;
 
 /**
  * (AuditProjectDocsnapHistroy)表服务实现类
@@ -88,6 +89,17 @@ public class AuditProjectDocsnapHistroyServiceImpl implements IAuditProjectDocsn
      */
     public List<AuditProjectDocsnapHistroy> findList(String sql, Object... args) {
         return new AuditProjectDocsnapHistroyDao().findList(sql, args);
+    }
+
+    /**
+     * 查找一个list
+     *
+     * @param conditionMap 查询条件集合
+     * @return T extends BaseEntity
+     */
+    @Override
+    public List<AuditProjectDocsnapHistroy> findList(Map<String, Object> conditionMap) {
+        return new AuditProjectDocsnapHistroyDao().findList(conditionMap);
     }
 
     /**

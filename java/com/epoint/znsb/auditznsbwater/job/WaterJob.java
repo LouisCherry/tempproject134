@@ -6,10 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.epoint.core.EpointFrameDsManager;
 import com.epoint.core.utils.classpath.ClassPathUtil;
 import com.epoint.core.utils.container.ContainerFactory;
-import com.epoint.core.utils.date.EpointDateUtil;
 import com.epoint.core.utils.file.FileManagerUtil;
 import com.epoint.core.utils.log.LogUtil;
-import com.epoint.frame.service.message.entity.MessagesCenter;
 import com.epoint.znsb.auditznsbwater.api.IAuditznsbwaterService;
 import com.epoint.znsb.auditznsbwater.api.entity.Auditznsbwater;
 import com.epoint.znsb.auditznsbwaterjfinfo.api.IAuditZnsbWaterjfinfoService;
@@ -25,9 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class WaterJob implements Job{
     transient Logger log = LogUtil.getLog(WaterJob.class);
@@ -37,24 +33,9 @@ public class WaterJob implements Job{
              log.info("====================水务对账文件开始上传===========================");
              EpointFrameDsManager.begin(null);
              String dir = ClassPathUtil.getDeployWarPath() + "jiningzwfw/water/";
-
              //查询未正上传的对账文件
              IAuditZnsbWaterjfinfoService jfService = ContainerFactory.getContainInfo().getComponent(IAuditZnsbWaterjfinfoService.class);
              IAuditznsbwaterService service = ContainerFactory.getContainInfo().getComponent(IAuditznsbwaterService.class);
-
-
-             //查询当天的对账文件是否产生
-             String date = EpointDateUtil.convertDate2String(new Date(),"yyyy-MM-dd");
-             List<Auditznsbwater> oldwaterlist = service.getLisrtByname(date);
-             if(oldwaterlist != null && !oldwaterlist.isEmpty()){
-
-             }else{
-                 //添加当天的信息
-                 Auditznsbwater water = new Auditznsbwater();
-                 water.setRowguid(UUID.randomUUID().toString());
-                 water.setWaterinfo(date);
-                 service.insert(water);
-             }
 
               List<Auditznsbwater> waterlist = service.getListByIsupload();
               if(waterlist != null && !waterlist.isEmpty()){
@@ -87,13 +68,9 @@ public class WaterJob implements Job{
                       sftp.upload( "dz", "", "DZ" + water.getWaterinfo() + "022.txt", is);
                       sftp.logout();
                       is.close();
-                      water.setIsupload("1");
-                      //推送成功
-                       service.update(water);
                   }
+
               }
-
-
              EpointFrameDsManager.commit();
          }
          catch (Exception e) {

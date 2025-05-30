@@ -1,9 +1,9 @@
 package com.epoint.auditproject.auditdoc.entity;
 
-import java.util.Date;
-
 import com.epoint.core.BaseEntity;
 import com.epoint.core.annotation.Entity;
+
+import java.util.Date;
 
 /**
  * (AuditProjectDocsnapHistroy)实体类

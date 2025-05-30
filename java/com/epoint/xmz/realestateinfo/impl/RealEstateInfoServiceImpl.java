@@ -1,14 +1,13 @@
 package com.epoint.xmz.realestateinfo.impl;
-
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.epoint.basic.audittask.basic.domain.AuditTask;
+import com.epoint.database.peisistence.crud.impl.model.PageData;
 import com.epoint.xmz.realestateinfo.api.IRealEstateInfoService;
 import com.epoint.xmz.realestateinfo.api.entity.RealEstateInfo;
-
 /**
  * 楼盘信息表对应的后台service实现类
  * 
@@ -62,7 +61,7 @@ public class RealEstateInfoServiceImpl implements IRealEstateInfoService
      * @return T extends BaseEntity
      */
     public RealEstateInfo find(Object primaryKey) {
-        return new RealEstateInfoService().find(primaryKey);
+       return new RealEstateInfoService().find(primaryKey);
     }
 
     /**
@@ -78,7 +77,7 @@ public class RealEstateInfoServiceImpl implements IRealEstateInfoService
      * @return T {String、Integer、Long、Record、FrameOu、Object[]等}
      */
     public RealEstateInfo find(String sql, Object... args) {
-        return new RealEstateInfoService().find(sql, args);
+        return new RealEstateInfoService().find(sql,args);
     }
 
     /**
@@ -93,7 +92,7 @@ public class RealEstateInfoServiceImpl implements IRealEstateInfoService
      * @return T extends BaseEntity
      */
     public List<RealEstateInfo> findList(String sql, Object... args) {
-        return new RealEstateInfoService().findList(sql, args);
+       return new RealEstateInfoService().findList(sql,args);
     }
 
     /**
@@ -112,10 +111,10 @@ public class RealEstateInfoServiceImpl implements IRealEstateInfoService
      * @return T extends BaseEntity
      */
     public List<RealEstateInfo> findList(String sql, int pageNumber, int pageSize, Object... args) {
-        return new RealEstateInfoService().findList(sql, pageNumber, pageSize, args);
+       return new RealEstateInfoService().findList(sql,pageNumber,pageSize,args);
     }
-
-    /**
+    
+     /**
      * 查询数量
      * 
      * @param sql
@@ -124,14 +123,22 @@ public class RealEstateInfoServiceImpl implements IRealEstateInfoService
      *            参数
      * @return Integer
      */
-    @Override
-    public Integer countRealEstateInfo(String sql, Object... args) {
+     @Override
+    public Integer countRealEstateInfo(String sql, Object... args){
         return new RealEstateInfoService().countRealEstateInfo(sql, args);
     }
-
-    @Override
-    public List<AuditTask> getCertListByProjectNum(String projectnum) {
-        return new RealEstateInfoService().getCertListByProjectNum(projectnum);
-    }
+     
+     /**
+      * 分页查找一个list
+      *
+      * @param conditionMap 查询条件集合
+      * @param pageNumber   记录行的偏移量
+      * @param pageSize     记录行的最大数目
+      * @return T extends BaseEntity
+      */
+     @Override
+     public PageData<RealEstateInfo> paginatorList(Map<String, Object> conditionMap, int pageNumber, int pageSize) {
+         return new RealEstateInfoService().paginatorList(conditionMap, pageNumber, pageSize);
+     }
 
 }

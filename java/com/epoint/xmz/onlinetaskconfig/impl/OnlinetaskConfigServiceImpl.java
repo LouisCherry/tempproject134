@@ -125,4 +125,19 @@ public class OnlinetaskConfigServiceImpl implements IOnlinetaskConfigService
         return new OnlinetaskConfigService().countOnlinetaskConfig(sql, args);
     }
 
+    @Override
+    public List<OnlinetaskConfig> getAllConfg() {
+        return new OnlinetaskConfigService().getAllConfg();
+    }
+
+    @Override
+    public List<OnlinetaskConfig> getAllConfgByOu(String ou) {
+        return new OnlinetaskConfigService().getAllConfgByOu(ou);
+    }
+
+    @Override
+    public List<OnlinetaskConfig> getConfigByOuname(String ouname) {
+        return new OnlinetaskConfigService().getConfigByOuname(ouname);
+    }
+
 }

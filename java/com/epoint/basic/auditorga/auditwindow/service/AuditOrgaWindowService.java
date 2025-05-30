@@ -1,13 +1,7 @@
 package com.epoint.basic.auditorga.auditwindow.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.epoint.basic.auditorga.auditwindow.domain.AuditOrgaWindow;
-import com.epoint.basic.auditqueue.auditqueue.service.SSAuditQueueService;
 import com.epoint.basic.authentication.UserSession;
-import com.epoint.basic.controller.BaseController;
 import com.epoint.common.util.SQLManageUtil;
 import com.epoint.core.BaseEntity;
 import com.epoint.core.annotation.Entity;
@@ -15,6 +9,10 @@ import com.epoint.core.dao.CommonDao;
 import com.epoint.core.grammar.Record;
 import com.epoint.core.utils.string.StringUtil;
 import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 产品代码排查，后续需要删除

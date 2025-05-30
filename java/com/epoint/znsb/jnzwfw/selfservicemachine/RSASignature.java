@@ -36,7 +36,7 @@ public class RSASignature
             signature.update(content.getBytes(charset));
 
             byte[] signed = signature.sign();
-            ////system.out.println(signed.length);
+            //System.out.println(signed.length);
             return Base64.encode(signed);
         }
         catch (Exception e) {
@@ -95,7 +95,7 @@ public class RSASignature
             bf.close(); // 重要且易忽略步骤 (关闭流,切记!)   
             connection.disconnect(); // 销毁连接  
 
-            ////system.out.println(sb.toString());
+            //System.out.println(sb.toString());
             return JSONObject.parseObject(sb.toString());
         }
         catch (Exception e) {
@@ -127,7 +127,7 @@ public class RSASignature
 
             connection.addRequestProperty("headparaMD5",
                     RSASignature.sign(EncryptionByMD5.getMD5(params.getBytes()), RSASignature.RSA_PRIVATE));
-            //system.out.println( RSASignature.sign(EncryptionByMD5.getMD5(params.getBytes()), RSASignature.RSA_PRIVATE));
+            System.out.println( RSASignature.sign(EncryptionByMD5.getMD5(params.getBytes()), RSASignature.RSA_PRIVATE));
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
             // 建立连接 (请求未开始,直到connection.getInputStream()方法调用时才发起,以上各个参数设置需在此方法之前进行)
             connection.connect();
@@ -137,7 +137,7 @@ public class RSASignature
             // 将参数输出到连接
             //dataout.writeBytes(URLEncoder.encode(params, "utf8"));
             params = params.replaceAll("[+]","%2B");
-            //system.out.println(params);
+            System.out.println(params);
             dataout.writeBytes(params);
             // 输出完成后刷新并关闭流
             dataout.flush();
@@ -156,7 +156,7 @@ public class RSASignature
             bf.close(); // 重要且易忽略步骤 (关闭流,切记!)
             connection.disconnect(); // 销毁连接
 
-            ////system.out.println(sb.toString());
+            //System.out.println(sb.toString());
             return JSONObject.parseObject(sb.toString());
         }
         catch (Exception e) {

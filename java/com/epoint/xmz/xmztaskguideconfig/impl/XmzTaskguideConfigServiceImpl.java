@@ -1,13 +1,14 @@
 package com.epoint.xmz.xmztaskguideconfig.impl;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Component;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.basic.audittask.basic.domain.AuditTask;
 import com.epoint.xmz.xmztaskguideconfig.api.IXmzTaskguideConfigService;
 import com.epoint.xmz.xmztaskguideconfig.api.entity.XmzTaskguideConfig;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * 事项指南配置表对应的后台service实现类
  * 
@@ -136,6 +137,11 @@ public class XmzTaskguideConfigServiceImpl implements IXmzTaskguideConfigService
     @Override
     public List<AuditTask> selectTaskList(String areacode) {
         return new XmzTaskguideConfigService().selectTaskList(areacode);
+    }
+
+    @Override
+    public XmzTaskguideConfig getXmzTaskguidByTaskId(String task_id) {
+        return new XmzTaskguideConfigService().getXmzTaskguidByTaskId(task_id);
     }
 
 }

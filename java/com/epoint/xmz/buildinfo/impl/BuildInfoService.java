@@ -101,8 +101,8 @@ public class BuildInfoService
      *            参数值数组
      * @return T extends BaseEntity
      */
-    public List<Record> findList(String sql, Object... args) {
-        return baseDao.findList(sql, Record.class, args);
+    public List<BuildInfo> findList(String sql, Object... args) {
+        return baseDao.findList(sql, BuildInfo.class, args);
     }
 
     /**

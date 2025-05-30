@@ -1,7 +1,8 @@
 package com.epoint.xmz.jncertrecord.api;
+import com.epoint.xmz.jncertrecord.api.entity.JnCertRecord;
+
 import java.io.Serializable;
 import java.util.List;
-import com.epoint.xmz.jncertrecord.api.entity.JnCertRecord;
 
 /**
  * 证照调用次数统计表对应的后台service接口
@@ -104,4 +105,9 @@ public interface IJnCertRecordService extends Serializable
      * @return Integer
      */
 	 public Integer countJnCertRecord(String sql, Object... args);
+	 
+	 public JnCertRecord getTotalByAreacode(String aracode);
+
+
+    int getCountByIdnumber(String idnumber);
 }

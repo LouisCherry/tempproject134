@@ -1,11 +1,10 @@
 package com.epoint.auditspoptiontownship.api;
 
-import com.epoint.auditspoptiontownship.api.entity.AuditSpOptiontownship;
-import com.epoint.basic.audittask.delegate.domain.AuditTaskDelegate;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
+import com.epoint.auditspoptiontownship.api.entity.AuditSpOptiontownship;
 
 /**
  * 情形引导选项乡镇延伸对应的后台service接口

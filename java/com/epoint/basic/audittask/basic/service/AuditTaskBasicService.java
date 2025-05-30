@@ -10,6 +10,7 @@ import com.epoint.basic.audittask.basic.domain.CacheAuditTask;
 import com.epoint.basic.audittask.basic.domain.ViewAuditTaskJiangSu;
 import com.epoint.basic.audittask.extension.domain.AuditTaskExtension;
 import com.epoint.basic.audittask.service.AuditTaskCache;
+import com.epoint.common.service.AuditCommonResult;
 import com.epoint.common.util.SQLManageUtil;
 import com.epoint.common.util.SqlConditionUtil;
 import com.epoint.common.util.ZwfwConstant;
@@ -20,6 +21,7 @@ import com.epoint.core.utils.DbKit;
 import com.epoint.core.utils.container.ContainerFactory;
 import com.epoint.core.utils.memory.EHCacheUtil;
 import com.epoint.core.utils.string.StringUtil;
+import com.epoint.database.config.JdbcConstantValue;
 import com.epoint.database.jdbc.Parameter;
 import com.epoint.database.jdbc.connection.DataSourceConfig;
 import com.epoint.database.peisistence.crud.impl.model.PageData;
@@ -164,14 +166,17 @@ public class AuditTaskBasicService
      * @see [类、类#方法、类#成员]
      */
     private String buildQuerySql(Map<String, String> conditionMap) {
-        String sql = "select a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE from AUDIT_TASK a where 1=1";
+        String sql = "select a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.promise_day,"
+                + "a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.yw_catalog_id from AUDIT_TASK a left join AUDIT_TASK_EXTENSION b on a.ROWGUID=b.TASKGUID where 1=1";
         SQLManageUtil sqlManageUtil = new SQLManageUtil("task", true);
         sql += sqlManageUtil.buildSql(conditionMap).replace(" where 1=1", "");
         return sql;
     }
 
     private String buildQuerySql(Map<String, String> conditionMap, List<String> exampleList) {
-        String sql = "select a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,a.transact_addr,a.Transact_time from AUDIT_TASK a where 1=1";
+        String sql = "select a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,"
+                + "a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,a.transact_addr,a.Transact_time,"
+                + "a.yw_catalog_id from AUDIT_TASK a where 1=1";
         SQLManageUtil sqlManageUtil = new SQLManageUtil("task", true);
         sql += sqlManageUtil.buildSql(conditionMap, exampleList).replace(" where 1=1", "");
         return sql;
@@ -179,7 +184,7 @@ public class AuditTaskBasicService
 
     private String buildQuerySqlForcenter(Map<String, String> conditionMap) {
         String sql = "select b.rowguid,item_id,taskname,ouname,b.ordernum,is_enable,ouguid,PROCESSGUID,TYPE,AREACODE,task_id,promise_day,anticipate_day,charge_flag,"
-                + "shenpilb,link_tel,supervise_tel,IS_EDITAFTERIMPORT from AUDIT_TASK b,audit_task_extension c where b.rowguid = c.taskguid and  1=1";
+                + "shenpilb,link_tel,supervise_tel,IS_EDITAFTERIMPORT,b.yw_catalog_id from AUDIT_TASK b,audit_task_extension c where b.rowguid = c.taskguid and  1=1";
         SQLManageUtil sqlManageUtil = new SQLManageUtil("task", true);
         sql += sqlManageUtil.buildPatchSql(conditionMap);
         return sql;
@@ -187,7 +192,7 @@ public class AuditTaskBasicService
 
     private String buildQuerySqlForcenter(Map<String, String> conditionMap, List<String> exampleList) {
         String sql = "select b.rowguid,item_id,taskname,ouname,b.ordernum,is_enable,ouguid,PROCESSGUID,TYPE,AREACODE,task_id,promise_day,anticipate_day,charge_flag,"
-                + "shenpilb,link_tel,supervise_tel,IS_EDITAFTERIMPORT from AUDIT_TASK b where  1=1";
+                + "shenpilb,link_tel,supervise_tel,IS_EDITAFTERIMPORT,b.yw_catalog_id from AUDIT_TASK b,audit_task_extension c where b.rowguid = c.taskguid and  1=1";
         SQLManageUtil sqlManageUtil = new SQLManageUtil("task", true);
         sql += sqlManageUtil.buildPatchSql(conditionMap, exampleList);
         return sql;
@@ -204,7 +209,8 @@ public class AuditTaskBasicService
      * @see [类、类#方法、类#成员]
      */
     private String buildQuerySqlWithDict(Map<String, String> conditionMap) {
-        String sql = "select a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id from AUDIT_TASK a left join AUDIT_TASK_EXTENSION b on a.ROWGUID=b.TASKGUID LEFT JOIN audit_task_map c ON a.TASK_ID = c.TASK_ID where (a.IS_HISTORY=0 or a.IS_HISTORY is null)";
+        String sql = "select a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,"
+                + "a.yw_catalog_id from AUDIT_TASK a left join AUDIT_TASK_EXTENSION b on a.ROWGUID=b.TASKGUID LEFT JOIN audit_task_map c ON a.TASK_ID = c.TASK_ID where (a.IS_HISTORY=0 or a.IS_HISTORY is null)";
         SQLManageUtil sqlManageUtil = new SQLManageUtil("task", true);
         sql += sqlManageUtil.buildSql(conditionMap).replace(" where 1=1", "");
         return sql;
@@ -221,7 +227,8 @@ public class AuditTaskBasicService
      * @see [类、类#方法、类#成员]
      */
     private String buildQuerySqlWithDict(Map<String, String> conditionMap, List<String> exampleList) {
-        String sql = "select a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id from AUDIT_TASK a left join AUDIT_TASK_EXTENSION b on a.ROWGUID=b.TASKGUID LEFT JOIN audit_task_map c ON a.TASK_ID = c.TASK_ID where (a.IS_HISTORY=0 or a.IS_HISTORY is null)";
+        String sql = "select a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,"
+                + "a.yw_catalog_id from AUDIT_TASK a left join AUDIT_TASK_EXTENSION b on a.ROWGUID=b.TASKGUID where (a.IS_HISTORY=0 or a.IS_HISTORY is null)";
         SQLManageUtil sqlManageUtil = new SQLManageUtil("task", true);
         sql += sqlManageUtil.buildSql(conditionMap, exampleList).replace(" where 1=1", "");
         return sql;
@@ -238,18 +245,21 @@ public class AuditTaskBasicService
      * @return List 事项集合
      */
     public List<AuditTask> selectTaskByTaskId(String taskid, String filter) {
-        StringBuffer sb = new StringBuffer("select * from AUDIT_TASK where TASK_ID=? ");
-        sb.append(filter);
+        String sql = "select * from AUDIT_TASK where TASK_ID=? " + filter;
         if (commonDao.isSqlserver()) {
-            sb.append(" order by CAST(VERSION AS int) DESC");
+            sql += " order by CAST(VERSION AS int) DESC";
         }
-        else if (commonDao.isOracle()) {
-            sb.append(" order by  to_number(VERSION) DESC");
+        else if (commonDao.isOracle() || "Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())
+                || commonDao.isDM()) {
+            sql += " order by  to_number(VERSION) DESC";
         }
         else if (commonDao.isMySql()) {
-            sb.append(" order by CONVERT(VERSION,SIGNED) DESC");
+            sql += " order by CONVERT(VERSION,SIGNED) DESC";
         }
-        return commonDao.findList(sb.toString(), AuditTask.class,taskid);
+        else {
+            sql += " order by  to_number(VERSION) DESC";
+        }
+        return commonDao.findList(sql, AuditTask.class, taskid);
     }
 
     /**
@@ -277,7 +287,7 @@ public class AuditTaskBasicService
      */
     public String getTemplateTaskGuid(String areaCode) {
         String sql = "select rowguid from AUDIT_TASK where istemplate='1' and is_editafterimport='1' and areaCode=? ";
-        return commonDao.queryString(sql,areaCode);
+        return commonDao.queryString(sql, areaCode);
     }
 
     /**
@@ -292,7 +302,7 @@ public class AuditTaskBasicService
         boolean retbol = false;
 
         String sql = "select count(*) from Audit_Task where item_id=? and (is_editafterimport <> '-1' and is_editafterimport <> '5') and (IS_HISTORY=0 or IS_HISTORY is null)";
-        Integer count = commonDao.find(sql, Integer.class,itemid);
+        Integer count = commonDao.find(sql, Integer.class, itemid);
         if (count > 0) {
             retbol = true;
         }
@@ -311,7 +321,7 @@ public class AuditTaskBasicService
     public boolean isItemIdExist(String itemid, String RowGuid) {
         boolean retbol = false;
         String sql = "select count(*) from Audit_Task where item_id=? and RowGuid<>? and (is_editafterimport <> '-1' and is_editafterimport <> '5')";
-        Integer count = commonDao.find(sql, Integer.class,itemid,RowGuid);
+        Integer count = commonDao.find(sql, Integer.class, itemid, RowGuid);
         if (count > 0) {
             retbol = true;
         }
@@ -387,19 +397,36 @@ public class AuditTaskBasicService
         PageData<AuditTask> pageData = new PageData<AuditTask>();
         SqlConditionUtil sqlCondition = new SqlConditionUtil(conditionMap);
         List<String> exampleList = new ArrayList<String>();
-        sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+
+        //        String sqlextra = " and  ifnull(IS_HISTORY, 0) = 0) ";
         // 筛选+排序的sql
+
         String sql = "";
         //从主题处点击进来
         if (conditionMap.containsKey(
-                "dict_id" + ZwfwConstant.ZWFW_SPLIT + ZwfwConstant.SQL_OPERATOR_EQ + ZwfwConstant.ZWFW_SPLIT + "S")) {
+                "TASKCLASS_FORCOMPANY" + ZwfwConstant.ZWFW_SPLIT + ZwfwConstant.SQL_OPERATOR_EQ + ZwfwConstant.ZWFW_SPLIT + "S")||conditionMap.containsKey(
+                "TASKCLASS_FORPERSION" + ZwfwConstant.ZWFW_SPLIT + ZwfwConstant.SQL_OPERATOR_EQ + ZwfwConstant.ZWFW_SPLIT + "S")) {
             //如果是外网门户网站查询的 
             if (conditionMap.containsKey("iszwmhwz" + ZwfwConstant.ZWFW_SPLIT + ZwfwConstant.SQL_OPERATOR_EQ
                     + ZwfwConstant.ZWFW_SPLIT + "S")) {
                 sqlCondition.getMap().remove("iszwmhwz" + ZwfwConstant.ZWFW_SPLIT + ZwfwConstant.SQL_OPERATOR_EQ
                         + ZwfwConstant.ZWFW_SPLIT + "S");
             }
-            sql = buildQuerySqlWithDict(sqlCondition.getMap(), exampleList);
+            if ("Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+                String ifnullcase = " and nvl(IS_HISTORY, '0') = '0' ";
+                sqlCondition.setOrderDesc("ordernum");
+                sqlCondition.setOrderDesc("item_id");
+                sql = buildQuerySqlWithDict(sqlCondition.getMap(), exampleList);
+                String sqllist[] = sql.toLowerCase().split("order by");
+                sql = sqllist[0] + ifnullcase + " order by " + sqllist[1];
+            }
+            else {
+                sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+                sqlCondition.setOrderDesc("ordernum");
+                sqlCondition.setOrderDesc("item_id");
+                sql = buildQuerySqlWithDict(sqlCondition.getMap(), exampleList);
+            }
+
         }
         // 从除了主题之外的其他地方进来
         else {
@@ -415,38 +442,65 @@ public class AuditTaskBasicService
                         + ZwfwConstant.SQL_OPERATOR_EQ + ZwfwConstant.ZWFW_SPLIT + "S");
 
                 String extraSql = buildQuerySqlForcenter(sqlCondition.getMap(), exampleList);
+                String ifhistory = " and ifnull(IS_HISTORY, '0') = '0' ";
                 String ifnullcase = " ifnull(IS_HISTORY, '0') = '0') ";
-                if (commonDao.isOracle()) {
+                if (commonDao.isOracle() || commonDao.isDM()
+                        || "Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())
+                        || JdbcConstantValue.Gauss.equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
                     ifnullcase = " nvl(IS_HISTORY, '0') = '0') ";
+                    ifhistory = " and nvl(IS_HISTORY, '0') = '0' ";
                 }
-                String extraSqlstatus = " AND (IS_EDITAFTERIMPORT ='1' OR (IS_EDITAFTERIMPORT = '-1' AND tasksource = 0))";
-                sql = "select a.* from (" + extraSql + extraSqlstatus
-                        + " and not EXISTS( SELECT rowguid FROM audit_Task where b.IS_EDITAFTERIMPORT='-1' and b.task_id=task_id and IS_EDITAFTERIMPORT='1' and "
-                        + ifnullcase + ") a ";
+                String extraSqlstatus = " AND (IS_EDITAFTERIMPORT =1 OR (IS_EDITAFTERIMPORT = -1 AND tasksource = 0))";
+                sql = "select a.* from (" + extraSql + ifhistory + extraSqlstatus
+                        + " and not EXISTS( SELECT rowguid FROM audit_Task where b.IS_EDITAFTERIMPORT=-1 and b.task_id=task_id and IS_EDITAFTERIMPORT=1 and "
+                        + ifnullcase + ") a ORDER BY ordernum DESC,item_id DESC";
+                //                sql = "select a.* from (select b.rowguid,item_id,taskname,ouname,b.ordernum,is_enable,ouguid,PROCESSGUID,TYPE,AREACODE,task_id,promise_day,anticipate_day,charge_flag,shenpilb,link_tel,supervise_tel,IS_EDITAFTERIMPORT from AUDIT_TASK b,audit_task_extension c where b.rowguid = c.taskguid and  1=1 and ouguid in ('71b071c6-1ead-4a92-b8af-93e0a16a633e','') and item_id like '%000' and nvl(IS_HISTORY, 0)= 0 and areacode='081616' and istemplate= 0 AND (IS_EDITAFTERIMPORT =1 OR (IS_EDITAFTERIMPORT = -1 AND tasksource = 0)) and not EXISTS( SELECT rowguid FROM audit_Task where b.IS_EDITAFTERIMPORT=-1 and b.task_id=task_id and IS_EDITAFTERIMPORT=1 and  nvl(IS_HISTORY, 0) = 0) ) a ORDER BY ordernum DESC,item_id DESC ";
             }
             //外网门户网站查询
             else {
                 sqlCondition.getMap().remove("iszwmhwz" + ZwfwConstant.ZWFW_SPLIT + ZwfwConstant.SQL_OPERATOR_EQ
                         + ZwfwConstant.ZWFW_SPLIT + "S");
-                sqlCondition.setOrderDesc("ordernum");
-                sqlCondition.setOrderDesc("item_id");
-                sql = buildQuerySql(sqlCondition.getMap(), exampleList);
+                if ("Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+                    sqlCondition.setOrderDesc("ordernum");
+                    sqlCondition.setOrderDesc("item_id");
+                    sql = buildQuerySql(sqlCondition.getMap(), exampleList);
+                    String ifnullcase = " and nvl(IS_HISTORY, '0') = '0' ";
+                    String sqllist[] = sql.toLowerCase().split("order by");
+                    sql = sqllist[0] + ifnullcase + " order by " + sqllist[1];
+                }
+                else {
+                    sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+                    sqlCondition.setOrderDesc("ordernum");
+                    sqlCondition.setOrderDesc("item_id");
+                    sql = buildQuerySql(sqlCondition.getMap(), exampleList);
+                }
             }
 
         }
         Object[] paramsobject = exampleList.toArray();
         List<AuditTask> auditTaskList = commonDao.findList(sql, firstResult, maxResults, AuditTask.class, paramsobject);
         pageData.setList(auditTaskList);
+        if ("Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            sql = sql.toLowerCase().split("order by")[0];
+        }
+        else {
+            sql = sql.toLowerCase();
+        }
         pageData.setRowCount(commonDao.queryInt(sql.replace("a.*", "count(1)")
-                .replaceAll("a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,a.transact_addr,a.Transact_time", "count(1)")
-                .replaceAll("a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id", "count(1)"), paramsobject));
+                .replaceAll(
+                        "a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.processguid,a.type,a.areacode,a.task_id",
+                        "count(1)")
+                .replaceAll(
+                        "a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.processguid,a.type,a.areacode,a.task_id,a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.jbjmode,a.by_law,a.transact_addr,a.transact_time",
+                        "count(1)"),
+                paramsobject));
         return pageData;
     }
 
     /**
      * 
      * 对事项信息根据条件查询，并且分页 其中conditionMap支持事项扩展信息的查询， 如果扩展信息的话，需要key写成
-     * AUDIT_TASK_nSION.XXX的方式，value不变
+     * AUDIT_TASK_EXTENSION.XXX的方式，value不变
      * 
      * @param conditionMap
      *            条件map， key为字段名称，value为值
@@ -462,12 +516,16 @@ public class AuditTaskBasicService
      * @exception/throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
      */
-    public Integer  getAuditTaskCount(Map<String, String> conditionMap, int firstResult,
-            int maxResults, String sortField, String sortOrder) {
+    public Integer getAuditTaskCount(Map<String, String> conditionMap, int firstResult, int maxResults,
+            String sortField, String sortOrder) {
         PageData<AuditTask> pageData = new PageData<AuditTask>();
         SqlConditionUtil sqlCondition = new SqlConditionUtil(conditionMap);
         List<String> exampleList = new ArrayList<String>();
-        sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+        //        sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+        String sqlextra = "";
+        if (!"Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+        }
         // 筛选+排序的sql
         String sql = "";
         //从主题处点击进来
@@ -481,6 +539,10 @@ public class AuditTaskBasicService
             }
             sqlCondition.setOrderDesc("ordernum");
             sqlCondition.setOrderDesc("item_id");
+            if ("Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+                String sqltemp[] = sql.toLowerCase().split("order by");
+                sql = sqltemp[0] + sqlextra + sqltemp[1];
+            }
             sql = buildQuerySqlWithDict(sqlCondition.getMap(), exampleList);
         }
         // 从除了主题之外的其他地方进来
@@ -498,12 +560,14 @@ public class AuditTaskBasicService
 
                 String extraSql = buildQuerySqlForcenter(sqlCondition.getMap(), exampleList);
                 String ifnullcase = " ifnull(IS_HISTORY, '0') = '0') ";
-                if (commonDao.isOracle()) {
+                if (commonDao.isOracle() || commonDao.isDM()
+                        || "Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())
+                        || JdbcConstantValue.Gauss.equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
                     ifnullcase = " nvl(IS_HISTORY, '0') = '0') ";
                 }
-                String extraSqlstatus = " AND (IS_EDITAFTERIMPORT ='1' OR (IS_EDITAFTERIMPORT = '-1' AND tasksource = 0))";
+                String extraSqlstatus = " AND (IS_EDITAFTERIMPORT =1 OR (IS_EDITAFTERIMPORT = -1 AND tasksource = '0'))";
                 sql = "select a.* from (" + extraSql + extraSqlstatus
-                        + " and not EXISTS( SELECT rowguid FROM audit_Task where b.IS_EDITAFTERIMPORT='-1' and b.task_id=task_id and IS_EDITAFTERIMPORT='1' and "
+                        + " and not EXISTS( SELECT rowguid FROM audit_Task where b.IS_EDITAFTERIMPORT=-1 and b.task_id=task_id and IS_EDITAFTERIMPORT=1 and "
                         + ifnullcase + ") a ORDER BY ordernum DESC,item_id DESC";
             }
             //外网门户网站查询
@@ -512,17 +576,21 @@ public class AuditTaskBasicService
                         + ZwfwConstant.ZWFW_SPLIT + "S");
                 sqlCondition.setOrderDesc("ordernum");
                 sqlCondition.setOrderDesc("item_id");
+                if ("Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+                    String sqltemp[] = sql.toLowerCase().split("order by");
+                    sql = sqltemp[0] + sqlextra + sqltemp[1];
+                }
                 sql = buildQuerySql(sqlCondition.getMap(), exampleList);
             }
 
         }
         Object[] paramsobject = exampleList.toArray();
-        return commonDao.queryInt(sql.replace("a.*","count(1)"), paramsobject);
+        if ("Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            sql = sql.toLowerCase().split("order by")[0];
+        }
+        return commonDao.queryInt(sql.replace("a.*", "count(1)"), paramsobject);
     }
 
-  
-    
-    
     /**
      * 
      * 对事项信息根据条件查询，并且分页 其中conditionMap支持事项扩展信息的查询， 如果扩展信息的话，需要key写成
@@ -548,7 +616,7 @@ public class AuditTaskBasicService
         // 筛选+排序的sql
         String sql = buildQuerySqlWithDict(conditionMap);
         sql += " and (IS_HISTORY=0 or IS_HISTORY is null)";
-        
+
         if (StringUtil.isNotBlank(sortField)) {
             sql += " order by " + DbKit.checkOrderField(sql, sortField, AuditTask.class);
         }
@@ -558,7 +626,14 @@ public class AuditTaskBasicService
 
         List<AuditTask> auditTaskList = commonDao.findList(sql, firstResult, maxResults, AuditTask.class);
         pageData.setList(auditTaskList);
-        pageData.setRowCount(commonDao.queryInt(sql.replaceAll("a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id", "count(1)")));
+        sql = StringUtil.toLowerCase(sql);
+        if ("Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            String sqltemp[] = sql.split("order by");
+            sql = sqltemp[0];
+        }
+        String filed = StringUtil.toLowerCase(
+                "a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id");
+        pageData.setRowCount(commonDao.queryInt(sql.replaceAll(filed, "count(1)")));
         return pageData;
     }
 
@@ -586,7 +661,7 @@ public class AuditTaskBasicService
                     Object value = entry.getValue();
                     if (StringUtil.isNotBlank(key)) {
                         // 事项联表查询，和事项扩展表关联 key如果包含 '.' 就说明需要关联事项扩展表
-                        if (key.indexOf(".") != -1) {
+                        if (key.indexOf('.') != -1) {
                             String[] fields = key.split("\\.");
                             if (fields.length == 2) {
                                 if ("AUDIT_TASK_EXTENSION".equalsIgnoreCase(fields[0])) {
@@ -651,8 +726,8 @@ public class AuditTaskBasicService
     public AuditTask selectUsableTaskByTaskID(String taskid) {
         AuditTask audittask = null;
         String sql = "select *  FROM Audit_Task Where task_id=? and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1";
-        List<AuditTask> list = commonDao.findList(sql, AuditTask.class,taskid);
-        if (list != null && list.size() > 0) {
+        List<AuditTask> list = commonDao.findList(sql, AuditTask.class, taskid);
+        if (list != null && !list.isEmpty()) {
             audittask = list.get(0);
         }
         return audittask;
@@ -669,8 +744,7 @@ public class AuditTaskBasicService
     public List<AuditTask> selectlatestByTaskId(String taskid) {
         String sql = "";
         sql = "SELECT * FROM Audit_Task Where Task_ID=? ORDER BY IS_EDITAFTERIMPORT DESC";
-        List<AuditTask> list = commonDao.findList(sql, AuditTask.class,taskid);
-        return list;
+        return commonDao.findList(sql, AuditTask.class, taskid);
     }
 
     /**
@@ -684,8 +758,7 @@ public class AuditTaskBasicService
     public AuditTask selectByRowGuid(String rowguid) {
         String sql = "";
         sql = "select * from audit_task where ROWGUID =? ";
-        AuditTask auditTask = commonDao.find(sql, AuditTask.class,rowguid);
-        return auditTask;
+        return commonDao.find(sql, AuditTask.class, rowguid);
     }
 
     /**
@@ -697,7 +770,7 @@ public class AuditTaskBasicService
      * @see [类、类#方法、类#成员]
      */
     public List<AuditTask> selectAuditTaskByCondition(String condition, String areaCode) {
-        String sql = "select ROWGUID,TASKNAME,Task_id,applyertype,item_id,businesstype from AUDIT_TASK where TASKNAME like ? and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1 and IS_ENABLE=1"
+        String sql = "select ROWGUID,TASKNAME,Task_id,applyertype,item_id from AUDIT_TASK where TASKNAME like ? and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1 and IS_ENABLE=1"
                 + " and ISTEMPLATE=0 and areacode=?";
         return commonDao.findList(sql, AuditTask.class, "%" + condition + "%", areaCode);
     }
@@ -712,7 +785,7 @@ public class AuditTaskBasicService
      * @see [类、类#方法、类#成员]
      */
     public List<AuditTask> selectAuditTaskOuByObjectGuid(String objectGuid, String areaCode) {
-        String sql = "select ROWGUID,TASKNAME,Task_id,Item_id,areacode,businesstype from AUDIT_TASK where OUGUID=? and( IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1  and IS_ENABLE=1"
+        String sql = "select ROWGUID,TASKNAME,Task_id,Item_id,areacode,yw_catalog_id from AUDIT_TASK where OUGUID=? and( IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1  and IS_ENABLE=1"
                 + " and ISTEMPLATE=0 and areacode=? order by item_id asc,ordernum desc";
         return commonDao.findList(sql, AuditTask.class, objectGuid, areaCode);
     }
@@ -727,7 +800,7 @@ public class AuditTaskBasicService
      * @see [类、类#方法、类#成员]
      */
     public List<AuditTask> selectAuditTaskByAreacode(String areaCode) {
-        String sql = "select ROWGUID,TASKNAME,Task_id,Item_id,businesstype from AUDIT_TASK where ( IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1  and IS_ENABLE=1"
+        String sql = "select ROWGUID,TASKNAME,Task_id,Item_id from AUDIT_TASK where ( IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1  and IS_ENABLE=1"
                 + " and ISTEMPLATE=0 and areacode=?1 order by item_id asc,ordernum desc";
         return commonDao.findList(sql, AuditTask.class, areaCode);
     }
@@ -742,7 +815,7 @@ public class AuditTaskBasicService
      * @see [类、类#方法、类#成员]
      */
     public List<AuditTask> selectAuditTaskByObjectGuid(String objectGuid) {
-        String sql = "select ROWGUID,TASKNAME,Task_id,businesstype from AUDIT_TASK where (ROWGUID=?1 or task_id=?2) and ( IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1  and IS_ENABLE=1";
+        String sql = "select ROWGUID,TASKNAME,Task_id from AUDIT_TASK where (ROWGUID=?1 or task_id=?2) and ( IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1  and IS_ENABLE=1";
         return commonDao.findList(sql, AuditTask.class, objectGuid, objectGuid);
     }
 
@@ -782,8 +855,8 @@ public class AuditTaskBasicService
      * @see [类、类#方法、类#成员]
      */
     public AuditTask getTaskAndExtByTaskid(String oneTaskid) {
-        String sql = " select a.* from Audit_Task a "
-                + " where a.TASK_ID =?1 and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1  and istemplate='0'";
+        String sql = " select a.* from Audit_Task a where "
+                + "  a.TASK_ID =?1 and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1  and istemplate='0'";
         AuditTask auditTask = commonDao.find(sql, AuditTask.class, oneTaskid);
         if (auditTask != null) {
             return auditTask;
@@ -811,37 +884,26 @@ public class AuditTaskBasicService
         PageData<AuditTask> pageData = new PageData<AuditTask>();
         String extraSql = sqlManageUtil.buildSql(conditionMap);
         String extraSqlstatus = " AND (IS_EDITAFTERIMPORT NOT IN ('-1', '-3', '-5') OR (IS_EDITAFTERIMPORT = '-1' AND tasksource = 1))";
-        StringBuffer sb = new StringBuffer("select a.* from (select * from AUDIT_TASK ");
-        sb.append(extraSql);
-        sb.append(extraSqlstatus);
-        sb.append(" ) a left join (select * from AUDIT_TASK ");
-        sb.append(extraSql);
-        sb.append("  AND (IS_EDITAFTERIMPORT IN ('0', '2')OR (IS_EDITAFTERIMPORT = '-1' AND tasksource = 1))) b");
-        sb.append(" on a.task_id=b.task_id where (a.IS_EDITAFTERIMPORT='1' and b.rowguid is null) or (a.IS_EDITAFTERIMPORT in ('-1','0','2') and a.rowguid=b.rowguid )");
-        StringBuffer sb1 = new StringBuffer("select count(*) from (select * from AUDIT_TASK ");
-        sb1.append(extraSql);
-        sb1.append(extraSqlstatus);
-        sb1.append(" ) a left join (select * from AUDIT_TASK ");
-        sb1.append(extraSql);
-        sb1.append("  AND (IS_EDITAFTERIMPORT IN ('0', '2')OR (IS_EDITAFTERIMPORT = '-1' AND tasksource = 1))) b");
-        sb1.append(" on a.task_id=b.task_id where (a.IS_EDITAFTERIMPORT='1' and b.rowguid is null) or (a.IS_EDITAFTERIMPORT in ('-1','0','2') and a.rowguid=b.rowguid )");
-                // 增加Orderby语句
+        String sql = "select a.* from (select * from AUDIT_TASK " + extraSql + extraSqlstatus
+                + " ) a left join (select * from AUDIT_TASK " + extraSql
+                + "  AND (IS_EDITAFTERIMPORT IN ('0', '2')OR (IS_EDITAFTERIMPORT = '-1'AND tasksource = 1))) b"
+                + " on a.task_id=b.task_id where (a.IS_EDITAFTERIMPORT='1' and b.rowguid is null) or (a.IS_EDITAFTERIMPORT in ('-1','0','2') and a.rowguid=b.rowguid )";
+        String sqlCount = "select count(*) from (select * from AUDIT_TASK " + extraSql + extraSqlstatus
+                + " ) a left join (select * from AUDIT_TASK " + extraSql
+                + "  AND (IS_EDITAFTERIMPORT IN ('0', '2')OR (IS_EDITAFTERIMPORT = '-1'AND tasksource = 1))) b"
+                + " on a.task_id=b.task_id where (a.IS_EDITAFTERIMPORT='1' and b.rowguid is null) or (a.IS_EDITAFTERIMPORT in ('-1','0','2') and a.rowguid=b.rowguid )";
+        // 增加Orderby语句      
         if (StringUtil.isNotBlank(sortField)) {
-            sb.append(" order by a.");
-            sb.append(sortField);
-            sb.append(" ");
-            sb.append(sortOrder);
-            sb.append(", a.rowguid desc");
-
+            sql += " order by a." + sortField + " " + sortOrder + ", a.rowguid desc";
         }
-//        if (StringUtil.isNotBlank(sortField)) {
-//            sql += " order by " + DbKit.checkOrderField(sql, "a."+sortField, AuditTask.class);
-//        }
-//        if (StringUtil.isNotBlank(sortOrder)) {
-//            sql += " " + DbKit.checkOrderDirect(sql, "a."+sortOrder)+" , a.rowguid desc";
-//        }
-        List<AuditTask> dataList = commonDao.findList(sb.toString(), first, pageSize, AuditTask.class);
-        int dataCount = commonDao.queryInt(sb1.toString());
+        //        if (StringUtil.isNotBlank(sortField)) {
+        //            sql += " order by " + DbKit.checkOrderField(sql, "a."+sortField, AuditTask.class);
+        //        }
+        //        if (StringUtil.isNotBlank(sortOrder)) {
+        //            sql += " " + DbKit.checkOrderDirect(sql, "a."+sortOrder)+" , a.rowguid desc";
+        //        }
+        List<AuditTask> dataList = commonDao.findList(sql, first, pageSize, AuditTask.class);
+        int dataCount = commonDao.queryInt(sqlCount);
         pageData.setList(dataList);
         pageData.setRowCount(dataCount);
         return pageData;
@@ -852,7 +914,7 @@ public class AuditTaskBasicService
             String strtaskids = "'" + StringUtil.join(taskids, "','") + "'";
             String sql = "select task_id  FROM Audit_Task a inner join Audit_Task_Extension b on a.rowguid = b.taskguid Where task_id in ("
                     + strtaskids
-                    + ") and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1 and b.ISZIJIANXITONG='1'";
+                    + ") and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1 and ISZIJIANXITONG='1'";
             return commonDao.findList(sql, String.class);
         }
         else {
@@ -878,9 +940,9 @@ public class AuditTaskBasicService
         String sql = "select * from View_Audit_Task where (IS_HISTORY=0 or IS_HISTORY is null)";
         SQLManageUtil sqlManageUtil = new SQLManageUtil("task", true);
         sql += sqlManageUtil.buildSql(conditionMap).replace(" where 1=1", "");
-//        if (StringUtil.isNotBlank(sortField)) {
-//            sql += " order by " + sortField + " " + sortOrder;
-//        }
+        //        if (StringUtil.isNotBlank(sortField)) {
+        //            sql += " order by " + sortField + " " + sortOrder;
+        //        }
         if (StringUtil.isNotBlank(sortField)) {
             sql += " order by " + DbKit.checkOrderField(sql, sortField, ViewAuditTaskJiangSu.class);
         }
@@ -923,9 +985,9 @@ public class AuditTaskBasicService
         condition = condition.replaceAll("where 1=1", "");
         String sql = "select a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE from (select t.*,d.AREACODE delegateareacode from audit_task t, audit_task_delegate d where d.TASKID=t.TASK_ID order by d.xzorder desc) a left join AUDIT_TASK_EXTENSION b on a.ROWGUID=b.TASKGUID where 1=1"
                 + condition;
-//        if (StringUtil.isNotBlank(sortField)) {
-//            sql += " order by " + sortField + " " + sortOrder;
-//        }
+        //        if (StringUtil.isNotBlank(sortField)) {
+        //            sql += " order by " + sortField + " " + sortOrder;
+        //        }
         if (StringUtil.isNotBlank(sortField)) {
             sql += " order by " + DbKit.checkOrderField(sql, sortField, AuditTask.class);
         }
@@ -941,7 +1003,9 @@ public class AuditTaskBasicService
 
     public Record getAvgPromiseAndanticipatedate(String areacode) {
         String sql = "select IFNULL(avg(promise_day),0) promise,IFNULL(avg(anticipate_day),0) anticipate  from audit_task where areacode = ?1 and ( IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1  and IS_ENABLE=1  and ISTEMPLATE=0 and type='2'";
-        if (commonDao.isOracle()) {
+        if (commonDao.isOracle() || commonDao.isDM()
+                || "Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())
+                || JdbcConstantValue.Gauss.equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
             sql = sql.replace("IFNULL", "NVL");
         }
         return commonDao.find(sql, Record.class, areacode);
@@ -960,6 +1024,9 @@ public class AuditTaskBasicService
         String sql = "select a.*,b.ordernum as ordernumber,b.rowguid as windowtaskguid from audit_task a,audit_orga_windowtask b where a.task_id = b.taskid and windowguid=? "
                 + sqlbuild + usebletask + order;
         String countsql = sql.replace("a.*,b.ordernum as ordernumber,b.rowguid as windowtaskguid", "count(1)");
+        if ("Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            countsql = countsql.toLowerCase().split("order by")[0];
+        }
         List<AuditTask> auditTaskList = commonDao.findList(sql, first, pageSize, AuditTask.class, windowguid);
         pageData.setList(auditTaskList);
         pageData.setRowCount(commonDao.queryInt(countsql, windowguid));
@@ -975,17 +1042,18 @@ public class AuditTaskBasicService
         if (StringUtil.isNotBlank(sortField) && StringUtil.isNotBlank(sortOrder)) {
             order = " order by " + sortField + " " + sortOrder;
         }
-        //String sqle = sm.buildSql(map);
-        String sqle = " where (IS_ENABLE = '1' AND ISTEMPLATE = '0' "
-                + sqlbuild + " AND ifnull(IS_HISTORY, '0') = '0' AND IS_EDITAFTERIMPORT = 1)";
-        //String sql = "select " + fileds + " from view_enabledtask " + sqle + order;
-        StringBuffer sb = new StringBuffer("select ");
-        sb.append(fileds);
-        sb.append(" from audit_task ");
-        sb.append(sqle);
-        sb.append(order);
-        String sqlcount = sb.toString().replace(fileds, "count(*)");
-        List<AuditTask> auditTaskList = commonDao.findList(sb.toString(), first, pageSize, AuditTask.class);
+        /*String sqle = sm.buildSql(map);*/
+        String sqle = " where ( ITEM_ID LIKE '%000' AND IS_ENABLE = '1' AND ISTEMPLATE = '0' " + sqlbuild
+                + " AND ifnull(IS_HISTORY, '0') = '0' AND IS_EDITAFTERIMPORT = 1"
+                + " AND ITEM_ID NOT IN ( SELECT CONCAT (left(ITEM_ID, (length(ITEM_ID) - 3)),'000')"
+                + " FROM audit_task WHERE (IS_ENABLE = '1') AND (ifnull(IS_HISTORY, '0') = '0')"
+                + "AND (IS_EDITAFTERIMPORT = 1) AND ITEM_ID NOT LIKE '%000'))"
+                + " OR ( IS_ENABLE = '1' AND ISTEMPLATE = '0' AND ifnull(IS_HISTORY, '0') = '0'"
+                + " AND IS_EDITAFTERIMPORT = 1 AND ITEM_ID NOT LIKE '%000' " + sqlbuild + ")";
+        /*String sql = "select " + fileds + " from view_enabledtask " + sqle + order;*/
+        String sql = "select " + fileds + " from audit_task a " + sqle + order;
+        String sqlcount = sql.replace(fileds, "count(*)");
+        List<AuditTask> auditTaskList = commonDao.findList(sql, first, pageSize, AuditTask.class);
         pageData.setList(auditTaskList);
         pageData.setRowCount(commonDao.queryInt(sqlcount));
         return pageData;
@@ -999,21 +1067,16 @@ public class AuditTaskBasicService
         if (StringUtil.isNotBlank(sortField) && StringUtil.isNotBlank(sortOrder)) {
             order = " order by " + sortField + " " + sortOrder;
         }
-       /* if (StringUtil.isNotBlank(sortField)) {
-            order += " order by " + DbKit.checkOrderField(order, sortField, AuditTask.class);
-        }
-        if (StringUtil.isNotBlank(sortOrder)) {
-            order += " " + DbKit.checkOrderDirect(order, sortOrder);
-        }*/
-        String sqle = " where (IS_ENABLE = '1' AND ISTEMPLATE = '0' "
-                + sqlbuild + " AND ifnull(IS_HISTORY, '0') = '0' AND IS_EDITAFTERIMPORT = 1)";
-        //String sqle = sm.buildSql(map);
-        StringBuffer sb = new StringBuffer("select ");
-        sb.append(fileds);
-        sb.append(" from audit_task ");
-        sb.append(sqle);
-        sb.append(order);
-        List<AuditTask> auditTaskList = commonDao.findList(sb.toString(), first, pageSize, AuditTask.class);
+        String sqle = " where ( ITEM_ID LIKE '%000' AND IS_ENABLE = '1' AND ISTEMPLATE = '0' " + sqlbuild
+                + " AND ifnull(IS_HISTORY, '0') = '0' AND IS_EDITAFTERIMPORT = 1"
+                + " AND ITEM_ID NOT IN ( SELECT CONCAT (left(ITEM_ID, (length(ITEM_ID) - 3)),'000')"
+                + " FROM audit_task WHERE (IS_ENABLE = '1') AND (ifnull(IS_HISTORY, '0') = '0')"
+                + " AND (IS_EDITAFTERIMPORT = 1) AND ITEM_ID NOT LIKE '%000'))"
+                + " OR ( IS_ENABLE = '1' AND ISTEMPLATE = '0' AND ifnull(IS_HISTORY, '0') = '0'"
+                + " AND IS_EDITAFTERIMPORT = 1 AND ITEM_ID NOT LIKE '%000' " + sqlbuild + ")";
+        /*      String sqle = sm.buildSql(map);*/
+        String sql = "select " + fileds + " from audit_task " + sqle + order;
+        List<AuditTask> auditTaskList = commonDao.findList(sql, first, pageSize, AuditTask.class);
         return auditTaskList;
     }
 
@@ -1021,9 +1084,14 @@ public class AuditTaskBasicService
             String sortOrder) {
         SQLManageUtil sm = new SQLManageUtil("task", true);
         String sqlbuild = sm.buildPatchSql(map);
-       // String sqle = sm.buildSql(map);
-        String sqle = " where (IS_ENABLE = '1' AND ISTEMPLATE = '0' "
-                + sqlbuild + " AND ifnull(IS_HISTORY, '0') = '0' AND IS_EDITAFTERIMPORT = 1)";
+        /*String sqle = sm.buildSql(map);*/
+        String sqle = " where ( ITEM_ID LIKE '%000' AND IS_ENABLE = '1' AND ISTEMPLATE = '0' " + sqlbuild
+                + " AND ifnull(IS_HISTORY, '0') = '0' AND IS_EDITAFTERIMPORT = 1"
+                + " AND ITEM_ID NOT IN ( SELECT CONCAT (left(ITEM_ID, (length(ITEM_ID) - 3)),'000')"
+                + " FROM audit_task WHERE (IS_ENABLE = '1') AND (ifnull(IS_HISTORY, '0') = '0')"
+                + " AND (IS_EDITAFTERIMPORT = 1) AND ITEM_ID NOT LIKE '%000'))"
+                + " OR ( IS_ENABLE = '1' AND ISTEMPLATE = '0' AND ifnull(IS_HISTORY, '0') = '0'"
+                + " AND IS_EDITAFTERIMPORT = 1 AND ITEM_ID NOT LIKE '%000' " + sqlbuild + ")";
         String sql = "select count(*) from audit_task " + sqle;
         return commonDao.queryInt(sql);
     }
@@ -1038,12 +1106,9 @@ public class AuditTaskBasicService
      */
     public List<AuditTask> selectUsableTaskItemListByItemId(String item, String itemid) {
         AuditTask audittask = null;
-        StringBuffer sb = new StringBuffer("select *  FROM Audit_Task Where item_id like '");
-        sb.append(item);
-        sb.append("%' and ITEM_ID NOT in('");
-        sb.append(itemid);
-        sb.append("') and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1 and IS_ENABLE=1 ");
-        List<AuditTask> list = commonDao.findList(sb.toString(), AuditTask.class);
+        String sql = "select *  FROM Audit_Task Where item_id like '" + item + "%' and ITEM_ID NOT in('" + itemid
+                + "') and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1 and IS_ENABLE=1 ";
+        List<AuditTask> list = commonDao.findList(sql, AuditTask.class);
         return list;
     }
 
@@ -1060,15 +1125,15 @@ public class AuditTaskBasicService
         SQLManageUtil sm = new SQLManageUtil("task", true);
         String sqlextend = sm.buildPatchSql(sqlmap);
         List<Object> params = new ArrayList<Object>();
-        String sql = "select *  FROM Audit_Task Where item_id like ? and is_enable='1' and ITEM_ID NOT in " ;
+        String sql = "select *  FROM Audit_Task Where item_id like ? and is_enable='1' and ITEM_ID NOT in ";
         params.add(item.replace("\\", "\\\\").replace("%", "\\%") + "%");
-        Parameter pa= DbKit.splitIn(itemid);
+        Parameter pa = DbKit.splitIn(itemid);
         sql += pa.getSql();
         sql += sqlextend;
-        for(Object obj : pa.getValue()){
+        for (Object obj : pa.getValue()) {
             params.add(obj);
         }
-        List<AuditTask> list = commonDao.findList(sql, AuditTask.class,params.toArray());
+        List<AuditTask> list = commonDao.findList(sql, AuditTask.class, params.toArray());
         return list;
     }
 
@@ -1094,7 +1159,11 @@ public class AuditTaskBasicService
         PageData<AuditTask> pageData = new PageData<AuditTask>();
         SqlConditionUtil sqlCondition = new SqlConditionUtil(conditionMap);
         List<String> exampleList = new ArrayList<String>();
-        sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+        //        sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+        String sqlextra = "";
+        if (!"Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+        }
         // 筛选+排序的sql
         String sql = "";
 
@@ -1108,7 +1177,6 @@ public class AuditTaskBasicService
             sql = buildGBQuerySql(sqlCondition.getMap(), exampleList);
         }
         Object[] paramsobject = exampleList.toArray();
-        //system.out.println(sql);
         List<AuditTask> auditTaskList = commonDao.findList(sql, firstResult, maxResults, AuditTask.class, paramsobject);
         pageData.setList(auditTaskList);
         pageData.setRowCount(commonDao.findList(sql, AuditTask.class, paramsobject).size());
@@ -1133,14 +1201,15 @@ public class AuditTaskBasicService
         String sql1 = "";//查询有小项的大项
         String sql2 = "";//查询没有有小项的大项
         String sql3 = "";//拼接sql1和sql2
-        if (commonDao.isOracle()||commonDao.isDM()) {
-            sql1 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id"
+        if (commonDao.isOracle() || commonDao.isDM()
+                || "Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            sql1 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.IS_HISTORY "
                     + " FROM audit_task a WHERE  IS_EDITAFTERIMPORT = 1  AND ISTEMPLATE = 0 "
                     + "AND IS_ENABLE = 1 AND (  IS_HISTORY = 0 OR IS_HISTORY IS NULL ) AND substr(ITEM_ID ,-3) = '000' AND ITEM_ID  IN ("
                     + "SELECT  concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b "
                     + "INNER JOIN AUDIT_TASK_EXTENSION d ON b.ROWGUID = d.TASKGUID LEFT JOIN audit_task_map c ON b.TASK_ID = c.TASK_ID "
                     + " WHERE ( NOT (ITEM_ID LIKE '%000'))";
-            sql2 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id "
+            sql2 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id ,a.IS_HISTORY "
                     + "FROM audit_task a INNER JOIN AUDIT_TASK_EXTENSION d ON a.ROWGUID = d.TASKGUID "
                     + "LEFT JOIN audit_task_map c ON a.TASK_ID = c.TASK_ID WHERE substr(ITEM_ID ,-3) = '000' AND ITEM_ID NOT IN ("
                     + "SELECT  concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b WHERE IS_EDITAFTERIMPORT = 1 "
@@ -1148,16 +1217,30 @@ public class AuditTaskBasicService
                     + "AND ( NOT (ITEM_ID LIKE '%000')))";
         }
         else if (commonDao.isMySql()) {
-            sql1 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id"
+            sql1 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.IS_HISTORY "
                     + " FROM audit_task a WHERE  IS_EDITAFTERIMPORT = 1  AND ISTEMPLATE = 0 "
                     + "AND IS_ENABLE = 1 AND (  IS_HISTORY = 0 OR IS_HISTORY IS NULL ) AND RIGHT (ITEM_ID, 3) = '000' AND ITEM_ID  IN ("
                     + "SELECT concat( LEFT (ITEM_ID,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b "
                     + "INNER JOIN AUDIT_TASK_EXTENSION d ON b.ROWGUID = d.TASKGUID LEFT JOIN audit_task_map c ON b.TASK_ID = c.TASK_ID "
                     + " WHERE ( NOT (ITEM_ID LIKE '%000'))";
-            sql2 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id "
+            sql2 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.IS_HISTORY "
                     + "FROM audit_task a INNER JOIN AUDIT_TASK_EXTENSION d ON a.ROWGUID = d.TASKGUID "
                     + "LEFT JOIN audit_task_map c ON a.TASK_ID = c.TASK_ID WHERE RIGHT (ITEM_ID, 3) = '000' AND ITEM_ID NOT IN ("
                     + "SELECT concat( LEFT (ITEM_ID,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b WHERE IS_EDITAFTERIMPORT = 1 "
+                    + "AND ISTEMPLATE = 0 AND IS_ENABLE = 1 AND ( IS_HISTORY = 0 OR IS_HISTORY IS NULL )"
+                    + "AND ( NOT (ITEM_ID LIKE '%000')))";
+        }
+        else {
+            sql1 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.IS_HISTORY "
+                    + " FROM audit_task a WHERE  IS_EDITAFTERIMPORT = 1  AND ISTEMPLATE = 0 "
+                    + "AND IS_ENABLE = 1 AND (  IS_HISTORY = 0 OR IS_HISTORY IS NULL ) AND substr(ITEM_ID ,-3) = '000' AND ITEM_ID  IN ("
+                    + "SELECT  concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b "
+                    + "INNER JOIN AUDIT_TASK_EXTENSION d ON b.ROWGUID = d.TASKGUID LEFT JOIN audit_task_map c ON b.TASK_ID = c.TASK_ID "
+                    + " WHERE ( NOT (ITEM_ID LIKE '%000'))";
+            sql2 = "SELECT a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id ,a.IS_HISTORY "
+                    + "FROM audit_task a INNER JOIN AUDIT_TASK_EXTENSION d ON a.ROWGUID = d.TASKGUID "
+                    + "LEFT JOIN audit_task_map c ON a.TASK_ID = c.TASK_ID WHERE substr(ITEM_ID ,-3) = '000' AND ITEM_ID NOT IN ("
+                    + "SELECT  concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b WHERE IS_EDITAFTERIMPORT = 1 "
                     + "AND ISTEMPLATE = 0 AND IS_ENABLE = 1 AND ( IS_HISTORY = 0 OR IS_HISTORY IS NULL )"
                     + "AND ( NOT (ITEM_ID LIKE '%000')))";
         }
@@ -1165,7 +1248,8 @@ public class AuditTaskBasicService
         sql1 += sqlManageUtil.buildSql(conditionMap, tempresultList1).replace(" where 1=1", "") + " ) ";
         //拼接sql，拼接通用条件
         sql2 += sqlManageUtil.buildSql(conditionMap, tempresultList2).replace(" where 1=1", "");
-        sql3 = "select * from ( " + sql1 + " UNION  " + sql2 + " ) c order by ordernum desc, item_id desc ";
+        sql3 = "select * from ( " + sql1 + " UNION  " + sql2
+                + " ) c  where ( c.is_history = 0 OR c.is_history IS NULL )  order by ordernum desc, item_id desc ";
         exampleList.addAll(tempresultList1);
         exampleList.addAll(tempresultList2);
         return sql3;
@@ -1189,15 +1273,16 @@ public class AuditTaskBasicService
         String sql1 = "";//查询有小项的大项
         String sql2 = "";//查询没有有小项的大项
         String sql3 = "";//拼接sql1和sql2
-        if (commonDao.isOracle() || commonDao.isDM()) {
+        if (commonDao.isOracle() || commonDao.isDM()
+                || "Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
             sql1 = "SELECT a.rowguid,a.if_entrust,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,"
                     + "a.AREACODE,a.task_id,a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,"
-                    + "a.transact_addr,a.Transact_time FROM audit_task a WHERE IS_EDITAFTERIMPORT = 1  AND ISTEMPLATE = 0 "
+                    + "a.transact_addr,a.Transact_time,a.IS_HISTORY FROM audit_task a WHERE IS_EDITAFTERIMPORT = 1  AND ISTEMPLATE = 0 "
                     + "AND IS_ENABLE = 1 AND (  IS_HISTORY = 0 OR IS_HISTORY IS NULL ) AND substr(ITEM_ID ,-3) = '000' AND ITEM_ID  IN ("
-                    + "SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b INNER JOIN AUDIT_TASK_EXTENSION d ON b.ROWGUID = d.TASKGUID WHERE ( NOT (ITEM_ID LIKE '%000'))";
+                    + "SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b  WHERE ( NOT (ITEM_ID LIKE '%000'))";
             sql2 = "SELECT b.rowguid,b.if_entrust,b.applyertype,b.item_id,b.taskname,b.ouname,b.ordernum,b.is_enable,b.ouguid,b.PROCESSGUID,b.TYPE,"
                     + "b.AREACODE,b.task_id,b.promise_day,b.anticipate_day,b.charge_flag,b.shenpilb,b.link_tel,b.supervise_tel,b.JBJMODE,b.BY_LAW,"
-                    + "transact_addr,Transact_time FROM audit_task b INNER JOIN AUDIT_TASK_EXTENSION d ON b.ROWGUID = d.TASKGUID WHERE substr(ITEM_ID ,-3) = '000' AND ITEM_ID NOT IN ("
+                    + "transact_addr,Transact_time,b.IS_HISTORY FROM audit_task b  WHERE substr(ITEM_ID ,-3) = '000' AND ITEM_ID NOT IN ("
                     + "SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK WHERE IS_EDITAFTERIMPORT = 1 "
                     + "AND ISTEMPLATE = 0 AND IS_ENABLE = 1 AND ( IS_HISTORY = 0 OR IS_HISTORY IS NULL )"
                     + "AND ( NOT (ITEM_ID LIKE '%000')))";
@@ -1205,13 +1290,26 @@ public class AuditTaskBasicService
         else if (commonDao.isMySql()) {
             sql1 = "SELECT a.rowguid,a.if_entrust,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,"
                     + "a.AREACODE,a.task_id,a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,"
-                    + "a.transact_addr,a.Transact_time FROM audit_task a WHERE IS_EDITAFTERIMPORT = 1  AND ISTEMPLATE = 0 "
+                    + "a.transact_addr,a.Transact_time,a.IS_HISTORY FROM audit_task a WHERE IS_EDITAFTERIMPORT = 1  AND ISTEMPLATE = 0 "
                     + "AND IS_ENABLE = 1 AND (  IS_HISTORY = 0 OR IS_HISTORY IS NULL ) AND RIGHT (ITEM_ID, 3) = '000' AND ITEM_ID  IN ("
-                    + "SELECT concat( LEFT (ITEM_ID,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b INNER JOIN AUDIT_TASK_EXTENSION d ON b.ROWGUID = d.TASKGUID WHERE ( NOT (ITEM_ID LIKE '%000'))";
+                    + "SELECT concat( LEFT (ITEM_ID,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b  WHERE ( NOT (ITEM_ID LIKE '%000'))";
             sql2 = "SELECT b.rowguid,b.if_entrust,b.applyertype,b.item_id,b.taskname,b.ouname,b.ordernum,b.is_enable,b.ouguid,b.PROCESSGUID,b.TYPE,"
                     + "b.AREACODE,b.task_id,b.promise_day,b.anticipate_day,b.charge_flag,b.shenpilb,link_tel,b.supervise_tel,b.JBJMODE,b.BY_LAW,"
-                    + "b.transact_addr,b.Transact_time FROM audit_task b INNER JOIN AUDIT_TASK_EXTENSION d ON b.ROWGUID = d.TASKGUID WHERE RIGHT (ITEM_ID, 3) = '000' AND ITEM_ID NOT IN ("
+                    + "b.transact_addr,b.Transact_time,b.IS_HISTORY FROM audit_task b  WHERE RIGHT (ITEM_ID, 3) = '000' AND ITEM_ID NOT IN ("
                     + "SELECT concat( LEFT (ITEM_ID,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK  WHERE IS_EDITAFTERIMPORT = 1 "
+                    + "AND ISTEMPLATE = 0 AND IS_ENABLE = 1 AND ( IS_HISTORY = 0 OR IS_HISTORY IS NULL )"
+                    + "AND ( NOT (ITEM_ID LIKE '%000')))";
+        }
+        else {
+            sql1 = "SELECT a.rowguid,a.if_entrust,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,"
+                    + "a.AREACODE,a.task_id,a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,"
+                    + "a.transact_addr,a.Transact_time,a.IS_HISTORY FROM audit_task a WHERE IS_EDITAFTERIMPORT = 1  AND ISTEMPLATE = 0 "
+                    + "AND IS_ENABLE = 1 AND (  IS_HISTORY = 0 OR IS_HISTORY IS NULL ) AND substr(ITEM_ID ,-3) = '000' AND ITEM_ID  IN ("
+                    + "SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK b  WHERE ( NOT (ITEM_ID LIKE '%000'))";
+            sql2 = "SELECT b.rowguid,b.if_entrust,b.applyertype,b.item_id,b.taskname,b.ouname,b.ordernum,b.is_enable,b.ouguid,b.PROCESSGUID,b.TYPE,"
+                    + "b.AREACODE,b.task_id,b.promise_day,b.anticipate_day,b.charge_flag,b.shenpilb,b.link_tel,b.supervise_tel,b.JBJMODE,b.BY_LAW,"
+                    + "transact_addr,Transact_time,b.IS_HISTORY FROM audit_task b  WHERE substr(ITEM_ID ,-3) = '000' AND ITEM_ID NOT IN ("
+                    + "SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK WHERE IS_EDITAFTERIMPORT = 1 "
                     + "AND ISTEMPLATE = 0 AND IS_ENABLE = 1 AND ( IS_HISTORY = 0 OR IS_HISTORY IS NULL )"
                     + "AND ( NOT (ITEM_ID LIKE '%000')))";
         }
@@ -1219,7 +1317,8 @@ public class AuditTaskBasicService
         sql1 += sqlManageUtil.buildSql(conditionMap, tempresultList1).replace(" where 1=1", "") + " ) ";
         //拼接sql，拼接通用条件
         sql2 += sqlManageUtil.buildSql(conditionMap, tempresultList2).replace(" where 1=1", "");
-        sql3 = "select * from ( " + sql1 + " UNION ALL " + sql2 + " ) c order by ordernum desc, item_id desc ";
+        sql3 = "select * from ( " + sql1 + " UNION ALL " + sql2
+                + " ) c where ( c.is_history = 0 OR c.is_history IS NULL ) order by ordernum desc, item_id desc ";
         exampleList.addAll(tempresultList1);
         exampleList.addAll(tempresultList2);
         return sql3;
@@ -1255,7 +1354,10 @@ public class AuditTaskBasicService
         PageData<AuditTask> pageData = new PageData<AuditTask>();
         SqlConditionUtil sqlCondition = new SqlConditionUtil(conditionMap);
         List<String> exampleList = new ArrayList<String>();
-        sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+        String sqlextra = "";
+        if (!"Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            sqlCondition.isBlankOrValue("IS_HISTORY", "0");
+        }
         // 筛选+排序的sql
         String sql = "";
         // 从主题处点击进来
@@ -1292,12 +1394,13 @@ public class AuditTaskBasicService
         String sql1 = "";//查询有小项的大项
         String sql2 = "";//查询没有有小项的大项
         String sql3 = "";//拼接sql1和sql2
-        if (commonDao.isOracle() ||commonDao.isDM()) {
-            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id "
+        if (commonDao.isOracle() || commonDao.isDM()
+                || "Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history "
                     + "from audit_task a  WHERE substr(ITEM_ID ,-3) = '000' AND ITEM_ID  IN ( SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM "
                     + "AUDIT_TASK b INNER JOIN  AUDIT_TASK_EXTENSION e on b.ROWGUID=e.TASKGUID  INNER JOIN audit_task_delegate d on b.Task_id = d.TASKID "
                     + "LEFT JOIN audit_task_map c ON b.TASK_ID = c.TASK_ID WHERE ( NOT (ITEM_ID LIKE '%000')) AND d.status = 1 AND d.ISALLOWACCEPT = 1 ";
-            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id "
+            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history "
                     + "from audit_task a left join AUDIT_TASK_EXTENSION e on a.ROWGUID=e.TASKGUID LEFT JOIN audit_task_map c ON a.TASK_ID = c.TASK_ID "
                     + "INNER JOIN audit_task_delegate d ON a.Task_id = d.TASKID WHERE substr(ITEM_ID ,-3) = '000' "
                     + "AND ITEM_ID NOT IN(SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK WHERE "
@@ -1305,14 +1408,26 @@ public class AuditTaskBasicService
                     + " AND d.status = 1 AND d.ISALLOWACCEPT = 1 ";
         }
         else if (commonDao.isMySql()) {
-            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id "
+            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history "
                     + "from audit_task a  WHERE RIGHT(ITEM_ID,3)='000' AND ITEM_ID  IN ( SELECT concat( LEFT (ITEM_ID,(length(ITEM_ID) - 3)),'000') FROM "
                     + "AUDIT_TASK b INNER JOIN  AUDIT_TASK_EXTENSION e on b.ROWGUID=e.TASKGUID  INNER JOIN audit_task_delegate d on b.Task_id = d.TASKID "
                     + "LEFT JOIN audit_task_map c ON b.TASK_ID = c.TASK_ID WHERE ( NOT (ITEM_ID LIKE '%000')) AND d.status = 1 AND d.ISALLOWACCEPT = 1 ";
-            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id "
+            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history "
                     + "from audit_task a left join AUDIT_TASK_EXTENSION e on a.ROWGUID=e.TASKGUID LEFT JOIN audit_task_map c ON a.TASK_ID = c.TASK_ID "
                     + "INNER JOIN audit_task_delegate d ON a.Task_id = d.TASKID WHERE RIGHT(ITEM_ID,3)='000' "
                     + "AND ITEM_ID NOT IN (SELECT concat( LEFT (`audit_task`.`ITEM_ID`, (length(`audit_task`.`ITEM_ID`) - 3)),'000')FROM AUDIT_TASK WHERE "
+                    + "IS_EDITAFTERIMPORT = 1 AND ISTEMPLATE = 0 AND IS_ENABLE = 1 AND (IS_HISTORY = 0 OR IS_HISTORY IS NULL) AND ( NOT ( ITEM_ID LIKE '%000')))"
+                    + " AND d.status = 1 AND d.ISALLOWACCEPT = 1 ";
+        }
+        else {
+            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history "
+                    + "from audit_task a  WHERE substr(ITEM_ID ,-3) = '000' AND ITEM_ID  IN ( SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM "
+                    + "AUDIT_TASK b INNER JOIN  AUDIT_TASK_EXTENSION e on b.ROWGUID=e.TASKGUID  INNER JOIN audit_task_delegate d on b.Task_id = d.TASKID "
+                    + "LEFT JOIN audit_task_map c ON b.TASK_ID = c.TASK_ID WHERE ( NOT (ITEM_ID LIKE '%000')) AND d.status = 1 AND d.ISALLOWACCEPT = 1 ";
+            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history "
+                    + "from audit_task a left join AUDIT_TASK_EXTENSION e on a.ROWGUID=e.TASKGUID LEFT JOIN audit_task_map c ON a.TASK_ID = c.TASK_ID "
+                    + "INNER JOIN audit_task_delegate d ON a.Task_id = d.TASKID WHERE substr(ITEM_ID ,-3) = '000' "
+                    + "AND ITEM_ID NOT IN(SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK WHERE "
                     + "IS_EDITAFTERIMPORT = 1 AND ISTEMPLATE = 0 AND IS_ENABLE = 1 AND (IS_HISTORY = 0 OR IS_HISTORY IS NULL) AND ( NOT ( ITEM_ID LIKE '%000')))"
                     + " AND d.status = 1 AND d.ISALLOWACCEPT = 1 ";
         }
@@ -1321,7 +1436,8 @@ public class AuditTaskBasicService
         //拼接sql，拼接通用条件
         sql1 += " AND IS_EDITAFTERIMPORT =1 AND ISTEMPLATE =0 AND IS_ENABLE =1 AND (IS_HISTORY=0 OR IS_HISTORY IS NULL)";
         sql2 += sqlManageUtil.buildSql(conditionMap, tempresultList2).replace(" where 1=1", "");
-        sql3 = "select * from ( " + sql1 + " UNION " + sql2 + " ) c order by ordernum desc, item_id desc";
+        sql3 = "select * from ( " + sql1 + " UNION " + sql2
+                + " ) c where ( c.is_history = 0 OR c.is_history IS NULL ) order by ordernum desc, item_id desc";
         exampleList.addAll(tempresultList1);
         exampleList.addAll(tempresultList2);
         return sql3;
@@ -1345,13 +1461,14 @@ public class AuditTaskBasicService
         String sql1 = "";//查询有小项的大项
         String sql2 = "";//查询没有有小项的大项
         String sql3 = "";//拼接sql1和sql2
-        if (commonDao.isOracle() || commonDao.isDM()) {
-            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,"
+        if (commonDao.isOracle() || commonDao.isDM()
+                || "Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history,"
                     + "a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,a.transact_addr,a.Transact_time "
                     + "from audit_task a  WHERE  substr(ITEM_ID ,-3)='000' AND ITEM_ID  IN ( SELECT  concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM "
                     + " AUDIT_TASK b INNER JOIN  AUDIT_TASK_EXTENSION e on b.ROWGUID=e.TASKGUID  INNER JOIN audit_task_delegate d on b.Task_id = d.TASKID "
                     + "WHERE ( NOT (ITEM_ID LIKE '%000')) AND d.status = 1 AND d.ISALLOWACCEPT = 1";
-            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,"
+            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history,"
                     + "a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,a.transact_addr,a.Transact_time "
                     + "from audit_task a left join AUDIT_TASK_EXTENSION e on a.ROWGUID=e.TASKGUID INNER JOIN audit_task_delegate d on a.Task_id = d.TASKID  "
                     + "WHERE substr(ITEM_ID ,-3)='000' "
@@ -1360,16 +1477,30 @@ public class AuditTaskBasicService
                     + "AND d.status = 1 AND d.ISALLOWACCEPT = 1 ";
         }
         else if (commonDao.isMySql()) {
-            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,"
+            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history,"
                     + "a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,a.transact_addr,a.Transact_time "
                     + "from audit_task a  WHERE RIGHT(ITEM_ID,3)='000' AND ITEM_ID  IN ( SELECT concat( LEFT (ITEM_ID,(length(ITEM_ID) - 3)),'000') FROM "
                     + " AUDIT_TASK b INNER JOIN  AUDIT_TASK_EXTENSION e on b.ROWGUID=e.TASKGUID  INNER JOIN audit_task_delegate d on b.Task_id = d.TASKID "
                     + "WHERE ( NOT (ITEM_ID LIKE '%000')) AND d.status = 1 AND d.ISALLOWACCEPT = 1";
-            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,"
+            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history,"
                     + "a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,a.transact_addr,a.Transact_time "
                     + "from audit_task a left join AUDIT_TASK_EXTENSION e on a.ROWGUID=e.TASKGUID INNER JOIN audit_task_delegate d on a.Task_id = d.TASKID  "
                     + "WHERE RIGHT(ITEM_ID,3)='000' "
                     + "AND ITEM_ID NOT IN (SELECT concat( LEFT (ITEM_ID,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK WHERE IS_EDITAFTERIMPORT = 1 "
+                    + "AND ISTEMPLATE = 0 AND IS_ENABLE = 1 AND ( IS_HISTORY = 0 OR IS_HISTORY IS NULL ) AND ( NOT (ITEM_ID LIKE '%000'))) "
+                    + "AND d.status = 1 AND d.ISALLOWACCEPT = 1 ";
+        }
+        else {
+            sql1 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history,"
+                    + "a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,a.transact_addr,a.Transact_time "
+                    + "from audit_task a  WHERE  substr(ITEM_ID ,-3)='000' AND ITEM_ID  IN ( SELECT  concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM "
+                    + " AUDIT_TASK b INNER JOIN  AUDIT_TASK_EXTENSION e on b.ROWGUID=e.TASKGUID  INNER JOIN audit_task_delegate d on b.Task_id = d.TASKID "
+                    + "WHERE ( NOT (ITEM_ID LIKE '%000')) AND d.status = 1 AND d.ISALLOWACCEPT = 1";
+            sql2 = "SELECT a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.PROCESSGUID,a.TYPE,a.AREACODE,a.task_id,a.is_history,"
+                    + "a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.JBJMODE,a.BY_LAW,a.transact_addr,a.Transact_time "
+                    + "from audit_task a left join AUDIT_TASK_EXTENSION e on a.ROWGUID=e.TASKGUID INNER JOIN audit_task_delegate d on a.Task_id = d.TASKID  "
+                    + "WHERE substr(ITEM_ID ,-3)='000' "
+                    + "AND ITEM_ID NOT IN (SELECT concat( substr (ITEM_ID,0,(length(ITEM_ID) - 3)),'000') FROM AUDIT_TASK WHERE IS_EDITAFTERIMPORT = 1 "
                     + "AND ISTEMPLATE = 0 AND IS_ENABLE = 1 AND ( IS_HISTORY = 0 OR IS_HISTORY IS NULL ) AND ( NOT (ITEM_ID LIKE '%000'))) "
                     + "AND d.status = 1 AND d.ISALLOWACCEPT = 1 ";
         }
@@ -1378,7 +1509,8 @@ public class AuditTaskBasicService
         //拼接sql，拼接通用条件
         sql1 += " AND IS_EDITAFTERIMPORT =1 AND ISTEMPLATE =0 AND IS_ENABLE =1 AND (IS_HISTORY=0 OR IS_HISTORY IS NULL)";
         sql2 += sqlManageUtil.buildSql(conditionMap, tempresultList2).replace(" where 1=1", "");
-        sql3 = "select * from ( " + sql1 + " UNION ALL " + sql2 + " ) c order by ordernum desc, item_id desc ";
+        sql3 = "select * from ( " + sql1 + " UNION ALL " + sql2
+                + " ) c where ( c.is_history = 0 OR c.is_history IS NULL ) order by ordernum desc, item_id desc ";
         exampleList.addAll(tempresultList1);
         exampleList.addAll(tempresultList2);
         return sql3;
@@ -1482,8 +1614,24 @@ public class AuditTaskBasicService
         pageData.setRowCount(commonDao.findList(sql, AuditTask.class, "%" + keyWord + "%", "%" + keyWord + "%").size());
         return pageData;
     }
-    
-    
+
+    /**
+     * 窗口配置事项根据条件查询事项
+     * 
+     * @param condition
+     * @return
+     * @exception/throws [违例类型] [违例说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<AuditTask> selectAuditTaskByCondition(String condition, String areaCode, List<String> ouguids) {
+        if (ouguids == null || ouguids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        String sql = "select ROWGUID,TASKNAME,Task_id,applyertype,item_id,ouguid,yw_catalog_id from AUDIT_TASK where TASKNAME like ?1 and (IS_HISTORY=0 or IS_HISTORY is null) and IS_EDITAFTERIMPORT=1 and IS_ENABLE=1"
+                + " and ISTEMPLATE=0 and areacode=?2 and ouguid in (" + StringUtil.joinSql(ouguids) + ")";
+        return commonDao.findList(sql, AuditTask.class, "%" + condition + "%", areaCode);
+    }
+
     /**
      * 
      * 对事项信息根据条件查询，并且conditionMap支持事项扩展信息的查询， 如果扩展信息的话，需要key写成
@@ -1548,8 +1696,67 @@ public class AuditTaskBasicService
 
         }
         Object[] paramsobject = exampleList.toArray();
-        List<AuditTask> auditTaskList = commonDao.findList(sql, AuditTask.class, paramsobject);
-        return auditTaskList;
+        return commonDao.findList(sql, AuditTask.class, paramsobject);
     }
 
+    public PageData<AuditTask> getAuditTaskPageDataWithEle(Map<String, String> conditionMap,
+            int firstResult, int maxResults, String sortField, String sortOrder) {
+        PageData<AuditTask> pageData = new PageData<AuditTask>();
+        SqlConditionUtil sqlCondition = new SqlConditionUtil(conditionMap);
+        List<String> exampleList = new ArrayList<String>();
+
+        //        String sqlextra = " and  ifnull(IS_HISTORY, 0) = 0) ";
+        // 筛选+排序的sql
+
+        String sql = "";
+        
+        String extraSql = "select b.rowguid,item_id,taskname,ouname,b.ordernum,is_enable,ouguid,PROCESSGUID,TYPE,AREACODE,task_id,promise_day,anticipate_day,charge_flag,"
+                + "shenpilb,link_tel,supervise_tel,IS_EDITAFTERIMPORT from AUDIT_TASK b left join audit_task_extension c on b.rowguid = c.taskguid left join (select distinct"
+                + " taskid from audit_task_element where ifnull(draft,'0') = '0' and ifnull(isdelete,'0') = '0') d on b.task_id=d.taskid where d.taskid is not null ";
+        SQLManageUtil sqlManageUtil = new SQLManageUtil("task", true);
+        extraSql += sqlManageUtil.buildPatchSql(conditionMap, exampleList);
+        
+        String ifhistory = " and ifnull(IS_HISTORY, '0') = '0' ";
+        String ifnullcase = " ifnull(IS_HISTORY, '0') = '0') ";
+        if (commonDao.isOracle() || commonDao.isDM()
+                || "Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())
+                || JdbcConstantValue.Gauss.equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            ifnullcase = " nvl(IS_HISTORY, '0') = '0') ";
+            ifhistory = " and nvl(IS_HISTORY, '0') = '0' ";
+        }
+        String extraSqlstatus = " AND (IS_EDITAFTERIMPORT =1 OR (IS_EDITAFTERIMPORT = -1 AND tasksource = 0))";
+        sql = "select a.* from (" + extraSql + ifhistory + extraSqlstatus
+                + " and not EXISTS( SELECT rowguid FROM audit_Task where b.IS_EDITAFTERIMPORT=-1 and b.task_id=task_id and IS_EDITAFTERIMPORT=1 and "
+                + ifnullcase + ") a ORDER BY ordernum DESC,item_id DESC";
+
+        Object[] paramsobject = exampleList.toArray();
+        List<AuditTask> auditTaskList = commonDao.findList(sql, firstResult, maxResults, AuditTask.class, paramsobject);
+        pageData.setList(auditTaskList);
+        if ("Atlas".equalsIgnoreCase(commonDao.getDataSource().getDatabase())) {
+            sql = sql.toLowerCase().split("order by")[0];
+        }
+        else {
+            sql = sql.toLowerCase();
+        }
+        pageData.setRowCount(commonDao.queryInt(sql.replace("a.*", "count(1)")
+                .replaceAll(
+                        "a.rowguid,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.processguid,a.type,a.areacode,a.task_id",
+                        "count(1)")
+                .replaceAll(
+                        "a.rowguid,a.applyertype,a.item_id,a.taskname,a.ouname,a.ordernum,a.is_enable,a.ouguid,a.processguid,a.type,a.areacode,a.task_id,a.promise_day,a.anticipate_day,a.charge_flag,a.shenpilb,a.link_tel,a.supervise_tel,a.jbjmode,a.by_law,a.transact_addr,a.transact_time",
+                        "count(1)"),
+                paramsobject));
+        return pageData;
+
+    }
+
+    public AuditTask getAuditTaskTypeByRowGuid(String taskguid) {
+        String sql = "select * from audit_task where rowguid = ?";
+        return commonDao.find(sql, AuditTask.class, taskguid);
+    }
+    
+    
+    public AuditTask getBeanByCondition(Map<String, String> conditionMap) {
+        return new SQLManageUtil().getBeanByCondition(AuditTask.class, conditionMap);
+    }
 }

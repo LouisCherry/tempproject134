@@ -3,7 +3,7 @@ package com.epoint.xmz.thirdreporteddata.basic.spglv3.service;
 import com.epoint.core.dao.CommonDao;
 import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.grammar.Record;
-import com.epoint.xmz.thirdreporteddata.basic.spglv3.domain.SpglJsgcjgysbaxxbV3;
+import com.epoint.zwdt.xmgxh.basic.spglv3.domain.SpglJsgcjgysbaxxbV3;
 
 import java.util.List;
 
@@ -129,5 +129,20 @@ public class SpglJsgcjgysbaxxbV3Service {
     public SpglJsgcjgysbaxxbV3 findDominByCondition(String xzqhdm, String gcdm, String spsxslbm) {
         String sql = "select * from SPGL_JSGCJGYSBAXXB_V3 where 1=1 and xzqhdm =? and gcdm = ? and spsxslbm=?";
         return baseDao.find(sql, SpglJsgcjgysbaxxbV3.class, xzqhdm, gcdm, spsxslbm);
+    }
+
+    /**
+     * 查询单个实体
+     * [一句话功能简述]
+     *
+     * @param xzqhdm
+     * @param gcdm
+     * @return
+     * @exception/throws [违例类型] [违例说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public SpglJsgcjgysbaxxbV3 findDominByCondition(String xzqhdm, String gcdm) {
+        String sql = "select * from SPGL_JSGCJGYSBAXXB_V3 where 1=1 and xzqhdm =? and gcdm = ? limit 1";
+        return baseDao.find(sql, SpglJsgcjgysbaxxbV3.class, xzqhdm, gcdm);
     }
 }

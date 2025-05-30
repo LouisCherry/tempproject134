@@ -45,10 +45,10 @@ public class HttpUtil {
             }
             UrlEncodedFormEntity uefe = new UrlEncodedFormEntity(pairList, "utf-8");
             post.setEntity(uefe);
+            post.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            post.setHeader("idCard", RentCarConstant.ID_CARD);
             // 创建一个http客户端
             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-            post.setHeader("idCard", RentCarConstant.ID_CARD);
-            post.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
             // 发送post请求
             HttpResponse response = httpClient.execute(post);
 //            response.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");

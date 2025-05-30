@@ -1,15 +1,14 @@
 package com.epoint.yjs.yjszn.api.entity;
 
-import java.util.Date;
-
 import com.epoint.core.BaseEntity;
 import com.epoint.core.annotation.Entity;
-import com.epoint.core.utils.EnumClazz.StrategyType;
+
+import java.util.Date;
 
 /**
  * 一件事指南配置实体
  *
- * @version [版本号, 2024-10-08 19:07:22]
+ * @version [版本号, 2024-10-08 15:22:37]
  * @作者 panshunxing
  */
 @Entity(table = "YJS_ZN", id = "rowguid")
@@ -83,7 +82,7 @@ public class YjsZn extends BaseEntity implements Cloneable {
     }
 
     /**
-     * 类型
+     * type
      */
     public String getType() {
         return super.get("type");
@@ -94,7 +93,7 @@ public class YjsZn extends BaseEntity implements Cloneable {
     }
 
     /**
-     * 标题
+     * title
      */
     public String getTitle() {
         return super.get("title");
@@ -105,7 +104,7 @@ public class YjsZn extends BaseEntity implements Cloneable {
     }
 
     /**
-     * 辖区
+     * areacode
      */
     public String getAreacode() {
         return super.get("areacode");
@@ -116,7 +115,7 @@ public class YjsZn extends BaseEntity implements Cloneable {
     }
 
     /**
-     * 链接
+     * url
      */
     public String getUrl() {
         return super.get("url");
@@ -127,7 +126,7 @@ public class YjsZn extends BaseEntity implements Cloneable {
     }
 
     /**
-     * 视频
+     * attachguid
      */
     public String getAttachguid() {
         return super.get("attachguid");

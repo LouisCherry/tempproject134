@@ -1,8 +1,6 @@
 package com.epoint.xmz.jnyjsevaluate.api;
 import java.io.Serializable;
 import java.util.List;
-
-import com.epoint.core.grammar.Record;
 import com.epoint.xmz.jnyjsevaluate.api.entity.JnYjsEvaluate;
 
 /**
@@ -106,8 +104,4 @@ public interface IJnYjsEvaluateService extends Serializable
      * @return Integer
      */
 	 public Integer countJnYjsEvaluate(String sql, Object... args);
-	 
-	 public List<Record> findEvaluateList( int pageNumber, int pageSize,String applydateStart,String applydateEnd);
-	 
-	 public Integer countEvaluate(String applydateStart,String applydateEnd);
 }

@@ -1,9 +1,9 @@
 package com.epoint.auditsp.auditspresultmaterial.api;
 
+import com.epoint.auditsp.auditspresultmaterial.api.entity.AuditSpResultmaterial;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.epoint.auditsp.auditspresultmaterial.api.entity.AuditSpResultmaterial;
 
 /**
  * 一件事结果材料对应的后台service接口

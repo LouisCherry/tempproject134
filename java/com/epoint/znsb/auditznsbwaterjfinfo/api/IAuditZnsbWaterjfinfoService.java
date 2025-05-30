@@ -1,9 +1,9 @@
 package com.epoint.znsb.auditznsbwaterjfinfo.api;
+
+import com.epoint.znsb.auditznsbwaterjfinfo.api.entity.AuditZnsbWaterjfinfo;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.epoint.znsb.auditznsbwater.api.entity.Auditznsbwater;
-import com.epoint.znsb.auditznsbwaterjfinfo.api.entity.AuditZnsbWaterjfinfo;
 
 /**
  * 水务缴费信息对应的后台service接口
@@ -114,6 +114,4 @@ public interface IAuditZnsbWaterjfinfoService extends Serializable
      */
 
     public List<AuditZnsbWaterjfinfo> findListByTime(String time);
-
-
 }

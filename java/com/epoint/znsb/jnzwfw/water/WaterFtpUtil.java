@@ -3,19 +3,12 @@ package com.epoint.znsb.jnzwfw.water;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.epoint.basic.auditorga.auditwindow.inter.IAuditOrgaWindowYjs;
-import com.epoint.basic.auditqueue.auditqueue.domain.AuditQueue;
-import com.epoint.basic.auditqueue.auditqueue.inter.IAuditQueue;
-import com.epoint.core.dao.CommonDao;
-import com.epoint.core.dao.ICommonDao;
 import com.epoint.core.utils.classpath.ClassPathUtil;
 import com.epoint.core.utils.container.ContainerFactory;
 import com.epoint.core.utils.log.LogUtil;
-import com.epoint.database.jdbc.connection.DataSourceConfig;
 import com.epoint.frame.service.attach.api.IAttachService;
 import com.epoint.frame.service.attach.entity.FrameAttachInfo;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
@@ -55,7 +48,7 @@ public class  WaterFtpUtil{
 
             //设置文件类型（二进制）
             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-            //system.out.println(ftpClient.storeFile(new String(fileName.getBytes("UTF-8"),"iso-8859-1"), fis));
+            System.out.println(ftpClient.storeFile(new String(fileName.getBytes("UTF-8"),"iso-8859-1"), fis));
 
         } catch ( IOException e) {
             e.printStackTrace();
@@ -68,7 +61,7 @@ public class  WaterFtpUtil{
                 e.printStackTrace();
                 throw new RuntimeException("关闭FTP连接发生异常！", e);
             }
-           //system.out.println("已上传至FTP服务器路径！");
+           System.out.println("已上传至FTP服务器路径！");
         }
     }
 
@@ -94,18 +87,18 @@ public class  WaterFtpUtil{
             ftpClient.connect(ftpHost, ftpPort);// 连接FTP服务器
             ftpClient.login(ftpUserName, ftpPassword);// 登陆FTP服务器
             if (!FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-                //system.out.println("未连接到FTP，用户名或密码错误。");
+                System.out.println("未连接到FTP，用户名或密码错误。");
                 ftpClient.disconnect();
             } else {
-                //system.out.println("FTP连接成功。");
+                System.out.println("FTP连接成功。");
             }
         } catch (SocketException e) {
             e.printStackTrace();
-            //system.out.println("FTP的IP地址可能错误，请正确配置。");
+            System.out.println("FTP的IP地址可能错误，请正确配置。");
             throw new RuntimeException("FTP的IP地址可能错误，请正确配置！", e);
         } catch (IOException e) {
             e.printStackTrace();
-            //system.out.println("FTP的端口错误,请正确配置。");
+            System.out.println("FTP的端口错误,请正确配置。");
             throw new RuntimeException("FTP的端口错误,请正确配置！", e);
         }
         return ftpClient;
@@ -141,16 +134,16 @@ public class  WaterFtpUtil{
             ftpClient.logout();
             flag = true;
         } catch (FileNotFoundException e) {
-            //system.out.println("没有找到" + ftpPath + "文件");
+            System.out.println("没有找到" + ftpPath + "文件");
             e.printStackTrace();
             throw new RuntimeException("没有找到" + ftpPath + "文件:", e);
         } catch (SocketException e) {
-            //system.out.println("连接FTP失败.");
+            System.out.println("连接FTP失败.");
             e.printStackTrace();
             throw new RuntimeException("连接FTP失败:", e);
         } catch (IOException e) {
             e.printStackTrace();
-            //system.out.println("文件读取错误。");
+            System.out.println("文件读取错误。");
             e.printStackTrace();
             throw new RuntimeException("文件读取错误:", e);
         }
@@ -227,7 +220,7 @@ public class  WaterFtpUtil{
                 for (Iterator<String> iterator = jsonObject.keySet().iterator(); iterator.hasNext(); ) {
                     // 当前字段
                     String key = iterator.next();
-                    //system.out.println(key);
+                    System.out.println(key);
                     Object obj = jsonObject.get(key);
                     // 格式化数据
                     String field = "";
@@ -263,7 +256,7 @@ public class  WaterFtpUtil{
             pfp.close();
         } catch (Exception e) {
             flag = false;
-            //system.out.println("生成txt文件失败");
+            System.out.println("生成txt文件失败");
         }
         return flag;
 

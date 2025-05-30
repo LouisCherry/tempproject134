@@ -1,8 +1,6 @@
 package com.epoint.xmz.buildinfo.api;
 import java.io.Serializable;
 import java.util.List;
-
-import com.epoint.core.grammar.Record;
 import com.epoint.xmz.buildinfo.api.entity.BuildInfo;
 
 /**
@@ -77,7 +75,7 @@ public interface IBuildInfoService extends Serializable
      *            参数值数组
      * @return T extends BaseEntity
      */
-    public List<Record> findList(String sql, Object... args);
+    public List<BuildInfo> findList(String sql, Object... args);
 
     /**
      * 分页查找一个list

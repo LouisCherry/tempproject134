@@ -3,8 +3,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 import com.epoint.xmz.certcbyyysz.api.entity.CertCbyyysz;
-import com.epoint.xmz.certggxkws.api.entity.CertGgxkws;
-import com.epoint.xmz.certggxkws.impl.CertGgxkwsService;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.xmz.certcbyyysz.api.ICertCbyyyszService;
 /**
@@ -138,9 +136,6 @@ public class CertCbyyyszServiceImpl implements ICertCbyyyszService
       */
      public CertCbyyysz getCertByCertno(String certno) {
         return new CertCbyyyszService().getCertByCertno(certno);
-     }
-     public CertCbyyysz getYywszBhCertByCertno(String certno) {
-    	 return new CertCbyyyszService().getYywszBhCertByCertno(certno);
      }
      
 

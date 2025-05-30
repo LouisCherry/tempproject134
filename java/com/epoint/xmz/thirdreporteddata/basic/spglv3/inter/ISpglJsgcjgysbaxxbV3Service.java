@@ -1,6 +1,7 @@
 package com.epoint.xmz.thirdreporteddata.basic.spglv3.inter;
 
-import com.epoint.xmz.thirdreporteddata.basic.spglv3.domain.SpglJsgcjgysbaxxbV3;
+
+import com.epoint.zwdt.xmgxh.basic.spglv3.domain.SpglJsgcjgysbaxxbV3;
 
 import java.io.Serializable;
 import java.util.List;
@@ -102,6 +103,18 @@ public interface ISpglJsgcjgysbaxxbV3Service extends Serializable {
      * @see [类、类#方法、类#成员]
      */
     public SpglJsgcjgysbaxxbV3 findDominByCondition(String xzqhdm, String gcdm, String spsxslbm);
+
+    /**
+     * 查询的那个实体
+     * [一句话功能简述]
+     *
+     * @param xzqhdm
+     * @param gcdm
+     * @return
+     * @exception/throws [违例类型] [违例说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public SpglJsgcjgysbaxxbV3 findDominByCondition(String xzqhdm, String gcdm);
 
 
     /**

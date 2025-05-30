@@ -51,7 +51,7 @@ public interface IKanyanmainService extends Serializable
      *            主键
      * @return T extends BaseEntity
      */
-    public Kanyanmain find(Object primaryKey);
+    public Kanyanmain find(String primaryKey);
 
     /**
      * 查找单条记录

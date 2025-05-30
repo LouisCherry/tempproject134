@@ -11,9 +11,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
-import com.epoint.basic.auditresource.auditrsitembaseinfo.inter.IAuditRsItemBaseinfo;
-import com.epoint.basic.auditsp.auditspbusiness.domain.AuditSpBusiness;
-import com.epoint.basic.auditsp.auditspbusiness.inter.IAuditSpBusiness;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +41,7 @@ import com.epoint.common.util.SqlConditionUtil;
 import com.epoint.common.util.ZwfwConstant;
 import com.epoint.core.grammar.Record;
 import com.epoint.core.utils.convert.ChineseToPinyin;
+import com.epoint.core.utils.date.EpointDateUtil;
 import com.epoint.core.utils.string.StringUtil;
 import com.epoint.database.peisistence.crud.impl.model.PageData;
 import com.epoint.frame.service.attach.api.IAttachService;
@@ -72,12 +70,6 @@ public class JNauditRsitemInfoController extends ApiBaseController
     private IAttachService attachService;
     @Autowired
     private IUserService userservice;
-
-    @Autowired
-    private IAuditRsItemBaseinfo iAuditRsItemBaseinfo;
-
-    @Autowired
-    private IAuditSpBusiness iAuditSpBusiness;
     @Autowired
     private IJNauditRsItemBaseinfoservice jnauditRsItemBaseinfoservice;
     /**
@@ -103,7 +95,6 @@ public class JNauditRsitemInfoController extends ApiBaseController
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             JSONObject dataJson = new JSONObject();
             List<JSONObject> infoList = new ArrayList<JSONObject>();
-            AuditRsItemBaseinfo auditRsItemBaseinfo1 = iAuditRsItemBaseinfo.getAuditRsItemBaseinfoByRowguid(xiangmuguid).getResult();
             if (list != null) {
                 for (Record phase : list) {
                     Date createdate = phase.getDate("CREATEDATE");
@@ -123,24 +114,13 @@ public class JNauditRsitemInfoController extends ApiBaseController
                     infoList.add(infoJson);
                 }
                 dataJson.put("infolist", infoList);
-                if(auditRsItemBaseinfo1!=null){
-                    dataJson.put("projectname", auditRsItemBaseinfo1.getItemname());
-                    AuditSpInstance auditSpInstance1 = auditSpInstance.getDetailByBIGuid(auditRsItemBaseinfo1.getBiguid()).getResult();
-                    if(auditSpInstance1!=null){
-                        AuditSpBusiness auditSpBusiness = iAuditSpBusiness.getAuditSpBusinessByRowguid(auditSpInstance1.getBusinessguid()).getResult();
-                        if(auditSpBusiness!=null){
-                            dataJson.put("themename", auditSpBusiness.getBusinessname());
-                        }
-                    }
-
-                }
-
+                dataJson.put("projectname", list.get(0).getStr("itemname"));
+                dataJson.put("themename", list.get(0).getStr("BUSINESSNAME"));
             }
             log.info("=======结束调用getPhaseInfo接口=======");
             return JsonUtils.zwdtRestReturn("1", "获取项目阶段信息成功！", dataJson.toString());
         }
         catch (Exception e) {
-            e.printStackTrace();
             log.info("=======getPhaseInfo接口参数：params【" + params + "】=======");
             return JsonUtils.zwdtRestReturn("0", "获取项目阶段信息异常：" + e.getMessage(), "");
         }
@@ -156,13 +136,13 @@ public class JNauditRsitemInfoController extends ApiBaseController
     @RequestMapping(value = "/getPhaseSonInfo", method = RequestMethod.POST)
     public String getPhaseSonInfo(@RequestBody String params) {
         try {
-            log.info("=======开始调用getPhaseSonInfo接口=======");
+            log.info("=======开始调用getPhaseInfo接口=======");
             JSONObject jsonObject = JSONObject.parseObject(params);
             JSONObject obj = (JSONObject) jsonObject.get("params");
             String phaseguid = obj.getString("phaseguid");
             String xiangmuguid = obj.getString("xiangmuguid");
             List<AuditSpITask> tasklist = jnauditRsItemBaseinfoservice.gettaskbybigguid(xiangmuguid, phaseguid);
-            //system.out.println("tasklist:" + tasklist);
+            System.out.println("tasklist:" + tasklist);
             if (tasklist.isEmpty()) {
             	tasklist = jnauditRsItemBaseinfoservice.gettaskbybigguidOld(xiangmuguid, phaseguid);
             }
@@ -181,24 +161,19 @@ public class JNauditRsitemInfoController extends ApiBaseController
                         infoJson.put("taskname", phase.get("taskname"));
                         infoJson.put("ouname", phase.get("ouname"));
                         String oupy = ChineseToPinyin.getPingYin(phase.get("ouname"));
-                        //system.out.println("phase:" + phase);
+                        System.out.println("phase:" + phase);
                         infoJson.put("ounamepy", oupy);
                         ouinfo.put(oupy,
                                 (ouinfo == null || ouinfo.getInteger(oupy) == null) ? 1 : ouinfo.getInteger(oupy) + 1);
                         infoJson.put("taskguid", phase.get("taskguid"));
                         int status = 0;
-                        if(phase.get("status")!=null){
-                            String statustr = phase.getStr("status");
-                            if (statustr != null) {
-                                status = Integer.parseInt(statustr);
-                            }
-                            else {
-                                status = 99;
-                            }
-                        }else{
+                        String statu = phase.getStr("status");
+                        if (statu != null) {
+                            status = Integer.parseInt(statu);
+                        }
+                        else {
                             status = 99;
                         }
-
                         infoJson.put("status", status);
                         if (status < 26) {
                             infoJson.put("state", "todo");
@@ -222,47 +197,48 @@ public class JNauditRsitemInfoController extends ApiBaseController
                         infoJson.put("projectguid", phase.get("projectguid"));
                         infoJson.put("num", "");
                         String date = "开始时间：";
-                        Date start = phase.get("RECEIVEDATE");
-                        Date end = phase.get("BANJIEDATE");
+                        Date start = phase.getDate("RECEIVEDATE");
+                        Date end = phase.getDate("BANJIEDATE");
+
+                        
+                        infoJson.put("begindate", EpointDateUtil.convertDate2String(start, "yyyy-MM-dd HH:mm"));
+                        infoJson.put("enddate", EpointDateUtil.convertDate2String(end, "yyyy-MM-dd HH:mm"));
                         if (start != null) {
-                            start=phase.getDate("RECEIVEDATE");
                             date += sdf.format(start) + "<br/>结束时间：";
                             if (begindate == null || begindate.after(start)) {
                                 begindate = start;
                             }
                         }
-                        if (start != null && end != null) {
-                            end=phase.getDate("BANJIEDATE");
+                        if (end != null) {
                             long date0 = start.getTime();
                             long date1 = end.getTime();
                             long day = (date1 - date0) / (1000 * 60 * 60 * 24);
                             long hour = (date1 - date0) / (60 * 60 * 1000) - day * 24;
                             long min = (date1 - date0) / (60 * 1000) - hour * 60 - day * 24 * 60;
-                            date += sdf.format(end) + "<br/>合计用时：" + day + "天" + hour + "小时" + min + "分钟";
+                            date = sdf.format(end) + "<br/>合计用时：" + day + "天" + hour + "小时" + min + "分钟";
+                            
+                            infoJson.put("usertime",  day + "天" + hour + "小时" + min + "分钟");
+                            
                             if (finishdate == null || end.after(finishdate)) {
                                 finishdate = end;
                             }
                         }
-                        else if (status >= 90 && start != null) {
-                            start=phase.getDate("RECEIVEDATE");
+                        else if (phase.getInt("status") >= 90) {
                             date += sdf.format(start);
                         }
                         infoJson.put("date", date);
-                        if(phase.get("SPAREMINUTES")!=null){
-                            String time = phase.getStr("SPAREMINUTES");
-                            if (StringUtil.isNotBlank(time) && status < 90) {
-                                int i = Integer.parseInt(time);
-                                int syts = i / 60 / 24;
-                                int ss = i / 60 % 24;
-                                if (syts < 0 && ss > 0) {
-                                    infoJson.put("light", "warn");
-                                }
-                                if (i < 0) {
-                                    infoJson.put("light", "danger");
-                                }
+                        String time = phase.getStr("SPAREMINUTES");
+                        if (StringUtil.isNotBlank(time) && status < 90) {
+                            int i = Integer.parseInt(time);
+                            int syts = i / 60 / 24;
+                            int ss = i / 60 % 24;
+                            if (syts < 0 && ss > 0) {
+                                infoJson.put("light", "warn");
+                            }
+                            if (i < 0) {
+                                infoJson.put("light", "danger");
                             }
                         }
-
                         infoList.add(infoJson);
 
                     }
@@ -288,12 +264,11 @@ public class JNauditRsitemInfoController extends ApiBaseController
                 dataJson.put("infolist", infoList);
                 dataJson.put("ouinfo", ouinfo);
             }
-            log.info("=======结束调用getPhaseSonInfo接口=======");
+            log.info("=======结束调用getPhaseInfo接口=======");
             return JsonUtils.zwdtRestReturn("1", "获取项目阶段详情成功！", dataJson.toString());
         }
         catch (Exception e) {
-            e.printStackTrace();
-            log.info("=======getPhaseSonInfo接口参数：params【" + params + "】=======");
+            log.info("=======getPhaseInfo接口参数：params【" + params + "】=======");
             return JsonUtils.zwdtRestReturn("0", "获取项目阶段详情异常：" + e.getMessage(), "");
         }
     }
@@ -323,8 +298,8 @@ public class JNauditRsitemInfoController extends ApiBaseController
                 infoJson.put("ouname", phase.get("ouname"));
                 String oupy = ChineseToPinyin.getPingYin(phase.get("ouname"));
                 infoJson.put("ounamepy", oupy);
-                //system.out.println("oupy:" + oupy);
-                //system.out.println("ouinfo:" + ouinfo);
+                System.out.println("oupy:" + oupy);
+                System.out.println("ouinfo:" + ouinfo);
                 ouinfo.put(oupy, (ouinfo == null || ouinfo.getInteger(oupy) == null) ? 1 : ouinfo.getInteger(oupy) + 1);
                 infoJson.put("taskguid", phase.get("taskguid"));
                 int status = 0;
@@ -381,21 +356,18 @@ public class JNauditRsitemInfoController extends ApiBaseController
                     date += sdf.format(start);
                 }
                 infoJson.put("date", date);
-                if(phase.get("SPAREMINUTES")!=null) {
-                    String time = phase.getStr("SPAREMINUTES");
-                    if (status < 90 && StringUtil.isNotBlank(time)) {
-                        int i = Integer.parseInt(time);
-                        int syts = i / 60 / 24;
-                        int ss = i / 60 % 24;
-                        if (syts < 0 && ss > 0) {
-                            infoJson.put("light", "warn");
-                        }
-                        if (i < 0) {
-                            infoJson.put("light", "danger");
-                        }
+                String time = phase.getStr("SPAREMINUTES");
+                if (status < 90 && StringUtil.isNotBlank(time)) {
+                    int i = Integer.parseInt(time);
+                    int syts = i / 60 / 24;
+                    int ss = i / 60 % 24;
+                    if (syts < 0 && ss > 0) {
+                        infoJson.put("light", "warn");
+                    }
+                    if (i < 0) {
+                        infoJson.put("light", "danger");
                     }
                 }
-
                 infoList.add(infoJson);
                 if (endproject == tasklist.size()) {
                     dataJson.put("status", "done");
@@ -776,7 +748,7 @@ public class JNauditRsitemInfoController extends ApiBaseController
     @RequestMapping(value = "/getprojectbyguid", method = RequestMethod.POST)
     public String getprojectbyguid(@RequestBody String params, @Context HttpServletRequest request) {
         try {
-            log.info("=======开始调用getprojectbyguid接口=======");
+            log.info("=======开始调用getPhaseInfo接口=======");
             //                TaJointGuidanceInfoService service = new TaJointGuidanceInfoService();
             JSONObject jsonObject = JSONObject.parseObject(params);
             JSONObject obj = (JSONObject) jsonObject.get("params");
@@ -816,12 +788,11 @@ public class JNauditRsitemInfoController extends ApiBaseController
             }
             infoJson.put("Banjieenddate", result);
             dataJson.put("infoJson", infoJson);
-            log.info("=======结束调用getprojectbyguid接口=======");
+            log.info("=======结束调用getPhaseInfo接口=======");
             return JsonUtils.zwdtRestReturn("1", "获取项子目阶段信息成功！", dataJson.toString());
         }
         catch (Exception e) {
-            e.printStackTrace();
-            log.info("=======getprojectbyguid接口参数：params【" + params + "】=======");
+            log.info("=======getPhaseInfo接口参数：params【" + params + "】=======");
             return JsonUtils.zwdtRestReturn("0", "获取子阶段信息异常：" + e.getMessage(), "");
         }
     }

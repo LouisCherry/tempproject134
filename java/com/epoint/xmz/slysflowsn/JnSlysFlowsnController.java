@@ -4,19 +4,23 @@ package com.epoint.xmz.slysflowsn;
 import java.lang.invoke.MethodHandles;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
-import com.epoint.cert.commonservice.DBServcie;
 import com.epoint.common.util.JsonUtils;
-import com.epoint.core.EpointFrameDsManager;
+import com.epoint.xmz.api.IJnService;
 
 @RestController
 @RequestMapping("/jnslysflowsn")
 public class JnSlysFlowsnController {
+	
+	@Autowired
+	private IJnService iJnService;
+	
 	/**
 	 * 日志
 	 */
@@ -37,9 +41,33 @@ public class JnSlysFlowsnController {
 			// 1、接口的入参转化为JSON对象
 			// 8、定义返回JSON对象
 			JSONObject dataJson = new JSONObject();
-			String flowsn = new DBServcie().getFlowSn("许可证编号", "123", 4, true, 6).replace("123", "").substring(8);
-			EpointFrameDsManager.commit();
-			dataJson.put("flowsn", "济审航XK"+flowsn);
+			
+			String flwosn = iJnService.getZjSlFlowsn("sl");
+			
+			String result = Integer.parseInt(flwosn)+1+"";
+			
+			if(result.length() == 1) {
+				result = "00000" + result;
+			}
+			else if (result.length() == 2) {
+				result = "0000" + result;
+			}
+			else if (result.length() == 3) {
+				result = "000" + result;
+			}
+			else if (result.length() == 4) {
+				result = "00" + result;
+			}
+			else if (result.length() == 5) {
+				result = "0" + result;
+			}
+			
+			iJnService.updateZjSlFlowsn(result,"sl");
+			
+			
+			dataJson.put("flowsn", "济审航XK"+result+"");
+			
+			
 			return JsonUtils.zwdtRestReturn("1", "获取水路运输事项编号成功", dataJson.toString());
 		} catch (Exception e) {
 			e.printStackTrace();

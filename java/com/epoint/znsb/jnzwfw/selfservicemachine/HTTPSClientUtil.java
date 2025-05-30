@@ -101,6 +101,68 @@ public class HTTPSClientUtil {
         return res;
     }
 
+	public static String doCertPost(String apiUrl, Map<String, Object> paramBody) throws Exception {
+		String res = "";
+		HttpURLConnection conn = null;
+		// boundary就是request头和上传文件内容的分隔符
+		String BOUNDARY = "---------------------------123821742118716";
+		try {
+			URL url = new URL(apiUrl);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setConnectTimeout(50000);
+			conn.setReadTimeout(50000);
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setUseCaches(false);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Connection", "Keep-Alive");
+			conn.setRequestProperty("x-authenticated-clientid", "89097081-8ef7-48d7-a13a-c52e6943e302");
+			// conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows; U;
+			// Windows NT 6.1; zh-CN; rv:1.9.2.6)");
+			conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+			OutputStream out = new DataOutputStream(conn.getOutputStream());
+			// text
+			if (paramBody != null) {
+				StringBuffer strBuf = new StringBuffer();
+				Iterator iter = paramBody.entrySet().iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					String inputName = (String) entry.getKey();
+					String inputValue = (String) entry.getValue();
+					if (inputValue == null) {
+						continue;
+					}
+					strBuf.append("\r\n").append("--").append(BOUNDARY).append("\r\n");
+					strBuf.append("Content-Disposition: form-data; name=\"" + inputName + "\"\r\n\r\n");
+					strBuf.append(inputValue);
+				}
+				out.write(strBuf.toString().getBytes());
+			}
+			byte[] endData = ("\r\n--" + BOUNDARY + "--\r\n").getBytes();
+			out.write(endData);
+			out.flush();
+			out.close();
+			// 读取返回数据
+			StringBuffer strBuf = new StringBuffer();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				strBuf.append(line).append("\n");
+			}
+			res = strBuf.toString();
+			reader.close();
+			reader = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.disconnect();
+				conn = null;
+			}
+		}
+		return res;
+	}
+
     /** 
      * post方法，默认UTF-8格式 
      *  [一句话功能简述] 

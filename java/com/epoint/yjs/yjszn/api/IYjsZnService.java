@@ -1,13 +1,16 @@
 package com.epoint.yjs.yjszn.api;
+
+import com.epoint.yjs.yjszn.api.entity.YjsZn;
+
 import java.io.Serializable;
 import java.util.List;
-import com.epoint.yjs.yjszn.api.entity.YjsZn;
+import java.util.Map;
 
 /**
  * 一件事指南配置对应的后台service接口
  * 
  * @author panshunxing
- * @version [版本号, 2024-10-08 19:07:22]
+ * @version [版本号, 2024-10-08 15:22:37]
  */
 public interface IYjsZnService extends Serializable
 { 
@@ -105,12 +108,15 @@ public interface IYjsZnService extends Serializable
      */
 	 public Integer countYjsZn(String sql, Object... args);
 
-    /**
-     * 删除数据
+         /**
+     * 查找一个list
      *
-     * @param record
-     *            BaseEntity或Record对象 <必须继承Record>
-     * @return int
      */
-    public int deleteByBusinessGuid(String businessguid);
+    public List<YjsZn> findList(Map<String, Object> conditionMap);
+
+    /**
+     * 查找一个list
+     *
+     */
+    public List<YjsZn> findList(Map<String, Object> conditionMap,int pageNumber, int pageSize);
 }

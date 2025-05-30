@@ -1,6 +1,7 @@
 package com.epoint.auditspoptiontownship.api.entity;
 
 import java.util.Date;
+
 import com.epoint.core.BaseEntity;
 import com.epoint.core.annotation.Entity;
 

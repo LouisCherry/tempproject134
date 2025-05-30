@@ -1,10 +1,12 @@
 package com.epoint.znsb.auditznsbwater.impl;
-import java.util.List;
 
-import org.springframework.stereotype.Component;
-import com.epoint.znsb.auditznsbwater.api.entity.Auditznsbwater;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.znsb.auditznsbwater.api.IAuditznsbwaterService;
+import com.epoint.znsb.auditznsbwater.api.entity.Auditznsbwater;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
 /**
  * 水务对账信息对应的后台service实现类
  * 
@@ -129,11 +131,6 @@ public class AuditznsbwaterServiceImpl implements IAuditznsbwaterService
     public List<Auditznsbwater> getListByIsupload() {
 
         return new AuditznsbwaterService().getListByIsupload();
-    }
-
-    @Override
-    public List<Auditznsbwater> getLisrtByname(String name) {
-        return new AuditznsbwaterService().getLisrtByname(name);
     }
 
 }

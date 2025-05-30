@@ -60,7 +60,7 @@ public class KanyanmainServiceImpl implements IKanyanmainService
      *            主键
      * @return T extends BaseEntity
      */
-    public Kanyanmain find(Object primaryKey) {
+    public Kanyanmain find(String primaryKey) {
        return new KanyanmainService().find(primaryKey);
     }
 

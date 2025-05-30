@@ -35,7 +35,7 @@ public class V2AuthUtil {
 //		genKeyPair();
 
 		/**
-		 * todo 此处需替换为微网厅签发的秘钥信息
+		 * 此处需替换为微网厅签发的秘钥信息
 		 */
 		String USER_NAME = "jiningOWA";
 		String PASSWORD = "7912df06448144e3be59d1365d680b00";

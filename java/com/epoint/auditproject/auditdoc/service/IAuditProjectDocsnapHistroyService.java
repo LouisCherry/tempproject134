@@ -1,13 +1,11 @@
 package com.epoint.auditproject.auditdoc.service;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.epoint.auditproject.auditdoc.entity.AuditProjectDocsnapHistroy;
+import com.epoint.database.peisistence.crud.impl.model.PageData;
 
 import java.util.List;
 import java.util.Map;
-
-import com.alibaba.dubbo.config.annotation.Service;
-import com.epoint.cs.auditepidemiclog.api.entity.AuditEpidemicLog;
-import com.epoint.database.peisistence.crud.impl.model.PageData;
 
 /**
  * (AuditProjectDocsnapHistroy)表服务接口
@@ -70,6 +68,14 @@ public interface IAuditProjectDocsnapHistroyService {
      * @return T extends BaseEntity
      */
     List<AuditProjectDocsnapHistroy> findList(String sql, Object... args);
+
+
+    /**
+     * 查找一个list
+     *
+     * @param conditionMap   查询条件
+     */
+    List<AuditProjectDocsnapHistroy> findList(Map<String, Object> conditionMap);
 
 
     /**

@@ -1,9 +1,5 @@
 package com.epoint.sm2util;
 
-
-import java.math.BigInteger;
-import java.security.SecureRandom;
-
 import org.bouncycastle154.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle154.crypto.params.ECDomainParameters;
 import org.bouncycastle154.crypto.params.ECKeyGenerationParameters;
@@ -11,6 +7,9 @@ import org.bouncycastle154.math.ec.ECCurve;
 import org.bouncycastle154.math.ec.ECFieldElement;
 import org.bouncycastle154.math.ec.ECFieldElement.Fp;
 import org.bouncycastle154.math.ec.ECPoint;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 public class SM2 {
     //正式参数

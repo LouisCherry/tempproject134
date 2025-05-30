@@ -31,12 +31,14 @@ public class ProjectdownForYCBHService
 
     public int insertbyrecord(WorkflowWorkItemHistory workflow) {
         int result = commonDaoTo.insert(workflow);
+        commonDaoTo.close();
         return result;
     }
     
     public List<Record> getAreaList(){
         String sql = "SELECT * from jining_banjian_ycbh";
         List<Record> list = commonDaoTo.findList(sql, Record.class);
+        commonDaoTo.close();
         return list;
     }
     
@@ -46,12 +48,14 @@ public class ProjectdownForYCBHService
                 + " where (IS_HISTORY=0 or IFNULL(IS_HISTORY,0)=0) and IS_EDITAFTERIMPORT=1"
                 + " and IS_ENABLE=1 and innerno = ?1 and AREACODE=?2";
         AuditTask task = commonDaoTo.find(sql, AuditTask.class, innerno, areacode);
+        commonDaoTo.close();
         return task;
     }
     
     public AuditProject getProjectByflowsn(String flowsn){
         String sql = "SELECT rowguid,ACCEPTUSERDATE,PVIGUID from audit_project WHERE flowsn =?";
         AuditProject project = commonDaoTo.find(sql, AuditProject.class, flowsn);
+        commonDaoTo.close();
         return project;
     }
 }

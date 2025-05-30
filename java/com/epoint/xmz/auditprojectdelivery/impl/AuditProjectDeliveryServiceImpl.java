@@ -109,8 +109,8 @@ public class AuditProjectDeliveryServiceImpl implements IAuditProjectDeliverySer
     }
 
     @Override
-    public AuditProjectDelivery getDeliveryByProjectguid(String projectguid) {
-        return new AuditProjectDeliveryService().getDeliveryByProjectguid(projectguid);
+    public AuditProjectDelivery getDeliveryByprojectguid(String projectguid) {
+        return new AuditProjectDeliveryService().getDeliveryByprojectguid(projectguid);
     }
 
 }

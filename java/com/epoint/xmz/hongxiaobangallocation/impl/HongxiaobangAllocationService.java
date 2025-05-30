@@ -116,7 +116,7 @@ public class HongxiaobangAllocationService {
     }
 
     public HongxiaobangAllocation getAllocation() {
-        String sql = "select * from hongxiaobang_allocation";
+        String sql = "select * from hongxiaobang_allocation limit 1";
         return baseDao.find(sql, HongxiaobangAllocation.class);
     }
 

@@ -1,7 +1,9 @@
 package com.epoint.znsb.auditznsbwater.api;
+
+import com.epoint.znsb.auditznsbwater.api.entity.Auditznsbwater;
+
 import java.io.Serializable;
 import java.util.List;
-import com.epoint.znsb.auditznsbwater.api.entity.Auditznsbwater;
 
 /**
  * 水务对账信息对应的后台service接口
@@ -110,13 +112,6 @@ public interface IAuditznsbwaterService extends Serializable
      */
 
     public List<Auditznsbwater> getListByIsupload();
-
-
-    /**
-     * 保持日期只有一次
-     */
-
-    public List<Auditznsbwater> getLisrtByname(String name);
 
 
 }
